@@ -53,7 +53,9 @@ public class GlobalExceptionHandlerMiddleware
         {
             context.Response.StatusCode = 422;
             context.Response.ContentType = "application/json";
-            var body = JsonSerializer.Serialize(new { message = "Validation failed", errors = ex.Errors });
+            var body = ex.Errors.Count > 0
+                ? JsonSerializer.Serialize(new { message = ex.Message, errors = ex.Errors })
+                : JsonSerializer.Serialize(new { message = ex.Message });
             await context.Response.WriteAsync(body);
         }
         catch (ValidationException ex)

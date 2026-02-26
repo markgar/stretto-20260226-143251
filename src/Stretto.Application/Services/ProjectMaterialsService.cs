@@ -29,6 +29,15 @@ public class ProjectMaterialsService : IProjectMaterialsService
 
     public async Task<ProjectLinkDto> AddLinkAsync(Guid projectId, Guid orgId, AddLinkRequest req)
     {
+        if (!Uri.TryCreate(req.Url, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
+        {
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["url"] = ["Url must be an http or https URL."]
+            });
+        }
+
         var link = new ProjectLink
         {
             Id = Guid.NewGuid(),

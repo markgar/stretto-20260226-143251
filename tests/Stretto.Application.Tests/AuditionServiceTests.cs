@@ -378,15 +378,27 @@ public class AuditionServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task SignUpForSlotAsync_throws_ConflictException_when_slot_already_claimed()
+    public async Task SignUpForSlotAsync_throws_UnprocessableEntityException_when_slot_already_claimed()
     {
         var created = await _service.CreateAsync(OrgId, DefaultRequest());
         var slotId = created.Slots[0].Id;
         await _service.SignUpForSlotAsync(slotId, new AuditionSignUpRequest("Jane", "Doe", "jane@example.com"));
 
-        await Assert.ThrowsAsync<ConflictException>(() =>
+        await Assert.ThrowsAsync<UnprocessableEntityException>(() =>
             _service.SignUpForSlotAsync(slotId,
                 new AuditionSignUpRequest("Bob", "Smith", "bob@example.com")));
+    }
+
+    [Fact]
+    public async Task SignUpForSlotAsync_throws_UnprocessableEntityException_when_slot_is_not_pending()
+    {
+        var created = await _service.CreateAsync(OrgId, DefaultRequest());
+        var slotId = created.Slots[0].Id;
+        await _service.UpdateSlotStatusAsync(slotId, OrgId, "Accepted");
+
+        await Assert.ThrowsAsync<UnprocessableEntityException>(() =>
+            _service.SignUpForSlotAsync(slotId,
+                new AuditionSignUpRequest("Jane", "Doe", "jane@example.com")));
     }
 
     [Fact]

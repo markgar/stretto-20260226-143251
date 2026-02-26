@@ -5,7 +5,7 @@
 > - `GET /api/audition-dates?programYearId={id}` returns HTTP 200 with a JSON array containing the created audition date
 > - `GET /api/audition-dates/{id}` returns HTTP 200 with matching `date` and `blockLengthMinutes`
 > - `DELETE /api/audition-dates/{id}` returns HTTP 204; subsequent `GET /api/audition-dates/{id}` returns HTTP 404
-> - `POST /api/audition-dates` with `blockLengthMinutes` that does not evenly divide the duration (e.g. `startTime:"09:00:00"`, `endTime:"12:00:00"`, `blockLengthMinutes":35`) returns HTTP 422 with a `message` field
+> - `POST /api/audition-dates` with `blockLengthMinutes` that does not evenly divide the duration (e.g. `startTime:"09:00:00"`, `endTime:"12:00:00"`, `blockLengthMinutes":35`) returns HTTP 400 with a `message` field
 > - `GET /api/audition-slots?auditionDateId={id}` returns HTTP 200 with the slot array; each slot has `id`, `slotTime`, `status` (`"Pending"`), `notes` (`null`)
 > - `PUT /api/audition-slots/{slotId}/status` with body `{"status":"Accepted"}` returns HTTP 200 with `status` updated to `"Accepted"`
 > - `PUT /api/audition-slots/{slotId}/notes` with body `{"notes":"Strong vocalist"}` returns HTTP 200 with `notes` updated

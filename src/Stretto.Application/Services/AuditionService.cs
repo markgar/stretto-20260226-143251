@@ -171,8 +171,11 @@ public class AuditionService : IAuditionService
         if (slot is null)
             throw new NotFoundException("Audition slot not found");
 
+        if (slot.Status != AuditionStatus.Pending)
+            throw new UnprocessableEntityException("This slot is no longer available");
+
         if (slot.MemberId != null)
-            throw new ConflictException("This slot has already been claimed");
+            throw new UnprocessableEntityException("This slot has already been claimed");
 
         if (string.IsNullOrWhiteSpace(req.Email))
             throw new ValidationException(new Dictionary<string, string[]>

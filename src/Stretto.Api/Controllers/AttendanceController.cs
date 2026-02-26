@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Stretto.Application.DTOs;
 using Stretto.Application.Exceptions;
 using Stretto.Application.Interfaces;
-using Stretto.Domain.Enums;
 
 namespace Stretto.Api.Controllers;
 
@@ -33,12 +32,7 @@ public class AttendanceController : ProtectedControllerBase
         var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can set attendance status");
-        if (!Enum.TryParse<AttendanceStatus>(req.Status, ignoreCase: true, out var status))
-            throw new ValidationException(new Dictionary<string, string[]>
-            {
-                ["status"] = [$"Invalid status value: {req.Status}. Must be Present, Excused, or Absent."]
-            });
-        var dto = await _attendanceService.SetStatusAsync(eventId, memberId, orgId, status);
+        var dto = await _attendanceService.SetStatusAsync(eventId, memberId, orgId, req.Status);
         return Ok(dto);
     }
 

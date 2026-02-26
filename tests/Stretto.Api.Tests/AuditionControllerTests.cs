@@ -433,7 +433,7 @@ public class PublicAuditionsControllerTests : IClassFixture<AuditionTestFactory>
     }
 
     [Fact]
-    public async Task Signup_for_slot_returns_409_when_slot_already_taken()
+    public async Task Signup_for_slot_returns_422_when_slot_already_taken()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
         var (_, slotId) = await CreateAuditionDateAndGetSlotAsync(client);
@@ -444,7 +444,7 @@ public class PublicAuditionsControllerTests : IClassFixture<AuditionTestFactory>
         var response = await client.PostAsJsonAsync($"/api/public/auditions/{slotId}/signup",
             new { firstName = "Bob", lastName = "Smith", email = "second@example.com" });
 
-        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
     }
 
     [Fact]
