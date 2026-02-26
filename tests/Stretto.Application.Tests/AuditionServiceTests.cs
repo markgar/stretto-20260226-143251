@@ -267,4 +267,138 @@ public class AuditionServiceTests : IDisposable
         await Assert.ThrowsAsync<NotFoundException>(() =>
             _service.UpdateSlotNotesAsync(Guid.NewGuid(), OrgId, "notes"));
     }
+
+    // CreateAsync — block length zero guard (milestone-12a bug fix)
+
+    [Fact]
+    public async Task CreateAsync_throws_ValidationException_when_block_length_is_zero()
+    {
+        var req = new CreateAuditionDateRequest(
+            Guid.NewGuid(),
+            new DateOnly(2026, 6, 1),
+            new TimeOnly(9, 0),
+            new TimeOnly(12, 0),
+            0
+        );
+
+        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+            _service.CreateAsync(OrgId, req));
+
+        Assert.True(ex.Errors.ContainsKey("blockLengthMinutes"));
+    }
+
+    // GetPublicAuditionDateAsync
+
+    [Fact]
+    public async Task GetPublicAuditionDateAsync_returns_public_dto_with_available_slots()
+    {
+        var created = await _service.CreateAsync(OrgId, DefaultRequest());
+
+        var result = await _service.GetPublicAuditionDateAsync(created.Id);
+
+        Assert.Equal(created.Id, result.Id);
+        Assert.Equal(6, result.Slots.Count);
+        Assert.All(result.Slots, s => Assert.True(s.IsAvailable));
+    }
+
+    [Fact]
+    public async Task GetPublicAuditionDateAsync_slots_include_id_and_slot_time()
+    {
+        var created = await _service.CreateAsync(OrgId, DefaultRequest());
+
+        var result = await _service.GetPublicAuditionDateAsync(created.Id);
+
+        var first = result.Slots[0];
+        Assert.NotEqual(Guid.Empty, first.Id);
+        Assert.Equal(new TimeOnly(9, 0), first.SlotTime);
+    }
+
+    [Fact]
+    public async Task GetPublicAuditionDateAsync_throws_NotFoundException_for_unknown_date()
+    {
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            _service.GetPublicAuditionDateAsync(Guid.NewGuid()));
+    }
+
+    [Fact]
+    public async Task GetPublicAuditionDateAsync_shows_claimed_slot_as_unavailable()
+    {
+        var created = await _service.CreateAsync(OrgId, DefaultRequest());
+        var slotId = created.Slots[0].Id;
+        await _service.SignUpForSlotAsync(slotId, new AuditionSignUpRequest("Jane", "Doe", "jane@example.com"));
+
+        var result = await _service.GetPublicAuditionDateAsync(created.Id);
+
+        var claimedSlot = result.Slots.First(s => s.Id == slotId);
+        Assert.False(claimedSlot.IsAvailable);
+        Assert.All(result.Slots.Where(s => s.Id != slotId), s => Assert.True(s.IsAvailable));
+    }
+
+    // SignUpForSlotAsync
+
+    [Fact]
+    public async Task SignUpForSlotAsync_creates_new_member_and_returns_slot_with_member_id()
+    {
+        var created = await _service.CreateAsync(OrgId, DefaultRequest());
+        var slotId = created.Slots[0].Id;
+
+        var result = await _service.SignUpForSlotAsync(slotId,
+            new AuditionSignUpRequest("Jane", "Doe", "jane@example.com"));
+
+        Assert.Equal(slotId, result.Id);
+        Assert.NotNull(result.MemberId);
+        Assert.Equal("Pending", result.Status);
+    }
+
+    [Fact]
+    public async Task SignUpForSlotAsync_reuses_existing_member_when_email_matches()
+    {
+        var created = await _service.CreateAsync(OrgId, DefaultRequest());
+        var slot1Id = created.Slots[0].Id;
+        var slot2Id = created.Slots[1].Id;
+
+        var first = await _service.SignUpForSlotAsync(slot1Id,
+            new AuditionSignUpRequest("Jane", "Doe", "jane@example.com"));
+
+        // Sign up again with same email on a different slot — should reuse the member
+        var second = await _service.SignUpForSlotAsync(slot2Id,
+            new AuditionSignUpRequest("Jane", "Doe", "JANE@EXAMPLE.COM"));
+
+        Assert.Equal(first.MemberId, second.MemberId);
+        var memberCount = _db.Set<Member>().Count(m => m.Email == "jane@example.com");
+        Assert.Equal(1, memberCount);
+    }
+
+    [Fact]
+    public async Task SignUpForSlotAsync_throws_NotFoundException_when_slot_not_found()
+    {
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            _service.SignUpForSlotAsync(Guid.NewGuid(),
+                new AuditionSignUpRequest("Jane", "Doe", "jane@example.com")));
+    }
+
+    [Fact]
+    public async Task SignUpForSlotAsync_throws_ConflictException_when_slot_already_claimed()
+    {
+        var created = await _service.CreateAsync(OrgId, DefaultRequest());
+        var slotId = created.Slots[0].Id;
+        await _service.SignUpForSlotAsync(slotId, new AuditionSignUpRequest("Jane", "Doe", "jane@example.com"));
+
+        await Assert.ThrowsAsync<ConflictException>(() =>
+            _service.SignUpForSlotAsync(slotId,
+                new AuditionSignUpRequest("Bob", "Smith", "bob@example.com")));
+    }
+
+    [Fact]
+    public async Task SignUpForSlotAsync_throws_ValidationException_when_email_is_whitespace()
+    {
+        var created = await _service.CreateAsync(OrgId, DefaultRequest());
+        var slotId = created.Slots[0].Id;
+
+        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+            _service.SignUpForSlotAsync(slotId,
+                new AuditionSignUpRequest("Jane", "Doe", "   ")));
+
+        Assert.True(ex.Errors.ContainsKey("email"));
+    }
 }

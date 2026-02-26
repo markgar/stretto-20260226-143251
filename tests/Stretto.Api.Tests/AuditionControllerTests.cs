@@ -324,3 +324,166 @@ public class AuditionControllerTests : IClassFixture<AuditionTestFactory>
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 }
+
+/// <summary>
+/// Integration tests for PublicAuditionsController — verifies the public (unauthenticated)
+/// sign-up and audition date listing endpoints.
+/// </summary>
+public class PublicAuditionsControllerTests : IClassFixture<AuditionTestFactory>
+{
+    private readonly AuditionTestFactory _factory;
+    private static readonly string SeededProgramYearId = "22222222-2222-2222-2222-222222222222";
+
+    public PublicAuditionsControllerTests(AuditionTestFactory factory)
+    {
+        _factory = factory;
+    }
+
+    private async Task<string> LoginAsync(HttpClient client)
+    {
+        var response = await client.PostAsJsonAsync("/auth/login", new { email = "admin@example.com" });
+        response.EnsureSuccessStatusCode();
+        var cookie = response.Headers.GetValues("Set-Cookie").First();
+        return cookie.Split(';').First().Split('=', 2).Last();
+    }
+
+    private static HttpRequestMessage WithSession(HttpMethod method, string url, string token)
+    {
+        var req = new HttpRequestMessage(method, url);
+        req.Headers.Add("Cookie", $"stretto_session={token}");
+        return req;
+    }
+
+    private async Task<(string dateId, string slotId)> CreateAuditionDateAndGetSlotAsync(HttpClient client)
+    {
+        var token = await LoginAsync(client);
+        var req = WithSession(HttpMethod.Post, "/api/audition-dates", token);
+        req.Content = JsonContent.Create(new
+        {
+            programYearId = SeededProgramYearId,
+            date = "2026-07-01",
+            startTime = "10:00:00",
+            endTime = "12:00:00",
+            blockLengthMinutes = 30
+        });
+        var resp = await client.SendAsync(req);
+        resp.EnsureSuccessStatusCode();
+        var body = JsonDocument.Parse(await resp.Content.ReadAsStringAsync());
+        var dateId = body.RootElement.GetProperty("id").GetString()!;
+        var slotId = body.RootElement.GetProperty("slots")[0].GetProperty("id").GetString()!;
+        return (dateId, slotId);
+    }
+
+    [Fact]
+    public async Task Get_public_audition_date_returns_200_without_authentication()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var (dateId, _) = await CreateAuditionDateAndGetSlotAsync(client);
+
+        var response = await client.GetAsync($"/api/public/auditions/{dateId}");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Get_public_audition_date_returns_correct_structure_with_slots()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var (dateId, _) = await CreateAuditionDateAndGetSlotAsync(client);
+
+        var response = await client.GetAsync($"/api/public/auditions/{dateId}");
+        var body = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(body);
+
+        Assert.Equal(dateId, doc.RootElement.GetProperty("id").GetString());
+        var slots = doc.RootElement.GetProperty("slots");
+        Assert.Equal(JsonValueKind.Array, slots.ValueKind);
+        Assert.NotEmpty(slots.EnumerateArray());
+        var first = slots[0];
+        Assert.True(first.TryGetProperty("id", out _));
+        Assert.True(first.TryGetProperty("slotTime", out _));
+        Assert.True(first.GetProperty("isAvailable").GetBoolean());
+    }
+
+    [Fact]
+    public async Task Get_public_audition_date_returns_404_for_unknown_id()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.GetAsync($"/api/public/auditions/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Signup_for_slot_returns_200_with_slot_dto_containing_member_id()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var (_, slotId) = await CreateAuditionDateAndGetSlotAsync(client);
+
+        var response = await client.PostAsJsonAsync($"/api/public/auditions/{slotId}/signup",
+            new { firstName = "Jane", lastName = "Doe", email = "jane.public@example.com" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(body);
+        Assert.Equal(slotId, doc.RootElement.GetProperty("id").GetString());
+        Assert.NotEqual(JsonValueKind.Null, doc.RootElement.GetProperty("memberId").ValueKind);
+        Assert.Equal("Pending", doc.RootElement.GetProperty("status").GetString());
+    }
+
+    [Fact]
+    public async Task Signup_for_slot_returns_409_when_slot_already_taken()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var (_, slotId) = await CreateAuditionDateAndGetSlotAsync(client);
+
+        await client.PostAsJsonAsync($"/api/public/auditions/{slotId}/signup",
+            new { firstName = "Jane", lastName = "Doe", email = "first@example.com" });
+
+        var response = await client.PostAsJsonAsync($"/api/public/auditions/{slotId}/signup",
+            new { firstName = "Bob", lastName = "Smith", email = "second@example.com" });
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Signup_for_slot_returns_404_when_slot_not_found()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.PostAsJsonAsync($"/api/public/auditions/{Guid.NewGuid()}/signup",
+            new { firstName = "Jane", lastName = "Doe", email = "jane@example.com" });
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Signup_for_slot_returns_400_when_email_is_empty()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var (_, slotId) = await CreateAuditionDateAndGetSlotAsync(client);
+
+        var response = await client.PostAsJsonAsync($"/api/public/auditions/{slotId}/signup",
+            new { firstName = "Jane", lastName = "Doe", email = "" });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Get_public_audition_date_shows_slot_as_unavailable_after_signup()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var (dateId, slotId) = await CreateAuditionDateAndGetSlotAsync(client);
+        await client.PostAsJsonAsync($"/api/public/auditions/{slotId}/signup",
+            new { firstName = "Jane", lastName = "Doe", email = "jane.taken@example.com" });
+
+        var response = await client.GetAsync($"/api/public/auditions/{dateId}");
+        var body = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(body);
+        var slots = doc.RootElement.GetProperty("slots").EnumerateArray().ToList();
+        var claimed = slots.First(s => s.GetProperty("id").GetString() == slotId);
+
+        Assert.False(claimed.GetProperty("isAvailable").GetBoolean());
+    }
+}
