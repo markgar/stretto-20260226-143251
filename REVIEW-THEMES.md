@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Members — API
+Last updated: Members — Admin Pages
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -33,3 +33,4 @@ Last updated: Members — API
 29. **Shared controller helpers must be extracted to a base class** — When identical private methods (e.g. `GetSessionAsync`) are copied verbatim into three or more controllers, extract the method into a `ControllerBase`-derived base class or middleware; copy-paste helpers drift independently and create multiple places to fix a single authentication bug.
 30. **Always pass ignoreCase:true to Enum.TryParse** — `Enum.TryParse<T>` is case-sensitive by default; a user submitting `"admin"` or `"ADMIN"` gets a 400 validation error even though it is a valid value; always call `Enum.TryParse<T>(value, ignoreCase: true, out var result)` when parsing user-supplied strings to enums.
 31. **Validate target existence before any side effects in multi-step writes** — When a write operation may affect other records (e.g. clearing IsCurrent on sibling rows), always load and validate the target entity first; executing side effects before the existence check means a NotFoundException unwinds the application exception stack but leaves the already-persisted side effects in the database, corrupting state.
+32. **Refactoring migrations must be completed atomically** — When extracting a shared method into a base class or shared module, migrate ALL call sites in the same commit; leaving some callers with the old private copy alongside the new base class creates two competing patterns, requires a second pass to finish the job, and negates the cleanup.
