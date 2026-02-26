@@ -14,7 +14,7 @@
 
 7. [x] Projects — CRUD API endpoints (list by program year, create, get, update, delete) with start/end date validation; admin Projects pages: list within program year, create form, project detail page with tabs (Overview, Events, Materials, Members); re-generate TypeScript API client <!-- depends: 4 -->
 
-8. [ ] Member Assignments + Utilization Grid — Assign/unassign member API endpoints; utilization grid API endpoint (server-side member × project matrix sorted by utilization count); assignment UI on project Members tab (browse/search member list, toggle assignment); admin Utilization Grid page (full matrix on desktop, list-by-member on mobile with utilization counts/percentages and accent-colored filled cells); re-generate TypeScript API client <!-- depends: 5, 7 -->
+8. [1] Member Assignments + Utilization Grid — Assign/unassign member API endpoints; utilization grid API endpoint (server-side member × project matrix sorted by utilization count); assignment UI on project Members tab (browse/search member list, toggle assignment); admin Utilization Grid page (full matrix on desktop, list-by-member on mobile with utilization counts/percentages and accent-colored filled cells); re-generate TypeScript API client <!-- depends: 5, 7 -->
 
 9. [2] Events — Create/update/delete events API with project date-range validation (type, date, start time, duration, venue); event list in project Events tab with type badges; event detail page; admin can edit/delete events; re-generate TypeScript API client <!-- depends: 6, 7 -->
 
