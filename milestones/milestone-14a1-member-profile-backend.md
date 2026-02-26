@@ -17,7 +17,7 @@
 
 - [x] Add `NotificationOptOut bool` property (defaulting to `false`) to `Member` entity in `src/Stretto.Domain/Entities/Member.cs`
 
-- [ ] Update `MemberDto` record in `src/Stretto.Application/DTOs/MemberDtos.cs` to add `NotificationOptOut bool` as the final positional parameter; add `UpdateMemberProfileRequest` record with `[Required][MaxLength(100)] string FirstName`, `[Required][MaxLength(100)] string LastName`, `[Required][EmailAddress][MaxLength(200)] string Email`, `bool NotificationOptOut`
+- [x] Update `MemberDto` record in `src/Stretto.Application/DTOs/MemberDtos.cs` to add `NotificationOptOut bool` as the final positional parameter; add `UpdateMemberProfileRequest` record with `[Required][MaxLength(100)] string FirstName`, `[Required][MaxLength(100)] string LastName`, `[Required][EmailAddress][MaxLength(200)] string Email`, `bool NotificationOptOut`
 
 - [ ] Update `MemberService.ToDto` in `src/Stretto.Application/Services/MemberService.cs` to include `NotificationOptOut` in the returned `MemberDto`; update `CreateAsync` to initialise `NotificationOptOut = false`
 

@@ -120,5 +120,5 @@ public class MemberService : IMemberService
     }
 
     private static MemberDto ToDto(Member m) =>
-        new(m.Id, m.FirstName, m.LastName, m.Email, m.Role.ToString(), m.IsActive);
+        new(m.Id, m.FirstName, m.LastName, m.Email, m.Role.ToString(), m.IsActive, m.NotificationOptOut);
 }
