@@ -22,7 +22,7 @@ public static class DataSeeder
         db.Members.Add(new Member
         {
             Id = Guid.NewGuid(),
-            Email = "admin@example.com",
+            Email = "mgarner22@gmail.com",
             FirstName = "Admin",
             LastName = "User",
             Role = Role.Admin,
@@ -33,11 +33,22 @@ public static class DataSeeder
         db.Members.Add(new Member
         {
             Id = Guid.NewGuid(),
-            Email = "member@example.com",
+            Email = "mgarner@outlook.com",
             FirstName = "Member",
             LastName = "User",
             Role = Role.Member,
             IsActive = true,
+            OrganizationId = org.Id
+        });
+
+        db.ProgramYears.Add(new ProgramYear
+        {
+            Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+            Name = "2025-2026",
+            StartDate = new DateOnly(2025, 9, 1),
+            EndDate = new DateOnly(2026, 6, 30),
+            IsCurrent = true,
+            IsArchived = false,
             OrganizationId = org.Id
         });
 

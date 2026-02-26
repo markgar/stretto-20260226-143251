@@ -27,7 +27,7 @@ public class AuthTestFactory : WebApplicationFactory<Program>
 
 /// <summary>
 /// Integration tests for /auth/login, /auth/validate, and /auth/logout using a real
-/// ASP.NET Core test server with the seeded admin account (admin@example.com).
+/// ASP.NET Core test server with the seeded admin account (mgarner22@gmail.com).
 /// </summary>
 public class AuthControllerTests : IClassFixture<AuthTestFactory>
 {
@@ -61,12 +61,12 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
-        var response = await client.PostAsJsonAsync("/auth/login", new { email = "admin@example.com" });
+        var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
         using var doc = JsonDocument.Parse(body);
-        Assert.Equal("admin@example.com", doc.RootElement.GetProperty("email").GetString());
+        Assert.Equal("mgarner22@gmail.com", doc.RootElement.GetProperty("email").GetString());
         Assert.Equal("My Choir", doc.RootElement.GetProperty("orgName").GetString());
     }
 
@@ -75,7 +75,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
-        var response = await client.PostAsJsonAsync("/auth/login", new { email = "member@example.com" });
+        var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner@outlook.com" });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
@@ -85,7 +85,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
-        var response = await client.PostAsJsonAsync("/auth/login", new { email = "admin@example.com" });
+        var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var setCookieHeader = response.Headers.Contains("Set-Cookie")
@@ -99,7 +99,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
-        var response = await client.PostAsJsonAsync("/auth/login", new { email = "admin@example.com" });
+        var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var setCookieValues = response.Headers.GetValues("Set-Cookie");
@@ -126,7 +126,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
-        var loginResponse = await client.PostAsJsonAsync("/auth/login", new { email = "admin@example.com" });
+        var loginResponse = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
         var token = ExtractSessionToken(loginResponse);
         Assert.NotNull(token);
 
@@ -136,7 +136,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
-        Assert.Contains("admin@example.com", body);
+        Assert.Contains("mgarner22@gmail.com", body);
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
-        var loginResponse = await client.PostAsJsonAsync("/auth/login", new { email = "admin@example.com" });
+        var loginResponse = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
         var token = ExtractSessionToken(loginResponse);
         Assert.NotNull(token);
 
