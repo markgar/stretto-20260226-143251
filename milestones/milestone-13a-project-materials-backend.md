@@ -1,4 +1,4 @@
-## Milestone: Project Materials — Links and Documents
+## Milestone: Project Materials — Backend (Links and Documents API)
 
 > **Validates:**
 > - `POST /api/projects/{projectId}/links` (admin session, JSON body `{ "title": "Score", "url": "https://example.com" }`) → 201 Created with `{ id, projectId, title, url }`
@@ -8,7 +8,6 @@
 > - `GET /api/projects/{projectId}/documents` (any authenticated session) → 200 with JSON array
 > - `GET /api/projects/{projectId}/documents/{documentId}/download` (any authenticated session) → 200 with `Content-Disposition: attachment` header and file bytes
 > - `DELETE /api/projects/{projectId}/documents/{documentId}` (admin session) → 204 No Content
-> - `GET /projects/{id}` in browser → project detail page renders with a Materials tab; clicking the tab shows the add-link form and upload button for admin users
 
 > **Reference files:**
 > - `src/Stretto.Domain/Entities/ProjectLink.cs` — entity shape for ProjectLink (already exists)
@@ -16,8 +15,6 @@
 > - `src/Stretto.Application/Services/EventService.cs` — service implementation pattern (IRepository injection, NotFoundException, ToDto helpers)
 > - `src/Stretto.Api/Controllers/EventsController.cs` — controller pattern (ProtectedControllerBase, GetSessionAsync, role check, HTTP verbs)
 > - `src/Stretto.Api/Program.cs` — DI registration location
-> - `src/Stretto.Web/src/components/ProjectEventsTab.tsx` — tab component pattern (useQuery, admin gate, list with action buttons)
-> - `src/Stretto.Web/src/pages/ProjectDetailPage.tsx` — where to wire the Materials tab component
 
 - [ ] Create `src/Stretto.Application/DTOs/ProjectMaterialsDtos.cs` with records: `ProjectLinkDto(Guid Id, Guid ProjectId, string Title, string Url)`, `AddLinkRequest([Required] string Title, [Required] string Url)`, `ProjectDocumentDto(Guid Id, Guid ProjectId, string Title, string FileName)`
 
@@ -30,11 +27,3 @@
 - [ ] Register services in `src/Stretto.Api/Program.cs`: add `builder.Services.AddScoped<IStorageProvider, LocalFileStorageProvider>()` and `builder.Services.AddScoped<IProjectMaterialsService, ProjectMaterialsService>()`; add `using Stretto.Infrastructure;` if needed
 
 - [ ] Create `src/Stretto.Api/Controllers/ProjectMaterialsController.cs` with route `[Route("api/projects/{projectId:guid}")]` extending `ProtectedControllerBase`; implement links endpoints: `GET /links` → 200 list (all roles), `POST /links` → 201 Created with location header (admin only, `[FromBody] AddLinkRequest`), `DELETE /links/{linkId:guid}` → 204 (admin only); implement documents endpoints: `GET /documents` → 200 list (all roles), `POST /documents` → 201 Created (admin only, `[FromForm] IFormFile file, [FromForm] string title`, call `UploadDocumentAsync`), `GET /documents/{documentId:guid}/download` → `FileStreamResult` with `Content-Disposition: attachment; filename="{fileName}"` (all roles), `DELETE /documents/{documentId:guid}` → 204 (admin only); throw `ForbiddenException` for role violations
-
-- [ ] Regenerate TypeScript client: run `cd src/Stretto.Web && npm run generate` so `ProjectMaterialsService` with all links and documents endpoints appears in `src/Stretto.Web/src/api/generated/`
-
-- [ ] Cleanup #234 — extract shared `EventTypeBadge` component: create `src/Stretto.Web/src/components/EventTypeBadge.tsx` exporting `EventTypeBadge({ type }: { type: number })` with the Rehearsal/Performance badge markup; update `src/Stretto.Web/src/components/ProjectEventsTab.tsx` and `src/Stretto.Web/src/pages/EventDetailPage.tsx` to remove their local `EventTypeBadge` definitions and import the shared component instead
-
-- [ ] Create `src/Stretto.Web/src/components/ProjectMaterialsTab.tsx` with props `{ projectId: string }`; fetch links with `useQuery` calling `GET /api/projects/{projectId}/links`; fetch documents with `useQuery` calling `GET /api/projects/{projectId}/documents`; if admin: render add-link form (Zod schema `z.object({ title: z.string().min(1), url: z.string().url() })`, `useForm` + `zodResolver`, `useMutation` calling `POST /api/projects/{projectId}/links`, invalidate links query on success, reset form); render upload-document section (uncontrolled file input with `data-testid="document-file-input"` and a title text input, `useMutation` calling `POST /api/projects/{projectId}/documents` with `FormData`, invalidate documents query on success); render links list: each link shows title as `<a href={url} target="_blank">` plus an admin-only delete button (calls `DELETE /api/projects/{projectId}/links/{id}`, invalidates on success); render documents list: each document shows filename, a download anchor pointing to `/api/projects/{projectId}/documents/{id}/download` with `download` attribute, and an admin-only delete button; show empty-state text when lists are empty; add `data-testid` attributes to the add-link form submit button, upload submit button, and each delete button
-
-- [ ] Update `src/Stretto.Web/src/pages/ProjectDetailPage.tsx`: replace `<p className="text-muted-foreground">Coming soon</p>` inside the `activeTab === 'materials'` branch with `<ProjectMaterialsTab projectId={id!} />`; add `import ProjectMaterialsTab from '../components/ProjectMaterialsTab';` at the top
