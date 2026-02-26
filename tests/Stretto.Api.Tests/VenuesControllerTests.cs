@@ -40,7 +40,7 @@ public class VenuesControllerTests : IClassFixture<VenuesTestFactory>
 
     private async Task<string> LoginAndGetTokenAsync(HttpClient client)
     {
-        var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
+        var response = await client.PostAsJsonAsync("/auth/login", new { email = "admin@example.com" });
         response.EnsureSuccessStatusCode();
         var cookie = response.Headers.GetValues("Set-Cookie").First();
         return cookie.Split(';').First().Split('=', 2).Last();
