@@ -1,0 +1,19 @@
+PASS  docker compose build -> success
+PASS  container startup (app) -> healthy after ~5s at http://localhost:7777/health
+PASS  container startup (frontend) -> ready after ~15s at http://localhost:7778/
+PASS  [A] npm install in src/Stretto.Web -> exits 0
+PASS  [A] npm test in src/Stretto.Web -> 1 test passed (renders Stretto heading)
+PASS  [A] npm run build in src/Stretto.Web -> exits 0, vite build succeeds
+PASS  [UI] homepage loads without JavaScript errors
+PASS  [UI] homepage renders Stretto heading
+PASS  [UI] root route "/" renders without 404
+PASS  [UI] page has correct title or body content
+PASS  [B] Requirement 'React + TypeScript frontend with Vite' -> src/Stretto.Web scaffolded with Vite react-ts template
+PASS  [B] Requirement 'TypeScript strict mode' -> tsconfig.json has strict: true
+PASS  [B] Requirement 'react-router-dom wired in main.tsx with BrowserRouter' -> verified in source
+PASS  [B] Requirement 'Tailwind CSS installed and configured' -> tailwind.config.js and postcss.config.js present
+PASS  [B] Requirement 'shadcn/ui initialized (New York style, Neutral color)' -> components.json present
+PASS  [B] Requirement 'ESLint + Prettier configured' -> .eslintrc.cjs and .prettierrc present
+PASS  [B] Requirement 'Vitest + React Testing Library installed with npm test' -> vitest run passes 1 test
+PASS  [B] Requirement 'openapi-typescript-codegen installed with generate script' -> package.json has "generate" script targeting swagger.json
+PASS  [B] Requirement 'src/api/generated/.gitkeep committed' -> file present
