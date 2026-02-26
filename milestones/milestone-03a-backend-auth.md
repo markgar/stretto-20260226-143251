@@ -23,7 +23,7 @@
 
 - [x] Create `InMemoryAuthSessionStore` in `Stretto.Infrastructure/Auth/InMemoryAuthSessionStore.cs` implementing `IAuthSessionStore`; use `ConcurrentDictionary<string, Guid>` as backing store; `CreateSession` generates a token via `Guid.NewGuid().ToString("N")`, stores `{token → memberId}`, returns the token; `GetMemberId` returns the value or `null` if absent; `DeleteSession` removes the key
 
-- [ ] Create auth DTOs as records in `Stretto.Application/DTOs/AuthDtos.cs`: `LoginRequest(string Email)` and `AuthUserDto(Guid Id, string Email, string FirstName, string LastName, string Role, Guid OrgId, string OrgName)`
+- [x] Create auth DTOs as records in `Stretto.Application/DTOs/AuthDtos.cs`: `LoginRequest(string Email)` and `AuthUserDto(Guid Id, string Email, string FirstName, string LastName, string Role, Guid OrgId, string OrgName)`
 
 - [ ] Create `AuthService` in `Stretto.Application/Services/AuthService.cs`; constructor takes `IRepository<Member> members`, `IRepository<Organization> orgs`, `IAuthSessionStore sessions`; `LoginAsync(LoginRequest req)` calls `members.FindOneAsync(m => m.Email == req.Email && m.IsActive)`, throws `UnauthorizedException("Invalid email or account is inactive")` if null, calls `orgs.FindOneAsync(o => o.Id == member.OrganizationId)` to get org name, calls `sessions.CreateSession(member.Id)`, returns `(AuthUserDto dto, string token)`; `ValidateAsync(string token)` calls `sessions.GetMemberId(token)`, throws `UnauthorizedException` if null, fetches member and org, returns `AuthUserDto`; `LogoutAsync(string token)` calls `sessions.DeleteSession(token)` (no-op if token is not found)
 
