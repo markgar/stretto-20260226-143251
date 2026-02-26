@@ -32,4 +32,4 @@
 
 - [x] Register `IAttendanceService` → `AttendanceService` as scoped in `src/Stretto.Api/Program.cs` following the pattern of the existing service registrations
 
-- [ ] [Cleanup #139] Migrate `ProjectsController` and `MembersController` and `EventsController` to extend `ProtectedControllerBase` (inject `IAuthService` via `base(authService)`) and remove their duplicated private `GetSessionAsync()` methods; update all callers inside each controller to use `var (orgId, role, _) = await GetSessionAsync()` (or `var (orgId, _,  memberId)` where memberId is needed)
+- [x] [Cleanup #139] Migrate `ProjectsController` and `MembersController` and `EventsController` to extend `ProtectedControllerBase` (inject `IAuthService` via `base(authService)`) and remove their duplicated private `GetSessionAsync()` methods; update all callers inside each controller to use `var (orgId, role, _) = await GetSessionAsync()` (or `var (orgId, _,  memberId)` where memberId is needed)
