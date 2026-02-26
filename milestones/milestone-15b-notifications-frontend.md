@@ -18,6 +18,6 @@
 
 - [x] Run `npm run generate` in `src/Stretto.Web` to regenerate the TypeScript API client from the updated OpenAPI spec
 
-- [ ] Create `src/Stretto.Web/src/pages/NotificationsPage.tsx`; use Zod schema and React Hook Form for the compose form; include a `type` field (select: `"assignment"` or `"audition"`), a program year or audition date selector (fetched via `useQuery`), `subject` and `body` text inputs, a "Preview Recipients" button that calls the recipient query and renders a list of names/emails, and a "Send Announcement" submit button wired to `useMutation`; include `data-testid="notifications-heading"` on the page heading
+- [x] Create `src/Stretto.Web/src/pages/NotificationsPage.tsx`; use Zod schema and React Hook Form for the compose form; include a `type` field (select: `"assignment"` or `"audition"`), a program year or audition date selector (fetched via `useQuery`), `subject` and `body` text inputs, a "Preview Recipients" button that calls the recipient query and renders a list of names/emails, and a "Send Announcement" submit button wired to `useMutation`; include `data-testid="notifications-heading"` on the page heading
 
-- [ ] Update `src/Stretto.Web/src/App.tsx` to replace the `<ComingSoon />` placeholder at `/notifications` with `<NotificationsPage />`  and add the corresponding import
+- [x] Update `src/Stretto.Web/src/App.tsx` to replace the `<ComingSoon />` placeholder at `/notifications` with `<NotificationsPage />`  and add the corresponding import
