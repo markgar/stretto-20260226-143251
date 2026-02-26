@@ -30,6 +30,7 @@ builder.Services.AddScoped<INotificationProvider, LogNotificationProvider>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<IProjectMaterialsService, ProjectMaterialsService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IMemberCalendarService, MemberCalendarService>();
 
 var app = builder.Build();
 
