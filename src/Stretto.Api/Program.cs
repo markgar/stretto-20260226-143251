@@ -18,6 +18,7 @@ builder.Services.AddSingleton<IAuthSessionStore, InMemoryAuthSessionStore>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<ProgramYearService>();
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 var app = builder.Build();
 
