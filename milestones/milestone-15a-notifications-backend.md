@@ -19,7 +19,7 @@
 
 - [x] Create notification DTOs in `src/Stretto.Application/DTOs/NotificationDtos.cs`: `record RecipientDto(Guid MemberId, string Name, string Email)`; `record SendAssignmentAnnouncementRequest([Required] Guid ProgramYearId, [Required] string Subject, [Required] string Body)`; `record SendAuditionAnnouncementRequest([Required] Guid AuditionDateId, [Required] string Subject, [Required] string Body)`
 
-- [ ] Create `INotificationService` interface in `src/Stretto.Application/Interfaces/INotificationService.cs` with methods: `Task<List<RecipientDto>> GetAssignmentRecipientsAsync(Guid programYearId, Guid orgId)`; `Task SendAssignmentAnnouncementAsync(Guid programYearId, string subject, string body, Guid orgId)`; `Task<List<RecipientDto>> GetAuditionRecipientsAsync(Guid auditionDateId, Guid orgId)`; `Task SendAuditionAnnouncementAsync(Guid auditionDateId, string subject, string body, Guid orgId)`
+- [x] Create `INotificationService` interface in `src/Stretto.Application/Interfaces/INotificationService.cs` with methods: `Task<List<RecipientDto>> GetAssignmentRecipientsAsync(Guid programYearId, Guid orgId)`; `Task SendAssignmentAnnouncementAsync(Guid programYearId, string subject, string body, Guid orgId)`; `Task<List<RecipientDto>> GetAuditionRecipientsAsync(Guid auditionDateId, Guid orgId)`; `Task SendAuditionAnnouncementAsync(Guid auditionDateId, string subject, string body, Guid orgId)`
 
 - [ ] Create `LogNotificationProvider` in `src/Stretto.Infrastructure/LogNotificationProvider.cs` implementing `INotificationProvider`; inject `ILogger<LogNotificationProvider>`; in `SendAsync` log an Information message: `"[NOTIFICATION] To: {to} | Subject: {subject} | Body: {body}"` and return `Task.CompletedTask` (no emails sent)
 
