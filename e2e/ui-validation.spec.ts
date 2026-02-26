@@ -33,7 +33,7 @@ test('navigating to /dashboard without login redirects to /login', async ({ page
 
 test('submitting login form with valid email redirects to /dashboard', async ({ page }) => {
   await page.goto('/login');
-  await page.getByTestId('email-input').fill('mgarner22@gmail.com');
+  await page.getByTestId('email-input').fill('admin@example.com');
   await page.getByTestId('login-button').click();
   await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
 });
@@ -41,7 +41,7 @@ test('submitting login form with valid email redirects to /dashboard', async ({ 
 test('dashboard page renders heading with data-testid="dashboard-heading"', async ({ page }) => {
   // Log in first
   await page.goto('/login');
-  await page.getByTestId('email-input').fill('mgarner22@gmail.com');
+  await page.getByTestId('email-input').fill('admin@example.com');
   await page.getByTestId('login-button').click();
   await page.waitForURL(/\/dashboard/, { timeout: 10000 });
 
@@ -54,7 +54,7 @@ test('dashboard page loads without JavaScript errors after login', async ({ page
   page.on('pageerror', (err) => errors.push(err.message));
 
   await page.goto('/login');
-  await page.getByTestId('email-input').fill('mgarner22@gmail.com');
+  await page.getByTestId('email-input').fill('admin@example.com');
   await page.getByTestId('login-button').click();
   await page.waitForURL(/\/dashboard/, { timeout: 10000 });
 
@@ -71,7 +71,7 @@ test('invalid email shows validation error on login form', async ({ page }) => {
 
 test('app shell navigation is visible after login', async ({ page }) => {
   await page.goto('/login');
-  await page.getByTestId('email-input').fill('mgarner22@gmail.com');
+  await page.getByTestId('email-input').fill('admin@example.com');
   await page.getByTestId('login-button').click();
   await page.waitForURL(/\/dashboard/, { timeout: 10000 });
 
