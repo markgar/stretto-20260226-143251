@@ -6,7 +6,7 @@
 
 3. [x] Authentication + App Shell — /auth/login, /auth/validate, /auth/logout API endpoints; HttpOnly/Secure/SameSite=Strict cookie referencing server-side session token; Admin and Member roles; React login page (email-only Phase 1 flow); Zustand auth store (current user, org, role); protected route wrapper; responsive app shell layout — fixed left sidebar on desktop (org name, nav links, user/role), collapsible icon sidebar on tablet, bottom tab bar on mobile; admin nav skeleton (Dashboard, Program Years, Projects, Utilization Grid, Members, Auditions, Venues, Notifications); member nav skeleton (My Projects, My Calendar, Auditions, Profile); placeholder dashboard page <!-- depends: 2 -->
 
-4. [ ] Program Years — CRUD API endpoints (list, create, get, update, archive, mark-current) scoped to organization; admin Program Years pages: list with current/archived indicators and archive/activate actions, create form, program year detail; re-generate TypeScript API client <!-- depends: 3 -->
+4. [2] Program Years — CRUD API endpoints (list, create, get, update, archive, mark-current) scoped to organization; admin Program Years pages: list with current/archived indicators and archive/activate actions, create form, program year detail; re-generate TypeScript API client <!-- depends: 3 -->
 
 5. [ ] Members — Admin — Members CRUD API (list with search, get, create, update, deactivate); admin Members pages: searchable list with status badges, add member form, edit member page, member profile with assignment summary; re-generate TypeScript API client <!-- depends: 3 -->
 
