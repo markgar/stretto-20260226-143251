@@ -18,9 +18,12 @@ vi.mock('zustand', () => ({
 const mockUseQuery = vi.fn();
 const mockUseMutation = vi.fn();
 
+const mockUseQueryClient = vi.fn(() => ({ invalidateQueries: vi.fn() }));
+
 vi.mock('@tanstack/react-query', () => ({
   useQuery: (...args: unknown[]) => mockUseQuery(...args),
   useMutation: (...args: unknown[]) => mockUseMutation(...args),
+  useQueryClient: () => mockUseQueryClient(),
 }));
 
 import ProjectDetailPage from './ProjectDetailPage';
@@ -89,4 +92,26 @@ test('shows inline error when project fetch fails', () => {
   mockUseQuery.mockReturnValue({ data: undefined, isLoading: false, isError: true });
   renderPage();
   expect(screen.getByText(/Failed to load project/i)).toBeInTheDocument();
+});
+
+test('clicking Members tab renders ProjectMembersTab with search input', async () => {
+  mockUseQuery.mockImplementation((opts: { queryKey: unknown[] }) => {
+    const key = opts?.queryKey?.[0];
+    if (key === 'projectMembers') return { data: [], isLoading: false };
+    return { data: sampleProject, isLoading: false, isError: false };
+  });
+  renderPage();
+  await userEvent.click(screen.getByTestId('tab-members'));
+  expect(screen.getByTestId('member-search-input')).toBeInTheDocument();
+});
+
+test('clicking Members tab no longer shows "Coming soon" placeholder', async () => {
+  mockUseQuery.mockImplementation((opts: { queryKey: unknown[] }) => {
+    const key = opts?.queryKey?.[0];
+    if (key === 'projectMembers') return { data: [], isLoading: false };
+    return { data: sampleProject, isLoading: false, isError: false };
+  });
+  renderPage();
+  await userEvent.click(screen.getByTestId('tab-members'));
+  expect(screen.queryByText(/Coming soon/i)).not.toBeInTheDocument();
 });
