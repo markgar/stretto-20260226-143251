@@ -19,7 +19,7 @@
 > - `src/Stretto.Api/Controllers/VenuesController.cs` — thin controller pattern; `GetSessionAsync()` helper; admin-only role check
 > - `src/Stretto.Api/Program.cs` — add `AddScoped<IMemberService, MemberService>()` here
 
-- [ ] Fix `AuthController.Login` in `src/Stretto.Api/Controllers/AuthController.cs`: remove `MaxAge = TimeSpan.FromDays(30)` from the `CookieOptions` so that only `Expires = DateTimeOffset.UtcNow.AddHours(8)` controls expiry — `MaxAge` takes precedence over `Expires` in all modern browsers and was overriding the 8-hour limit (fixes findings #101 and #88)
+- [x] Fix `AuthController.Login` in `src/Stretto.Api/Controllers/AuthController.cs`: remove `MaxAge = TimeSpan.FromDays(30)` from the `CookieOptions` so that only `Expires = DateTimeOffset.UtcNow.AddHours(8)` controls expiry — `MaxAge` takes precedence over `Expires` in all modern browsers and was overriding the 8-hour limit (fixes findings #101 and #88)
 
 - [ ] Fix `ProgramYearService.MarkCurrentAsync` in `src/Stretto.Application/Services/ProgramYearService.cs`: load all program years for the org via `_programYears.ListAsync(orgId)` first, then iterate the list setting `IsCurrent = false` on every entry where `py.Id != id` (calling `UpdateAsync` for each changed entry), then load the target year via `GetByIdAsync(id, orgId)` (throw `NotFoundException` if null), set `IsCurrent = true`, call `UpdateAsync`, return `ToDto` — this prevents a partial failure leaving multiple years marked current (fixes finding #99)
 
