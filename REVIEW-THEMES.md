@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Events — Pages
+Last updated: Auditions — Application Service Layer
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -40,3 +40,4 @@ Last updated: Events — Pages
 36. **Always render mutation error states, not just loading states** — Every `useMutation` call that can fail (create, update, delete) must render a user-visible error message when `mutation.isError` is true; silently swallowing mutation errors is a class of bug that recurs across pages and leaves users with no feedback on data loss.
 37. **Extract shared UI components rather than copy-pasting** — When a sub-component (e.g. `EventTypeBadge`) or local type definition is needed in two or more files in the same milestone, extract it to a shared component or types file immediately; copy-pasting creates divergence risk that compounds with every future change.
 38. **Confirm before irreversible actions** — Every Delete button that triggers a non-undoable action must include a confirmation step (e.g. `window.confirm()` or an AlertDialog) before firing the mutation; a bare `onClick={() => deleteMutation.mutate()}` with no guard leads to accidental data loss in production.
+39. **Keep milestone specs in sync with SPEC.md** — When an implementation changes to align with SPEC.md (e.g., status code 422→400), update the corresponding milestone spec validation criteria in the same commit; stale milestone specs become the authoritative reference for future builders and testers who write tests against them, causing hard-to-diagnose failures.
