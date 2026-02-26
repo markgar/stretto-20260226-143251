@@ -16,9 +16,9 @@
 > - `src/Stretto.Api/Program.cs` — add `AddScoped<IDashboardService, DashboardService>()` here
 > - `src/Stretto.Infrastructure/Data/AppDbContext.cs` — no changes needed; `Member` and `ProjectAssignment` DbSets already registered
 
-- [ ] Add `public DateTime CreatedAt { get; set; } = DateTime.UtcNow;` to `src/Stretto.Domain/Entities/Member.cs`; add `builder.Property(m => m.CreatedAt).IsRequired();` to `src/Stretto.Infrastructure/Data/Configurations/MemberConfiguration.cs`
+- [x] Add `public DateTime CreatedAt { get; set; } = DateTime.UtcNow;` to `src/Stretto.Domain/Entities/Member.cs`; add `builder.Property(m => m.CreatedAt).IsRequired();` to `src/Stretto.Infrastructure/Data/Configurations/MemberConfiguration.cs`
 
-- [ ] Add `public DateTime CreatedAt { get; set; } = DateTime.UtcNow;` to `src/Stretto.Domain/Entities/ProjectAssignment.cs`; add `builder.Property(pa => pa.CreatedAt).IsRequired();` to `src/Stretto.Infrastructure/Data/Configurations/ProjectAssignmentConfiguration.cs`
+- [x] Add `public DateTime CreatedAt { get; set; } = DateTime.UtcNow;` to `src/Stretto.Domain/Entities/ProjectAssignment.cs`; add `builder.Property(pa => pa.CreatedAt).IsRequired();` to `src/Stretto.Infrastructure/Data/Configurations/ProjectAssignmentConfiguration.cs`
 
 - [ ] Create `src/Stretto.Application/DTOs/DashboardDtos.cs` with three records: `UpcomingEventDto(Guid Id, Guid ProjectId, string ProjectName, EventType EventType, DateOnly Date, TimeOnly StartTime, int DurationMinutes, string? VenueName)`; `RecentActivityItem(string ActivityType, string Description, DateTime OccurredAt)` where `ActivityType` is either `"NewMember"` or `"NewAssignment"`; `DashboardSummaryDto(Guid? ProgramYearId, string? ProgramYearName, List<UpcomingEventDto> UpcomingEvents, List<RecentActivityItem> RecentActivity)`
 

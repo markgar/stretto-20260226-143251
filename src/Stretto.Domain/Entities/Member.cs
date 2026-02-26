@@ -10,5 +10,6 @@ public class Member
     public string Email { get; set; } = string.Empty;
     public Role Role { get; set; }
     public bool IsActive { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public Guid OrganizationId { get; set; }
 }

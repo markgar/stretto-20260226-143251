@@ -11,6 +11,7 @@ public class ProjectAssignmentConfiguration : IEntityTypeConfiguration<ProjectAs
         builder.HasKey(pa => pa.Id);
         builder.Property(pa => pa.ProjectId).IsRequired();
         builder.Property(pa => pa.MemberId).IsRequired();
+        builder.Property(pa => pa.CreatedAt).IsRequired();
         builder.Property(pa => pa.OrganizationId).IsRequired();
     }
 }

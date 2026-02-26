@@ -17,6 +17,7 @@ public class MemberConfiguration : IEntityTypeConfiguration<Member>
             .IsRequired()
             .HasConversion(r => r.ToString(), s => Enum.Parse<Role>(s));
         builder.Property(m => m.IsActive).IsRequired();
+        builder.Property(m => m.CreatedAt).IsRequired();
         builder.Property(m => m.OrganizationId).IsRequired();
         builder.HasIndex(m => new { m.OrganizationId, m.Email }).IsUnique();
     }
