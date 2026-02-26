@@ -284,4 +284,148 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
+
+    [Fact]
+    public async Task Get_without_session_returns_401()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.GetAsync($"/api/projects/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_without_session_returns_401()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.PutAsJsonAsync($"/api/projects/{Guid.NewGuid()}", new
+        {
+            name = "Updated",
+            startDate = ValidStartDate,
+            endDate = ValidEndDate
+        });
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Delete_without_session_returns_401()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.DeleteAsync($"/api/projects/{Guid.NewGuid()}");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_with_member_role_returns_403()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var memberToken = await LoginAndGetTokenAsync(client, "mgarner@outlook.com");
+
+        var req = WithSession(HttpMethod.Put, $"/api/projects/{Guid.NewGuid()}", memberToken);
+        req.Content = JsonContent.Create(new
+        {
+            name = "Updated",
+            startDate = ValidStartDate,
+            endDate = ValidEndDate
+        });
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Delete_with_member_role_returns_403()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var memberToken = await LoginAndGetTokenAsync(client, "mgarner@outlook.com");
+
+        var req = WithSession(HttpMethod.Delete, $"/api/projects/{Guid.NewGuid()}", memberToken);
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Create_with_dates_outside_program_year_returns_422()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAndGetTokenAsync(client);
+
+        var req = WithSession(HttpMethod.Post, "/api/projects", token);
+        req.Content = JsonContent.Create(new
+        {
+            programYearId = SeededProgramYearId,
+            name = "Out Of Range",
+            startDate = "2024-01-01",
+            endDate = "2024-02-01"
+        });
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_with_invalid_dates_returns_422()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAndGetTokenAsync(client);
+
+        var createReq = WithSession(HttpMethod.Post, "/api/projects", token);
+        createReq.Content = JsonContent.Create(new
+        {
+            programYearId = SeededProgramYearId,
+            name = "Concert",
+            startDate = ValidStartDate,
+            endDate = ValidEndDate
+        });
+        var createResp = await client.SendAsync(createReq);
+        var id = JsonDocument.Parse(await createResp.Content.ReadAsStringAsync())
+            .RootElement.GetProperty("id").GetString();
+
+        var updateReq = WithSession(HttpMethod.Put, $"/api/projects/{id}", token);
+        updateReq.Content = JsonContent.Create(new
+        {
+            name = "Concert",
+            startDate = ValidEndDate,
+            endDate = ValidStartDate
+        });
+        var updateResp = await client.SendAsync(updateReq);
+
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, updateResp.StatusCode);
+    }
+
+    [Fact]
+    public async Task Update_nonexistent_id_returns_404()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAndGetTokenAsync(client);
+
+        var req = WithSession(HttpMethod.Put, $"/api/projects/{Guid.NewGuid()}", token);
+        req.Content = JsonContent.Create(new
+        {
+            name = "Concert",
+            startDate = ValidStartDate,
+            endDate = ValidEndDate
+        });
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Delete_nonexistent_id_returns_404()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAndGetTokenAsync(client);
+
+        var req = WithSession(HttpMethod.Delete, $"/api/projects/{Guid.NewGuid()}", token);
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }

@@ -174,4 +174,30 @@ public class ProjectServiceTests : IDisposable
         await Assert.ThrowsAsync<NotFoundException>(() =>
             _service.DeleteAsync(Guid.NewGuid(), OrgId));
     }
+
+    [Fact]
+    public async Task UpdateAsync_throws_ValidationException_when_startDate_equals_endDate()
+    {
+        var py = await SeedProgramYearAsync();
+        var created = await _service.CreateAsync(OrgId, new CreateProjectRequest(py.Id, "Concert",
+            new DateOnly(2025, 10, 1), new DateOnly(2025, 11, 1)));
+        var date = new DateOnly(2025, 10, 15);
+
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            _service.UpdateAsync(created.Id, OrgId,
+                new UpdateProjectRequest("Concert", date, date)));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_throws_ValidationException_when_dates_outside_program_year()
+    {
+        var py = await SeedProgramYearAsync();
+        var created = await _service.CreateAsync(OrgId, new CreateProjectRequest(py.Id, "Concert",
+            new DateOnly(2025, 10, 1), new DateOnly(2025, 11, 1)));
+
+        await Assert.ThrowsAsync<ValidationException>(() =>
+            _service.UpdateAsync(created.Id, OrgId,
+                new UpdateProjectRequest("Concert",
+                    new DateOnly(2024, 1, 1), new DateOnly(2024, 2, 1))));
+    }
 }
