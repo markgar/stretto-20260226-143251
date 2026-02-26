@@ -10,7 +10,7 @@
 
 - [x] Regenerate TypeScript client: run `cd src/Stretto.Web && npm run generate` so `PublicAuditionSlotDto`, `PublicAuditionDateDto`, `AuditionSignUpRequest`, and the `/api/public/auditions` endpoints appear in `src/Stretto.Web/src/api/generated/`
 
-- [ ] Add two public routes outside `<Route element={<ProtectedRoute />}>` in `src/Stretto.Web/src/App.tsx`: `<Route path="/auditions/:auditionDateId" element={<AuditionSignUpPage />} />` and `<Route path="/auditions/confirmation" element={<AuditionConfirmationPage />} />`; add the corresponding imports at the top of the file
+- [x] Add two public routes outside `<Route element={<ProtectedRoute />}>` in `src/Stretto.Web/src/App.tsx`: `<Route path="/auditions/:auditionDateId" element={<AuditionSignUpPage />} />` and `<Route path="/auditions/confirmation" element={<AuditionConfirmationPage />} />`; add the corresponding imports at the top of the file
 
 - [ ] Create `src/Stretto.Web/src/pages/AuditionSignUpPage.tsx`: use `useParams` to get `auditionDateId`; call `GET /api/public/auditions/${auditionDateId}` with `useQuery` (use raw `fetch`, no credentials, since this is public); render date header (formatted date, time range); render a slot grid listing each slot's `slotTime` with an "Available" or "Taken" badge; for each available slot render a "Sign Up" button that sets a `selectedSlotId` state
 
