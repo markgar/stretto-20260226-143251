@@ -19,7 +19,7 @@
 
 - [x] Add `FindOneAsync(Expression<Func<T, bool>> predicate)` to `IRepository<T>` in `Stretto.Application/Interfaces/IRepository.cs`; implement it in `BaseRepository<T>` in `Stretto.Infrastructure/Repositories/BaseRepository.cs` returning `await _context.Set<T>().Where(predicate).FirstOrDefaultAsync()`; this method does NOT apply org-scoping (used for email lookups during auth)
 
-- [ ] Create `IAuthSessionStore` interface in `Stretto.Application/Interfaces/IAuthSessionStore.cs` with three methods: `string CreateSession(Guid memberId)`, `Guid? GetMemberId(string token)`, `void DeleteSession(string token)`
+- [x] Create `IAuthSessionStore` interface in `Stretto.Application/Interfaces/IAuthSessionStore.cs` with three methods: `string CreateSession(Guid memberId)`, `Guid? GetMemberId(string token)`, `void DeleteSession(string token)`
 
 - [ ] Create `InMemoryAuthSessionStore` in `Stretto.Infrastructure/Auth/InMemoryAuthSessionStore.cs` implementing `IAuthSessionStore`; use `ConcurrentDictionary<string, Guid>` as backing store; `CreateSession` generates a token via `Guid.NewGuid().ToString("N")`, stores `{token → memberId}`, returns the token; `GetMemberId` returns the value or `null` if absent; `DeleteSession` removes the key
 
