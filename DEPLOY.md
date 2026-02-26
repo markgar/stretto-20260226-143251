@@ -143,6 +143,17 @@ Validated in milestone `milestone-06b-venues-admin-pages`:
 - **Playwright navigation**: Tests use React Router client-side navigation (click `data-testid="nav-venues"`) rather than `page.goto('/venues')` to avoid full page reload losing Zustand auth state (due to `Secure` cookie issue on HTTP).
 - **All 17 Playwright tests pass** (7 venues tests + 10 previous shell tests).
 
+## Milestone 10b: Attendance — Frontend
+
+Validated in milestone `milestone-10b-attendance-frontend`:
+
+- **Build fix**: `AuditionDatesController.cs` and `AuditionSlotsController.cs` used 2-element tuple deconstruction `var (orgId, _) = await GetSessionAsync()` but `GetSessionAsync()` returns a 3-element tuple `(Guid orgId, string role, Guid memberId)`. Fixed to `var (orgId, _, _)` and `var (orgId, role, _)` as appropriate.
+- **CheckInPage route**: `/checkin/:eventId` is in `App.tsx` inside `<Route element={<ProtectedRoute />}>`. The page renders without AppShell, just a full-height centered layout with `data-testid="checkin-button"`.
+- **AttendancePanel**: `EventDetailPage.tsx` renders `data-testid="attendance-panel"` only when `isAdmin` is true AND the event data has loaded. If the event API call fails (e.g., due to auth), the panel won't render.
+- **Playwright route mocking**: To test `attendance-panel` and `checkin-url` visibility, use `page.route()` to mock `GET /api/events/{id}` and `GET /api/events/{id}/attendance` responses. This avoids the Secure cookie/Vite proxy issue where the browser may not send the session cookie on API calls.
+- **Direct API login in Playwright tests**: Use `request.post('http://app:8080/auth/login')` (not through the frontend Vite proxy) to get a session token for pre-test setup. Parse the `set-cookie` header to extract the session value.
+- **All 7 attendance Playwright tests pass** in `e2e/attendance-validation.spec.ts`.
+
 ## Known Gotchas
 
 - **Vite proxy for API calls**: The frontend calls `/api/*` relative URLs. Vite's `server.proxy` in `vite.config.ts` must rewrite `/api` → `` and target `http://app:8080` (via `VITE_API_URL` env var). Without this proxy, API calls 404. The `VITE_API_URL=http://app:8080` env var is set in docker-compose.yml for the frontend service.
