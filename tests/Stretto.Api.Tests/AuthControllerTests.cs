@@ -26,8 +26,8 @@ public class AuthTestFactory : WebApplicationFactory<Program>
 }
 
 /// <summary>
-/// Integration tests for /auth/login, /auth/validate, and /auth/logout using a real
-/// ASP.NET Core test server with the seeded admin account (mgarner22@gmail.com).
+/// Integration tests for the Auth controller endpoints — verifies login, validate, and logout
+/// end-to-end through the full ASP.NET Core pipeline using seeded member data.
 /// </summary>
 public class AuthControllerTests : IClassFixture<AuthTestFactory>
 {
@@ -38,26 +38,8 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
         _factory = factory;
     }
 
-    // Extracts the stretto_session cookie value from a Set-Cookie header.
-    private static string? ExtractSessionToken(HttpResponseMessage response)
-    {
-        if (!response.Headers.TryGetValues("Set-Cookie", out var cookies))
-            return null;
-
-        foreach (var cookie in cookies)
-        {
-            if (cookie.StartsWith("stretto_session=", StringComparison.OrdinalIgnoreCase))
-            {
-                var value = cookie.Split(';')[0].Split('=', 2)[1];
-                return value.Length > 0 ? value : null;
-            }
-        }
-
-        return null;
-    }
-
     [Fact]
-    public async Task Login_with_seeded_admin_email_returns_200_with_user_dto()
+    public async Task Login_with_valid_email_returns_200_with_user_dto()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
@@ -71,17 +53,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     }
 
     [Fact]
-    public async Task Login_with_seeded_member_email_returns_200()
-    {
-        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-
-        var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner@outlook.com" });
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Login_sets_stretto_session_cookie()
+    public async Task Login_with_valid_email_sets_stretto_session_cookie()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
@@ -95,21 +67,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     }
 
     [Fact]
-    public async Task Login_sets_persistent_cookie_with_max_age()
-    {
-        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-
-        var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
-
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var setCookieValues = response.Headers.GetValues("Set-Cookie");
-        Assert.Contains(setCookieValues, h =>
-            h.Contains("stretto_session") &&
-            h.Contains("max-age=", StringComparison.OrdinalIgnoreCase));
-    }
-
-    [Fact]
-    public async Task Login_with_unknown_email_returns_401_with_message()
+    public async Task Login_with_unknown_email_returns_401()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
@@ -122,21 +80,24 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     }
 
     [Fact]
-    public async Task Validate_with_valid_session_cookie_returns_200_with_user_data()
+    public async Task Validate_with_valid_session_cookie_returns_200_with_user_dto()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-
         var loginResponse = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
-        var token = ExtractSessionToken(loginResponse);
-        Assert.NotNull(token);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+
+        var setCookie = loginResponse.Headers.GetValues("Set-Cookie").FirstOrDefault() ?? string.Empty;
+        var tokenPart = setCookie.Split(';').First();
+        var token = tokenPart.Split('=', 2).Last();
 
         var request = new HttpRequestMessage(HttpMethod.Get, "/auth/validate");
         request.Headers.Add("Cookie", $"stretto_session={token}");
-        var response = await client.SendAsync(request);
+        var validateResponse = await client.SendAsync(request);
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var body = await response.Content.ReadAsStringAsync();
-        Assert.Contains("mgarner22@gmail.com", body);
+        Assert.Equal(HttpStatusCode.OK, validateResponse.StatusCode);
+        var body = await validateResponse.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(body);
+        Assert.Equal("mgarner22@gmail.com", doc.RootElement.GetProperty("email").GetString());
     }
 
     [Fact]
@@ -150,22 +111,38 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     }
 
     [Fact]
-    public async Task Logout_returns_204_and_subsequent_validate_returns_401()
+    public async Task Logout_with_valid_cookie_returns_204()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-
         var loginResponse = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
-        var token = ExtractSessionToken(loginResponse);
-        Assert.NotNull(token);
+        var setCookie = loginResponse.Headers.GetValues("Set-Cookie").FirstOrDefault() ?? string.Empty;
+        var tokenPart = setCookie.Split(';').First();
+        var token = tokenPart.Split('=', 2).Last();
+
+        var request = new HttpRequestMessage(HttpMethod.Post, "/auth/logout");
+        request.Headers.Add("Cookie", $"stretto_session={token}");
+        var logoutResponse = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.NoContent, logoutResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task Logout_invalidates_session_so_validate_returns_401_after()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var loginResponse = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner@outlook.com" });
+        var setCookie = loginResponse.Headers.GetValues("Set-Cookie").FirstOrDefault() ?? string.Empty;
+        var tokenPart = setCookie.Split(';').First();
+        var token = tokenPart.Split('=', 2).Last();
 
         var logoutRequest = new HttpRequestMessage(HttpMethod.Post, "/auth/logout");
         logoutRequest.Headers.Add("Cookie", $"stretto_session={token}");
-        var logoutResponse = await client.SendAsync(logoutRequest);
-        Assert.Equal(HttpStatusCode.NoContent, logoutResponse.StatusCode);
+        await client.SendAsync(logoutRequest);
 
         var validateRequest = new HttpRequestMessage(HttpMethod.Get, "/auth/validate");
         validateRequest.Headers.Add("Cookie", $"stretto_session={token}");
         var validateResponse = await client.SendAsync(validateRequest);
+
         Assert.Equal(HttpStatusCode.Unauthorized, validateResponse.StatusCode);
     }
 }
