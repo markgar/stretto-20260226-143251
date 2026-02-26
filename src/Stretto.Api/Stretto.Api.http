@@ -1,0 +1,6 @@
+@Stretto.Api_HostAddress = http://localhost:5168
+
+GET {{Stretto.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
