@@ -151,4 +151,104 @@ public class MemberMeControllerTests : IClassFixture<MemberMeTestFactory>
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
+
+    [Fact]
+    public async Task GetProjects_without_session_returns_401()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.GetAsync("/api/members/me/projects");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetProjects_with_valid_member_session_returns_200_with_array()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAsync(client, "member@example.com");
+
+        var req = WithSession(HttpMethod.Get, "/api/members/me/projects", token);
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        var doc = JsonDocument.Parse(body).RootElement;
+        Assert.Equal(JsonValueKind.Array, doc.ValueKind);
+    }
+
+    [Fact]
+    public async Task GetCalendar_without_session_returns_401()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.GetAsync("/api/members/me/calendar");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetCalendar_with_valid_member_session_returns_200_with_array()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAsync(client, "member@example.com");
+
+        var req = WithSession(HttpMethod.Get, "/api/members/me/calendar", token);
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        var doc = JsonDocument.Parse(body).RootElement;
+        Assert.Equal(JsonValueKind.Array, doc.ValueKind);
+    }
+
+    [Fact]
+    public async Task GetCalendarIcs_without_session_returns_401()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+
+        var response = await client.GetAsync("/api/members/me/calendar.ics");
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task GetCalendarIcs_with_valid_member_session_returns_200_with_text_calendar_content_type()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAsync(client, "member@example.com");
+
+        var req = WithSession(HttpMethod.Get, "/api/members/me/calendar.ics", token);
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("text/calendar", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task GetCalendarIcs_body_starts_with_BEGIN_VCALENDAR()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAsync(client, "member@example.com");
+
+        var req = WithSession(HttpMethod.Get, "/api/members/me/calendar.ics", token);
+        var response = await client.SendAsync(req);
+
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.StartsWith("BEGIN:VCALENDAR", body);
+    }
+
+    [Fact]
+    public async Task GetCalendarIcs_response_includes_content_disposition_attachment_header()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAsync(client, "member@example.com");
+
+        var req = WithSession(HttpMethod.Get, "/api/members/me/calendar.ics", token);
+        var response = await client.SendAsync(req);
+
+        Assert.True(response.Content.Headers.ContentDisposition is not null ||
+            response.Headers.Contains("Content-Disposition"),
+            "Content-Disposition header should be present");
+    }
 }
