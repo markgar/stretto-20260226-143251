@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AttendanceStatus } from './AttendanceStatus';
-export type SetAttendanceStatusRequest = {
-    status?: AttendanceStatus;
+export type SendAssignmentAnnouncementRequest = {
+    programYearId?: string;
+    subject?: string | null;
+    body?: string | null;
 };
 
