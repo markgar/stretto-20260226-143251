@@ -26,4 +26,4 @@
 
 - [x] Add the upload document form to `ProjectMaterialsTab` (admin only): render `<input type="file" data-testid="upload-document-input" />` to capture the file and a `<input type="text" data-testid="upload-document-title-input" />` for the title; render `<button data-testid="upload-document-button">Upload</button>`; on click call `ProjectMaterialsService.postApiProjectsDocuments(projectId, { file: selectedFile, title })` via `useMutation`; invalidate `['projectDocuments', projectId]` on success; show error message on failure; disable button while upload is pending
 
-- [ ] In `src/Stretto.Web/src/pages/ProjectDetailPage.tsx`, replace the `{activeTab === 'materials' && <p className="text-muted-foreground">Coming soon</p>}` placeholder with `{activeTab === 'materials' && <ProjectMaterialsTab projectId={id!} />}`; add the import for `ProjectMaterialsTab`
+- [x] In `src/Stretto.Web/src/pages/ProjectDetailPage.tsx`, replace the `{activeTab === 'materials' && <p className="text-muted-foreground">Coming soon</p>}` placeholder with `{activeTab === 'materials' && <ProjectMaterialsTab projectId={id!} />}`; add the import for `ProjectMaterialsTab`
