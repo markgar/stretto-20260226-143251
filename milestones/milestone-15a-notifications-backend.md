@@ -23,7 +23,7 @@
 
 - [x] Create `LogNotificationProvider` in `src/Stretto.Infrastructure/LogNotificationProvider.cs` implementing `INotificationProvider`; inject `ILogger<LogNotificationProvider>`; in `SendAsync` log an Information message: `"[NOTIFICATION] To: {to} | Subject: {subject} | Body: {body}"` and return `Task.CompletedTask` (no emails sent)
 
-- [ ] Register `INotificationProvider` in `src/Stretto.Api/Program.cs` as `builder.Services.AddScoped<INotificationProvider, LogNotificationProvider>()`
+- [x] Register `INotificationProvider` in `src/Stretto.Api/Program.cs` as `builder.Services.AddScoped<INotificationProvider, LogNotificationProvider>()`
 
 - [ ] Create `NotificationService` in `src/Stretto.Application/Services/NotificationService.cs` implementing `INotificationService`; inject `INotificationProvider`, `IRepository<Member>`, `IRepository<ProjectAssignment>`, `IRepository<Project>`, `IRepository<AuditionDate>`; `GetAssignmentRecipientsAsync` lists all active members (`IsActive && NotificationsEnabled`) assigned to any project in the given program year (join ProjectAssignments → Projects filtered by `ProgramYearId`), deduplicating by MemberId; `SendAssignmentAnnouncementAsync` calls `GetAssignmentRecipientsAsync` then calls `_provider.SendAsync(r.Email, subject, body)` for each recipient; `GetAuditionRecipientsAsync` verifies the audition date exists (throw `NotFoundException` if not), then returns all active members with `NotificationsEnabled = true` in the org; `SendAuditionAnnouncementAsync` calls `GetAuditionRecipientsAsync` then sends to each
 

@@ -26,6 +26,7 @@ builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IAuditionService, AuditionService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IStorageProvider, LocalFileStorageProvider>();
+builder.Services.AddScoped<INotificationProvider, LogNotificationProvider>();
 builder.Services.AddScoped<IProjectMaterialsService, ProjectMaterialsService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
