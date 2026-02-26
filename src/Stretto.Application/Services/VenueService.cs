@@ -5,7 +5,7 @@ using Stretto.Domain.Entities;
 
 namespace Stretto.Application.Services;
 
-public class VenueService
+public class VenueService : IVenueService
 {
     private readonly IRepository<Venue> _venues;
 

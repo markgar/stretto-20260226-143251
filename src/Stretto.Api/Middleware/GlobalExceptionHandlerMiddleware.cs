@@ -28,6 +28,13 @@ public class GlobalExceptionHandlerMiddleware
             var body = JsonSerializer.Serialize(new { message = ex.Message });
             await context.Response.WriteAsync(body);
         }
+        catch (ForbiddenException ex)
+        {
+            context.Response.StatusCode = 403;
+            context.Response.ContentType = "application/json";
+            var body = JsonSerializer.Serialize(new { message = ex.Message });
+            await context.Response.WriteAsync(body);
+        }
         catch (NotFoundException ex)
         {
             context.Response.StatusCode = 404;

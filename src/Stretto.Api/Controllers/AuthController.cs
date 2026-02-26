@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Stretto.Application.DTOs;
 using Stretto.Application.Exceptions;
-using Stretto.Application.Services;
+using Stretto.Application.Interfaces;
 
 namespace Stretto.Api.Controllers;
 
@@ -9,9 +9,9 @@ namespace Stretto.Api.Controllers;
 [Route("auth")]
 public class AuthController : ControllerBase
 {
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
 
-    public AuthController(AuthService authService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
     }

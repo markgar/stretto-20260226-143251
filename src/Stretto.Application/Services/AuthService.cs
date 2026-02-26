@@ -5,7 +5,7 @@ using Stretto.Domain.Entities;
 
 namespace Stretto.Application.Services;
 
-public class AuthService
+public class AuthService : IAuthService
 {
     private readonly IRepository<Member> _members;
     private readonly IRepository<Organization> _orgs;
