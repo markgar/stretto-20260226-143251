@@ -8,7 +8,7 @@
 
 4. [x] Program Years — CRUD API endpoints (list, create, get, update, archive, mark-current) scoped to organization; admin Program Years pages: list with current/archived indicators and archive/activate actions, create form, program year detail; re-generate TypeScript API client <!-- depends: 3 -->
 
-5. [1] Members — Admin — Members CRUD API (list with search, get, create, update, deactivate); admin Members pages: searchable list with status badges, add member form, edit member page, member profile with assignment summary; re-generate TypeScript API client <!-- depends: 3 -->
+5. [x] Members — Admin — Members CRUD API (list with search, get, create, update, deactivate); admin Members pages: searchable list with status badges, add member form, edit member page, member profile with assignment summary; re-generate TypeScript API client <!-- depends: 3 -->
 
 6. [x] Venues — CRUD API endpoints (list, create, get, update, delete) scoped to organization; admin Venues pages: list, create form, edit form with all contact fields (name, address, contact name, email, phone); re-generate TypeScript API client <!-- depends: 3 -->
 
