@@ -5,12 +5,15 @@ namespace Stretto.Infrastructure.Auth;
 
 public class InMemoryAuthSessionStore : IAuthSessionStore
 {
-    private readonly ConcurrentDictionary<string, (Guid memberId, DateTime expiresAt)> _sessions = new();
+    private record SessionEntry(Guid MemberId, DateTimeOffset ExpiresAt);
+
+    private readonly ConcurrentDictionary<string, SessionEntry> _sessions = new();
+    public static readonly TimeSpan SessionLifetime = TimeSpan.FromHours(8);
 
     public string CreateSession(Guid memberId)
     {
         var token = Guid.NewGuid().ToString("N");
-        _sessions[token] = (memberId, DateTime.UtcNow.AddHours(8));
+        _sessions[token] = new SessionEntry(memberId, DateTimeOffset.UtcNow.Add(SessionLifetime));
         return token;
     }
 
@@ -19,13 +22,13 @@ public class InMemoryAuthSessionStore : IAuthSessionStore
         if (!_sessions.TryGetValue(token, out var entry))
             return null;
 
-        if (DateTime.UtcNow > entry.expiresAt)
+        if (entry.ExpiresAt < DateTimeOffset.UtcNow)
         {
             _sessions.TryRemove(token, out _);
             return null;
         }
 
-        return entry.memberId;
+        return entry.MemberId;
     }
 
     public void DeleteSession(string token)

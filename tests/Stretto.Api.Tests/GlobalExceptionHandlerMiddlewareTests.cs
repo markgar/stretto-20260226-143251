@@ -85,7 +85,7 @@ public class GlobalExceptionHandlerMiddlewareTests
     {
         var (context, body) = CreateHttpContext();
         RequestDelegate next = _ => throw new UnauthorizedException("Invalid email or account is inactive");
-        var middleware = new GlobalExceptionHandlerMiddleware(next);
+        var middleware = new GlobalExceptionHandlerMiddleware(next, NullLogger<GlobalExceptionHandlerMiddleware>.Instance);
 
         await middleware.InvokeAsync(context);
 

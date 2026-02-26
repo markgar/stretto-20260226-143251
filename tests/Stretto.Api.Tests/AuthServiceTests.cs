@@ -1,152 +1,152 @@
-using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Stretto.Application.DTOs;
 using Stretto.Application.Exceptions;
-using Stretto.Application.Interfaces;
 using Stretto.Application.Services;
 using Stretto.Domain.Entities;
 using Stretto.Domain.Enums;
 using Stretto.Infrastructure.Auth;
+using Stretto.Infrastructure.Data;
+using Stretto.Infrastructure.Repositories;
 
 namespace Stretto.Api.Tests;
 
 /// <summary>
-/// Unit tests for AuthService — verifies login, validate, and logout business logic.
+/// Unit tests for AuthService — covers login, validate, and logout business logic using real
+/// repositories backed by an in-memory database and a real InMemoryAuthSessionStore.
 /// </summary>
 public class AuthServiceTests
 {
-    private static readonly Guid OrgId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-
-    private static Organization CreateOrg() => new Organization
+    private static (AuthService service, AppDbContext ctx) CreateService()
     {
-        Id = OrgId,
-        Name = "My Choir",
+        var ctx = new AppDbContext(
+            new DbContextOptionsBuilder<AppDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options);
+        var memberRepo = new BaseRepository<Member>(ctx);
+        var orgRepo = new BaseRepository<Organization>(ctx);
+        var sessions = new InMemoryAuthSessionStore();
+        return (new AuthService(memberRepo, orgRepo, sessions), ctx);
+    }
+
+    private static Organization CreateOrg(string name = "Test Choir") => new Organization
+    {
+        Id = Guid.NewGuid(),
+        Name = name,
         CreatedAt = DateTime.UtcNow
     };
 
-    private static Member CreateActiveMember(string email = "admin@example.com") => new Member
+    private static Member CreateActiveMember(Guid orgId, string email, Role role = Role.Member) => new Member
     {
         Id = Guid.NewGuid(),
         Email = email,
-        FirstName = "Admin",
-        LastName = "User",
-        Role = Role.Admin,
+        FirstName = "Jane",
+        LastName = "Singer",
+        Role = role,
         IsActive = true,
-        OrganizationId = OrgId
+        OrganizationId = orgId
     };
 
-    private static Member CreateInactiveMember() => new Member
+    [Fact]
+    public async Task LoginAsync_with_valid_active_member_returns_dto_with_correct_fields()
     {
-        Id = Guid.NewGuid(),
-        Email = "inactive@example.com",
-        FirstName = "Inactive",
-        LastName = "User",
-        Role = Role.Member,
-        IsActive = false,
-        OrganizationId = OrgId
-    };
+        var (service, ctx) = CreateService();
+        var org = CreateOrg("Harmony Choir");
+        var member = CreateActiveMember(org.Id, "jane.singer@example.com", Role.Admin);
+        ctx.Organizations.Add(org);
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
 
-    private class FakeRepository<T> : IRepository<T> where T : class
-    {
-        private readonly List<T> _store = new();
+        var (dto, token) = await service.LoginAsync(new LoginRequest("jane.singer@example.com"));
 
-        public void Seed(T entity) => _store.Add(entity);
-
-        public Task<T?> GetByIdAsync(Guid id, Guid orgId) => Task.FromResult<T?>(null);
-
-        public Task<T?> FindOneAsync(Expression<Func<T, bool>> predicate)
-        {
-            var compiled = predicate.Compile();
-            return Task.FromResult(_store.FirstOrDefault(compiled));
-        }
-
-        public Task<List<T>> ListAsync(Guid orgId, Expression<Func<T, bool>>? predicate = null)
-            => Task.FromResult(_store.ToList());
-
-        public Task AddAsync(T entity) { _store.Add(entity); return Task.CompletedTask; }
-        public Task UpdateAsync(T entity) => Task.CompletedTask;
-        public Task DeleteAsync(T entity) { _store.Remove(entity); return Task.CompletedTask; }
-    }
-
-    private static (AuthService service, FakeRepository<Member> members, FakeRepository<Organization> orgs, InMemoryAuthSessionStore sessions) BuildService()
-    {
-        var members = new FakeRepository<Member>();
-        var orgs = new FakeRepository<Organization>();
-        var sessions = new InMemoryAuthSessionStore();
-        var service = new AuthService(members, orgs, sessions);
-        return (service, members, orgs, sessions);
+        Assert.Equal("jane.singer@example.com", dto.Email);
+        Assert.Equal(org.Id, dto.OrgId);
+        Assert.Equal("Harmony Choir", dto.OrgName);
+        Assert.Equal("Admin", dto.Role);
+        Assert.False(string.IsNullOrEmpty(token));
     }
 
     [Fact]
-    public async Task LoginAsync_returns_dto_and_token_for_valid_active_member()
+    public async Task LoginAsync_with_unknown_email_throws_UnauthorizedException()
     {
-        var (service, members, orgs, _) = BuildService();
-        var member = CreateActiveMember("admin@example.com");
-        members.Seed(member);
-        orgs.Seed(CreateOrg());
+        var (service, _) = CreateService();
 
-        var (dto, token) = await service.LoginAsync(new LoginRequest("admin@example.com"));
-
-        Assert.NotNull(token);
-        Assert.Equal(member.Id, dto.Id);
-        Assert.Equal("admin@example.com", dto.Email);
-        Assert.Equal("My Choir", dto.OrgName);
+        await Assert.ThrowsAsync<UnauthorizedException>(
+            () => service.LoginAsync(new LoginRequest("nobody@example.com")));
     }
 
     [Fact]
-    public async Task LoginAsync_throws_UnauthorizedException_for_unknown_email()
+    public async Task LoginAsync_with_inactive_member_throws_UnauthorizedException()
     {
-        var (service, _, _, _) = BuildService();
+        var (service, ctx) = CreateService();
+        var org = CreateOrg();
+        var member = CreateActiveMember(org.Id, "inactive.singer@example.com");
+        member.IsActive = false;
+        ctx.Organizations.Add(org);
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
 
-        await Assert.ThrowsAsync<UnauthorizedException>(() =>
-            service.LoginAsync(new LoginRequest("unknown@example.com")));
+        await Assert.ThrowsAsync<UnauthorizedException>(
+            () => service.LoginAsync(new LoginRequest("inactive.singer@example.com")));
     }
 
     [Fact]
-    public async Task LoginAsync_throws_UnauthorizedException_for_inactive_member()
+    public async Task ValidateAsync_with_valid_token_returns_correct_dto()
     {
-        var (service, members, _, _) = BuildService();
-        members.Seed(CreateInactiveMember());
+        var (service, ctx) = CreateService();
+        var org = CreateOrg();
+        var member = CreateActiveMember(org.Id, "active.member@example.com");
+        ctx.Organizations.Add(org);
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
 
-        await Assert.ThrowsAsync<UnauthorizedException>(() =>
-            service.LoginAsync(new LoginRequest("inactive@example.com")));
-    }
-
-    [Fact]
-    public async Task ValidateAsync_returns_dto_for_valid_session_token()
-    {
-        var (service, members, orgs, _) = BuildService();
-        var member = CreateActiveMember();
-        members.Seed(member);
-        orgs.Seed(CreateOrg());
-        var (_, token) = await service.LoginAsync(new LoginRequest(member.Email));
-
+        var (_, token) = await service.LoginAsync(new LoginRequest("active.member@example.com"));
         var dto = await service.ValidateAsync(token);
 
-        Assert.Equal(member.Id, dto.Id);
-        Assert.Equal(member.Email, dto.Email);
+        Assert.Equal("active.member@example.com", dto.Email);
+        Assert.Equal(org.Id, dto.OrgId);
     }
 
     [Fact]
-    public async Task ValidateAsync_throws_UnauthorizedException_for_invalid_token()
+    public async Task ValidateAsync_with_unknown_token_throws_UnauthorizedException()
     {
-        var (service, _, _, _) = BuildService();
+        var (service, _) = CreateService();
 
-        await Assert.ThrowsAsync<UnauthorizedException>(() =>
-            service.ValidateAsync("invalid-token"));
+        await Assert.ThrowsAsync<UnauthorizedException>(
+            () => service.ValidateAsync("token-that-does-not-exist"));
     }
 
     [Fact]
-    public async Task LogoutAsync_removes_session_so_subsequent_validate_throws()
+    public async Task ValidateAsync_after_member_is_deactivated_throws_UnauthorizedException()
     {
-        var (service, members, orgs, _) = BuildService();
-        var member = CreateActiveMember();
-        members.Seed(member);
-        orgs.Seed(CreateOrg());
-        var (_, token) = await service.LoginAsync(new LoginRequest(member.Email));
+        var (service, ctx) = CreateService();
+        var org = CreateOrg();
+        var member = CreateActiveMember(org.Id, "tobedeactivated@example.com");
+        ctx.Organizations.Add(org);
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
 
+        var (_, token) = await service.LoginAsync(new LoginRequest("tobedeactivated@example.com"));
+
+        member.IsActive = false;
+        ctx.Members.Update(member);
+        await ctx.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<UnauthorizedException>(() => service.ValidateAsync(token));
+    }
+
+    [Fact]
+    public async Task LogoutAsync_invalidates_session_so_subsequent_validate_throws()
+    {
+        var (service, ctx) = CreateService();
+        var org = CreateOrg();
+        var member = CreateActiveMember(org.Id, "logout.test@example.com");
+        ctx.Organizations.Add(org);
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
+
+        var (_, token) = await service.LoginAsync(new LoginRequest("logout.test@example.com"));
         await service.LogoutAsync(token);
 
-        await Assert.ThrowsAsync<UnauthorizedException>(() =>
-            service.ValidateAsync(token));
+        await Assert.ThrowsAsync<UnauthorizedException>(() => service.ValidateAsync(token));
     }
 }

@@ -25,7 +25,8 @@ public class AuthController : ControllerBase
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Strict,
-            Path = "/"
+            Path = "/",
+            MaxAge = TimeSpan.FromDays(30)
         });
         return Ok(dto);
     }
