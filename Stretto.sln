@@ -5,17 +5,17 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Domain", "src\Stretto.Domain\Stretto.Domain.csproj", "{A95C0631-77FE-4000-8B29-54C5B688E038}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Domain", "src/Stretto.Domain/Stretto.Domain.csproj", "{A95C0631-77FE-4000-8B29-54C5B688E038}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Application", "src\Stretto.Application\Stretto.Application.csproj", "{50AFB817-90D2-4D48-AFF7-16EF00E93A1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Application", "src/Stretto.Application/Stretto.Application.csproj", "{50AFB817-90D2-4D48-AFF7-16EF00E93A1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Infrastructure", "src\Stretto.Infrastructure\Stretto.Infrastructure.csproj", "{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Infrastructure", "src/Stretto.Infrastructure/Stretto.Infrastructure.csproj", "{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Api", "src\Stretto.Api\Stretto.Api.csproj", "{0B036255-731E-421B-8968-E47F56D5C7F8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Api", "src/Stretto.Api/Stretto.Api.csproj", "{0B036255-731E-421B-8968-E47F56D5C7F8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Api.Tests", "tests\Stretto.Api.Tests\Stretto.Api.Tests.csproj", "{2EA67B04-7F2F-437B-896E-0BD2453B8F3C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Api.Tests", "tests/Stretto.Api.Tests/Stretto.Api.Tests.csproj", "{2EA67B04-7F2F-437B-896E-0BD2453B8F3C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
