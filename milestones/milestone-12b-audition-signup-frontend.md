@@ -8,7 +8,7 @@
 > - `src/Stretto.Web/src/App.tsx` — route definitions; add public routes outside `ProtectedRoute`
 > - `src/Stretto.Web/src/pages/LoginPage.tsx` — Zod + RHF + useMutation pattern for a public form page
 
-- [ ] Regenerate TypeScript client: run `cd src/Stretto.Web && npm run generate` so `PublicAuditionSlotDto`, `PublicAuditionDateDto`, `AuditionSignUpRequest`, and the `/api/public/auditions` endpoints appear in `src/Stretto.Web/src/api/generated/`
+- [x] Regenerate TypeScript client: run `cd src/Stretto.Web && npm run generate` so `PublicAuditionSlotDto`, `PublicAuditionDateDto`, `AuditionSignUpRequest`, and the `/api/public/auditions` endpoints appear in `src/Stretto.Web/src/api/generated/`
 
 - [ ] Add two public routes outside `<Route element={<ProtectedRoute />}>` in `src/Stretto.Web/src/App.tsx`: `<Route path="/auditions/:auditionDateId" element={<AuditionSignUpPage />} />` and `<Route path="/auditions/confirmation" element={<AuditionConfirmationPage />} />`; add the corresponding imports at the top of the file
 

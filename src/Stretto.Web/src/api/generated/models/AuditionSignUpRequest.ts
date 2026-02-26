@@ -2,7 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type SetAttendanceStatusRequest = {
-    status?: string | null;
+export type AuditionSignUpRequest = {
+    firstName?: string | null;
+    lastName?: string | null;
+    email?: string | null;
 };
 
