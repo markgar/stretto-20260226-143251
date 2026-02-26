@@ -22,7 +22,7 @@
 
 11. [x] Auditions — Admin Setup — Audition dates CRUD API (create with start time, end time, block length; validate block divides evenly; auto-generate time slots); admin Auditions pages: list audition dates by program year, create audition date form, slot grid view (status color-coding: Pending=amber, Accepted=green, Rejected=red, Waitlisted=blue), inline notes editor per slot, status update per slot; re-generate TypeScript API client <!-- depends: 4 -->
 
-12. [ ] Audition Sign-Up — Member-facing public audition listing page (no auth required to browse); sign-up API (claim slot, create member account if email is new, reject already-taken slots); sign-up form with email field; confirmation page; re-generate TypeScript API client <!-- depends: 11 -->
+12. [3] Audition Sign-Up — Member-facing public audition listing page (no auth required to browse); sign-up API (claim slot, create member account if email is new, reject already-taken slots); sign-up form with email field; confirmation page; re-generate TypeScript API client <!-- depends: 11 -->
 
 13. [ ] Project Materials — Links and documents API: add link (title + URL), delete link; upload document (file), list documents, download document, delete document; local filesystem storage behind IStorageProvider abstraction; admin Materials tab UI in project detail (add link form, upload button, list with delete actions); member read-only materials view showing links and download buttons; re-generate TypeScript API client <!-- depends: 7 -->
 
