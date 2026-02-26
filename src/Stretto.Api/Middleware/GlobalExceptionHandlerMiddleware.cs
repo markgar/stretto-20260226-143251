@@ -49,6 +49,13 @@ public class GlobalExceptionHandlerMiddleware
             var body = JsonSerializer.Serialize(new { message = ex.Message });
             await context.Response.WriteAsync(body);
         }
+        catch (ConcurrencyException ex)
+        {
+            context.Response.StatusCode = 422;
+            context.Response.ContentType = "application/json";
+            var body = JsonSerializer.Serialize(new { message = ex.Message });
+            await context.Response.WriteAsync(body);
+        }
         catch (UnprocessableEntityException ex)
         {
             context.Response.StatusCode = 422;

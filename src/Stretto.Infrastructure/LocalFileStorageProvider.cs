@@ -16,7 +16,10 @@ public class LocalFileStorageProvider : IStorageProvider
     public async Task<string> SaveAsync(string fileName, Stream content)
     {
         Directory.CreateDirectory(_uploadRoot);
-        var storedName = $"{Guid.NewGuid()}_{fileName}";
+        var safeFileName = Path.GetFileName(fileName);
+        if (string.IsNullOrWhiteSpace(safeFileName))
+            safeFileName = "upload";
+        var storedName = $"{Guid.NewGuid()}_{safeFileName}";
         var fullPath = Path.Combine(_uploadRoot, storedName);
         await using var fileStream = File.Create(fullPath);
         await content.CopyToAsync(fileStream);

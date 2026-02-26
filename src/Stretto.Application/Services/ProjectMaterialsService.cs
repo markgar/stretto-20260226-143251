@@ -9,15 +9,18 @@ public class ProjectMaterialsService : IProjectMaterialsService
 {
     private readonly IRepository<ProjectLink> _links;
     private readonly IRepository<ProjectDocument> _documents;
+    private readonly IRepository<Project> _projects;
     private readonly IStorageProvider _storage;
 
     public ProjectMaterialsService(
         IRepository<ProjectLink> links,
         IRepository<ProjectDocument> documents,
+        IRepository<Project> projects,
         IStorageProvider storage)
     {
         _links = links;
         _documents = documents;
+        _projects = projects;
         _storage = storage;
     }
 
@@ -29,6 +32,10 @@ public class ProjectMaterialsService : IProjectMaterialsService
 
     public async Task<ProjectLinkDto> AddLinkAsync(Guid projectId, Guid orgId, AddLinkRequest req)
     {
+        var project = await _projects.GetByIdAsync(projectId, orgId);
+        if (project is null)
+            throw new NotFoundException("Project not found");
+
         if (!Uri.TryCreate(req.Url, UriKind.Absolute, out var uri) ||
             (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
         {
@@ -66,18 +73,30 @@ public class ProjectMaterialsService : IProjectMaterialsService
 
     public async Task<ProjectDocumentDto> UploadDocumentAsync(Guid projectId, Guid orgId, string title, string fileName, Stream content)
     {
+        var project = await _projects.GetByIdAsync(projectId, orgId);
+        if (project is null)
+            throw new NotFoundException("Project not found");
+
         var storagePath = await _storage.SaveAsync(fileName, content);
-        var doc = new ProjectDocument
+        try
         {
-            Id = Guid.NewGuid(),
-            OrganizationId = orgId,
-            ProjectId = projectId,
-            Title = title,
-            FileName = fileName,
-            StoragePath = storagePath
-        };
-        await _documents.AddAsync(doc);
-        return ToDocumentDto(doc);
+            var doc = new ProjectDocument
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = orgId,
+                ProjectId = projectId,
+                Title = title,
+                FileName = fileName,
+                StoragePath = storagePath
+            };
+            await _documents.AddAsync(doc);
+            return ToDocumentDto(doc);
+        }
+        catch
+        {
+            await _storage.DeleteAsync(storagePath);
+            throw;
+        }
     }
 
     public async Task<(Stream stream, string fileName)> GetDocumentStreamAsync(Guid documentId, Guid orgId)
@@ -94,8 +113,8 @@ public class ProjectMaterialsService : IProjectMaterialsService
         var doc = await _documents.GetByIdAsync(documentId, orgId);
         if (doc is null)
             throw new NotFoundException("Project document not found");
-        await _storage.DeleteAsync(doc.StoragePath);
         await _documents.DeleteAsync(doc);
+        await _storage.DeleteAsync(doc.StoragePath);
     }
 
     private static ProjectLinkDto ToLinkDto(ProjectLink l) =>

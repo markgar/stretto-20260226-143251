@@ -3,6 +3,7 @@ using Stretto.Application.DTOs;
 using Stretto.Application.Exceptions;
 using Stretto.Application.Services;
 using Stretto.Domain.Entities;
+using Stretto.Domain.Enums;
 using Stretto.Infrastructure.Data;
 using Stretto.Infrastructure.Repositories;
 
@@ -99,7 +100,7 @@ public class AuditionServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task CreateAsync_throws_ValidationException_when_block_length_does_not_divide_duration()
+    public async Task CreateAsync_throws_UnprocessableEntityException_when_block_length_does_not_divide_duration()
     {
         var req = new CreateAuditionDateRequest(
             Guid.NewGuid(),
@@ -109,10 +110,8 @@ public class AuditionServiceTests : IDisposable
             35
         );
 
-        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+        await Assert.ThrowsAsync<UnprocessableEntityException>(() =>
             _service.CreateAsync(OrgId, req));
-
-        Assert.True(ex.Errors.ContainsKey("blockLengthMinutes"));
     }
 
     // GetAsync
@@ -212,7 +211,7 @@ public class AuditionServiceTests : IDisposable
         var created = await _service.CreateAsync(OrgId, DefaultRequest());
         var slotId = created.Slots[0].Id;
 
-        var result = await _service.UpdateSlotStatusAsync(slotId, OrgId, "Accepted");
+        var result = await _service.UpdateSlotStatusAsync(slotId, OrgId, AuditionStatus.Accepted);
 
         Assert.Equal("Accepted", result.Status);
     }
@@ -221,19 +220,18 @@ public class AuditionServiceTests : IDisposable
     public async Task UpdateSlotStatusAsync_throws_NotFoundException_when_slot_not_found()
     {
         await Assert.ThrowsAsync<NotFoundException>(() =>
-            _service.UpdateSlotStatusAsync(Guid.NewGuid(), OrgId, "Accepted"));
+            _service.UpdateSlotStatusAsync(Guid.NewGuid(), OrgId, AuditionStatus.Accepted));
     }
 
     [Fact]
-    public async Task UpdateSlotStatusAsync_throws_ValidationException_for_invalid_status()
+    public async Task UpdateSlotStatusAsync_updates_slot_status_to_rejected()
     {
         var created = await _service.CreateAsync(OrgId, DefaultRequest());
         var slotId = created.Slots[0].Id;
 
-        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
-            _service.UpdateSlotStatusAsync(slotId, OrgId, "NotAStatus"));
+        var result = await _service.UpdateSlotStatusAsync(slotId, OrgId, AuditionStatus.Rejected);
 
-        Assert.True(ex.Errors.ContainsKey("status"));
+        Assert.Equal("Rejected", result.Status);
     }
 
     // UpdateSlotNotesAsync
@@ -394,7 +392,7 @@ public class AuditionServiceTests : IDisposable
     {
         var created = await _service.CreateAsync(OrgId, DefaultRequest());
         var slotId = created.Slots[0].Id;
-        await _service.UpdateSlotStatusAsync(slotId, OrgId, "Accepted");
+        await _service.UpdateSlotStatusAsync(slotId, OrgId, AuditionStatus.Accepted);
 
         await Assert.ThrowsAsync<UnprocessableEntityException>(() =>
             _service.SignUpForSlotAsync(slotId,

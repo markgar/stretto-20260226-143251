@@ -61,11 +61,28 @@ public class ProjectMaterialsServiceTests : IDisposable
         _db = new AppDbContext(options);
         var links = new BaseRepository<ProjectLink>(_db);
         var documents = new BaseRepository<ProjectDocument>(_db);
+        var projects = new BaseRepository<Project>(_db);
         _storage = new InMemoryStorageProvider();
-        _service = new ProjectMaterialsService(links, documents, _storage);
+        _service = new ProjectMaterialsService(links, documents, projects, _storage);
     }
 
     public void Dispose() => _db.Dispose();
+
+    private async Task<Guid> SeedProjectAsync()
+    {
+        var projectId = Guid.NewGuid();
+        _db.Set<Project>().Add(new Project
+        {
+            Id = projectId,
+            OrganizationId = OrgId,
+            ProgramYearId = Guid.NewGuid(),
+            Name = "Test Project",
+            StartDate = DateOnly.FromDateTime(DateTime.Today),
+            EndDate = DateOnly.FromDateTime(DateTime.Today.AddMonths(3))
+        });
+        await _db.SaveChangesAsync();
+        return projectId;
+    }
 
     // ListLinksAsync
 
@@ -91,7 +108,7 @@ public class ProjectMaterialsServiceTests : IDisposable
     [Fact]
     public async Task AddLinkAsync_persists_link_and_returns_dto_with_correct_fields()
     {
-        var projectId = Guid.NewGuid();
+        var projectId = await SeedProjectAsync();
         var req = new AddLinkRequest("Practice Recording", "https://recording.example.com");
 
         var dto = await _service.AddLinkAsync(projectId, OrgId, req);
@@ -130,7 +147,7 @@ public class ProjectMaterialsServiceTests : IDisposable
     [Fact]
     public async Task UploadDocumentAsync_saves_to_storage_and_returns_dto()
     {
-        var projectId = Guid.NewGuid();
+        var projectId = await SeedProjectAsync();
         using var content = new MemoryStream("file bytes"u8.ToArray());
 
         var dto = await _service.UploadDocumentAsync(projectId, OrgId, "Sheet Music", "sheet.pdf", content);
@@ -146,11 +163,11 @@ public class ProjectMaterialsServiceTests : IDisposable
     [Fact]
     public async Task ListDocumentsAsync_returns_only_documents_for_the_given_project()
     {
-        var projectId = Guid.NewGuid();
+        var projectId = await SeedProjectAsync();
         using var content = new MemoryStream("data"u8.ToArray());
         await _service.UploadDocumentAsync(projectId, OrgId, "Doc A", "a.pdf", content);
 
-        var otherProjectId = Guid.NewGuid();
+        var otherProjectId = await SeedProjectAsync();
         using var content2 = new MemoryStream("data2"u8.ToArray());
         await _service.UploadDocumentAsync(otherProjectId, OrgId, "Doc B", "b.pdf", content2);
 
@@ -165,7 +182,7 @@ public class ProjectMaterialsServiceTests : IDisposable
     [Fact]
     public async Task GetDocumentStreamAsync_returns_stream_and_filename_for_uploaded_document()
     {
-        var projectId = Guid.NewGuid();
+        var projectId = await SeedProjectAsync();
         var bytes = "hello world"u8.ToArray();
         using var uploadStream = new MemoryStream(bytes);
         var dto = await _service.UploadDocumentAsync(projectId, OrgId, "Notes", "notes.txt", uploadStream);
@@ -190,7 +207,7 @@ public class ProjectMaterialsServiceTests : IDisposable
     [Fact]
     public async Task DeleteDocumentAsync_removes_document_from_db_and_storage()
     {
-        var projectId = Guid.NewGuid();
+        var projectId = await SeedProjectAsync();
         using var content = new MemoryStream("data"u8.ToArray());
         var dto = await _service.UploadDocumentAsync(projectId, OrgId, "Tmp", "tmp.pdf", content);
 
@@ -205,5 +222,87 @@ public class ProjectMaterialsServiceTests : IDisposable
     {
         await Assert.ThrowsAsync<NotFoundException>(() =>
             _service.DeleteDocumentAsync(Guid.NewGuid(), OrgId));
+    }
+
+    // Cross-org isolation
+
+    [Fact]
+    public async Task ListLinksAsync_does_not_return_links_from_different_org()
+    {
+        var projectId = Guid.NewGuid();
+        var otherOrgId = Guid.NewGuid();
+        _db.Set<ProjectLink>().Add(new ProjectLink
+        {
+            Id = Guid.NewGuid(),
+            OrganizationId = otherOrgId,
+            ProjectId = projectId,
+            Title = "Other Org Link",
+            Url = "https://other.com"
+        });
+        await _db.SaveChangesAsync();
+
+        var result = await _service.ListLinksAsync(projectId, OrgId);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task ListDocumentsAsync_does_not_return_documents_from_different_org()
+    {
+        var projectId = Guid.NewGuid();
+        var otherOrgId = Guid.NewGuid();
+        _db.Set<ProjectDocument>().Add(new ProjectDocument
+        {
+            Id = Guid.NewGuid(),
+            OrganizationId = otherOrgId,
+            ProjectId = projectId,
+            Title = "Other Org Doc",
+            FileName = "doc.pdf",
+            StoragePath = "some/path/doc.pdf"
+        });
+        await _db.SaveChangesAsync();
+
+        var result = await _service.ListDocumentsAsync(projectId, OrgId);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task DeleteLinkAsync_throws_NotFoundException_when_link_belongs_to_different_org()
+    {
+        var otherOrgId = Guid.NewGuid();
+        var link = new ProjectLink
+        {
+            Id = Guid.NewGuid(),
+            OrganizationId = otherOrgId,
+            ProjectId = Guid.NewGuid(),
+            Title = "Other Org Link",
+            Url = "https://other.com"
+        };
+        _db.Set<ProjectLink>().Add(link);
+        await _db.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            _service.DeleteLinkAsync(link.Id, OrgId));
+    }
+
+    [Fact]
+    public async Task DeleteDocumentAsync_throws_NotFoundException_when_document_belongs_to_different_org()
+    {
+        var otherOrgId = Guid.NewGuid();
+        var doc = new ProjectDocument
+        {
+            Id = Guid.NewGuid(),
+            OrganizationId = otherOrgId,
+            ProjectId = Guid.NewGuid(),
+            Title = "Other Org Doc",
+            FileName = "doc.pdf",
+            StoragePath = "some/path/doc.pdf"
+        };
+        _db.Set<ProjectDocument>().Add(doc);
+        await _db.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            _service.DeleteDocumentAsync(doc.Id, OrgId));
     }
 }

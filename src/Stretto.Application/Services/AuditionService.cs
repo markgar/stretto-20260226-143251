@@ -112,23 +112,16 @@ public class AuditionService : IAuditionService
         await _dates.DeleteAsync(date);
     }
 
-    public async Task<AuditionSlotDto> UpdateSlotStatusAsync(Guid slotId, Guid orgId, string status)
+    public async Task<AuditionSlotDto> UpdateSlotStatusAsync(Guid slotId, Guid orgId, AuditionStatus status)
     {
         var slot = await _slots.GetByIdAsync(slotId, orgId);
         if (slot is null)
             throw new NotFoundException("Audition slot not found");
 
-        if (!Enum.TryParse<AuditionStatus>(status, ignoreCase: true, out var parsed))
-            throw new ValidationException(new Dictionary<string, string[]>
-            {
-                ["status"] = ["Invalid status value"]
-            });
-
-        slot.Status = parsed;
+        slot.Status = status;
         await _slots.UpdateAsync(slot);
         return ToSlotDto(slot);
     }
-
     public async Task<AuditionSlotDto> UpdateSlotNotesAsync(Guid slotId, Guid orgId, string? notes)
     {
         var slot = await _slots.GetByIdAsync(slotId, orgId);

@@ -24,7 +24,9 @@ public record CreateAuditionDateRequest(
     TimeOnly EndTime,
     int BlockLengthMinutes);
 
-public record UpdateSlotStatusRequest(string Status);
+public record UpdateSlotStatusRequest(
+    [property: System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter))]
+    Stretto.Domain.Enums.AuditionStatus Status);
 
 public record UpdateSlotNotesRequest(string? Notes);
 

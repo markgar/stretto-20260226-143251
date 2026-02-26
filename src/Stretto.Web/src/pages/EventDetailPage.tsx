@@ -1,3 +1,4 @@
+import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format, parseISO } from 'date-fns';
@@ -32,36 +33,44 @@ function AttendanceStatusBadge({ status }: { status: string | null }) {
 
 function AttendanceRow({ item, eventId }: { item: AttendanceSummaryItem; eventId: string }) {
   const queryClient = useQueryClient();
+  const [mutationError, setMutationError] = React.useState<string | null>(null);
   const statusMutation = useMutation({
     mutationFn: (status: string) =>
       AttendanceService.putApiEventsAttendance(eventId, item.memberId, { status }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['attendance', eventId] }),
+    onSuccess: () => {
+      setMutationError(null);
+      queryClient.invalidateQueries({ queryKey: ['attendance', eventId] });
+    },
+    onError: () => setMutationError('Failed to update status. Please try again.'),
   });
 
   return (
-    <div className="flex items-center justify-between py-2 border-b last:border-0">
-      <div className="flex items-center gap-3">
-        <span className="text-sm font-medium">{item.memberName}</span>
-        <AttendanceStatusBadge status={item.status} />
+    <div className="flex flex-col py-2 border-b last:border-0">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-medium">{item.memberName}</span>
+          <AttendanceStatusBadge status={item.status} />
+        </div>
+        <select
+          value={item.status ?? ''}
+          onChange={(e) => statusMutation.mutate(e.target.value)}
+          disabled={statusMutation.isPending}
+          className="text-sm border rounded px-2 py-1 disabled:opacity-50"
+          aria-label={`Set status for ${item.memberName}`}
+        >
+          <option value="">— Select —</option>
+          <option value="Present">Present</option>
+          <option value="Excused">Excused</option>
+          <option value="Absent">Absent</option>
+        </select>
       </div>
-      <select
-        value={item.status ?? ''}
-        onChange={(e) => statusMutation.mutate(e.target.value)}
-        disabled={statusMutation.isPending}
-        className="text-sm border rounded px-2 py-1 disabled:opacity-50"
-        aria-label={`Set status for ${item.memberName}`}
-      >
-        <option value="">— Select —</option>
-        <option value="Present">Present</option>
-        <option value="Excused">Excused</option>
-        <option value="Absent">Absent</option>
-      </select>
+      {mutationError && <p className="text-xs text-destructive mt-1">{mutationError}</p>}
     </div>
   );
 }
 
 function AttendancePanel({ eventId }: { eventId: string }) {
-  const { data: attendance, isLoading } = useQuery<AttendanceSummaryItem[]>({
+  const { data: attendance, isLoading, isError } = useQuery<AttendanceSummaryItem[]>({
     queryKey: ['attendance', eventId],
     queryFn: () => AttendanceService.getApiEventsAttendance(eventId),
   });
@@ -75,6 +84,7 @@ function AttendancePanel({ eventId }: { eventId: string }) {
           /checkin/{eventId}
         </span>
       </p>
+      {isError && <p className="text-sm text-destructive">Failed to load attendance. Please refresh.</p>}
       {isLoading && <p className="text-sm text-muted-foreground">Loading attendance…</p>}
       {attendance && attendance.length === 0 && (
         <p className="text-sm text-muted-foreground">No members found.</p>
@@ -88,23 +98,28 @@ function AttendancePanel({ eventId }: { eventId: string }) {
 
 function MemberAttendanceSection({ eventId, memberId }: { eventId: string; memberId: string }) {
   const queryClient = useQueryClient();
+  const [toggleError, setToggleError] = React.useState<string | null>(null);
 
-  const { data: attendance } = useQuery<AttendanceSummaryItem[]>({
-    queryKey: ['attendance', eventId],
-    queryFn: () => AttendanceService.getApiEventsAttendance(eventId),
+  const { data: myRecord, isError: isRecordError } = useQuery<AttendanceSummaryItem | null>({
+    queryKey: ['my-attendance', eventId],
+    queryFn: () => AttendanceService.getApiEventsAttendanceMe(eventId),
   });
 
-  const myRecord = attendance?.find((a) => a.memberId === memberId) ?? null;
   const isExcused = myRecord?.status === 'Excused';
 
   const toggleMutation = useMutation({
     mutationFn: () => AttendanceService.putApiEventsAttendanceMeExcused(eventId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['attendance', eventId] }),
+    onSuccess: () => {
+      setToggleError(null);
+      queryClient.invalidateQueries({ queryKey: ['my-attendance', eventId] });
+    },
+    onError: () => setToggleError('Failed to update. Please try again.'),
   });
 
   return (
     <section className="mt-8 rounded-lg border p-4 max-w-md">
       <h2 className="text-lg font-semibold mb-3">My Attendance</h2>
+      {isRecordError && <p className="text-sm text-destructive mb-2">Failed to load attendance status.</p>}
       <div className="flex items-center gap-3 mb-4">
         <span className="text-sm font-medium">Status</span>
         <AttendanceStatusBadge status={myRecord?.status ?? null} />
@@ -117,6 +132,7 @@ function MemberAttendanceSection({ eventId, memberId }: { eventId: string; membe
       >
         {isExcused ? 'Remove excuse' : 'Excuse my absence'}
       </button>
+      {toggleError && <p className="text-sm text-destructive mt-2">{toggleError}</p>}
     </section>
   );
 }

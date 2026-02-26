@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Stretto.Application.Exceptions;
 using Stretto.Application.Interfaces;
 
 namespace Stretto.Api.Controllers;
@@ -20,7 +21,7 @@ public class DashboardController : ProtectedControllerBase
     {
         var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
-            return Forbid();
+            throw new ForbiddenException("Only admins can view the dashboard");
 
         var dto = programYearId.HasValue
             ? await _dashboardService.GetSummaryAsync(programYearId.Value, orgId)

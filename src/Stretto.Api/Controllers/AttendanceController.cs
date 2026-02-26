@@ -26,6 +26,14 @@ public class AttendanceController : ProtectedControllerBase
         return Ok(list);
     }
 
+    [HttpGet("api/events/{eventId:guid}/attendance/me")]
+    public async Task<IActionResult> GetMyRecord(Guid eventId)
+    {
+        var (orgId, _, memberId) = await GetSessionAsync();
+        var dto = await _attendanceService.GetMyRecordAsync(eventId, memberId, orgId);
+        return Ok(dto);
+    }
+
     [HttpPut("api/events/{eventId:guid}/attendance/{memberId:guid}")]
     public async Task<IActionResult> SetStatus(Guid eventId, Guid memberId, [FromBody] SetAttendanceStatusRequest req)
     {

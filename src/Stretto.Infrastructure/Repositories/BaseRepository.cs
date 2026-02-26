@@ -47,7 +47,14 @@ public class BaseRepository<T> : IRepository<T> where T : class
     public async Task UpdateAsync(T entity)
     {
         _context.Set<T>().Update(entity);
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new Stretto.Application.Exceptions.ConcurrencyException("The record was modified by another request. Please retry.");
+        }
     }
 
     public async Task DeleteAsync(T entity)

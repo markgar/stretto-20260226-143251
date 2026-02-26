@@ -34,9 +34,8 @@ public class AttendanceService : IAttendanceService
         var projectAssignments = await _assignments.ListAsync(orgId, a => a.ProjectId == ev.ProjectId);
         var memberIds = projectAssignments.Select(a => a.MemberId).ToHashSet();
 
-        var memberList = await _members.ListAsync(orgId);
-        var memberMap = memberList.Where(m => memberIds.Contains(m.Id))
-                                  .ToDictionary(m => m.Id, m => $"{m.FirstName} {m.LastName}");
+        var memberList = await _members.ListAsync(orgId, m => memberIds.Contains(m.Id));
+        var memberMap = memberList.ToDictionary(m => m.Id, m => $"{m.FirstName} {m.LastName}");
 
         var attendanceRecords = await _records.ListAsync(orgId, r => r.EventId == eventId);
         var recordMap = attendanceRecords.ToDictionary(r => r.MemberId, r => r.Status.ToString());
@@ -46,6 +45,23 @@ public class AttendanceService : IAttendanceService
             kvp.Value,
             recordMap.TryGetValue(kvp.Key, out var status) ? status : null
         )).ToList();
+    }
+
+    public async Task<AttendanceSummaryItemDto?> GetMyRecordAsync(Guid eventId, Guid memberId, Guid orgId)
+    {
+        var ev = await _events.GetByIdAsync(eventId, orgId);
+        if (ev is null)
+            throw new NotFoundException("Event not found");
+
+        var member = await _members.GetByIdAsync(memberId, orgId);
+        if (member is null)
+            throw new NotFoundException("Member not found");
+
+        var record = await _records.FindOneAsync(r => r.EventId == eventId && r.MemberId == memberId && r.OrganizationId == orgId);
+        return new AttendanceSummaryItemDto(
+            memberId,
+            $"{member.FirstName} {member.LastName}",
+            record?.Status.ToString());
     }
 
     public async Task<AttendanceRecordDto> SetStatusAsync(Guid eventId, Guid memberId, Guid orgId, AttendanceStatus status)
@@ -101,8 +117,26 @@ public class AttendanceService : IAttendanceService
             throw new ForbiddenException("Member is not assigned to this event's project");
 
         var record = await _records.FindOneAsync(r => r.EventId == eventId && r.MemberId == memberId && r.OrganizationId == orgId);
-        var newStatus = record?.Status == AttendanceStatus.Excused ? AttendanceStatus.Absent : AttendanceStatus.Excused;
-        return await SetStatusAsync(eventId, memberId, orgId, newStatus);
+        if (record is null)
+        {
+            record = new AttendanceRecord
+            {
+                Id = Guid.NewGuid(),
+                EventId = eventId,
+                MemberId = memberId,
+                OrganizationId = orgId,
+                Status = AttendanceStatus.Excused
+            };
+            await _records.AddAsync(record);
+        }
+        else
+        {
+            record.Status = record.Status == AttendanceStatus.Excused
+                ? AttendanceStatus.Absent
+                : AttendanceStatus.Excused;
+            await _records.UpdateAsync(record);
+        }
+        return ToDto(record);
     }
 
     private static AttendanceRecordDto ToDto(AttendanceRecord r) =>

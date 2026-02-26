@@ -13,5 +13,6 @@ public class ProjectAssignmentConfiguration : IEntityTypeConfiguration<ProjectAs
         builder.Property(pa => pa.MemberId).IsRequired();
         builder.Property(pa => pa.CreatedAt).IsRequired();
         builder.Property(pa => pa.OrganizationId).IsRequired();
+        builder.HasIndex(pa => new { pa.OrganizationId, pa.ProjectId, pa.MemberId }).IsUnique();
     }
 }

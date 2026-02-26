@@ -54,11 +54,13 @@ public class ProjectMaterialsController : ProtectedControllerBase
     }
 
     [HttpPost("documents")]
-    public async Task<IActionResult> UploadDocument(Guid projectId, IFormFile file, [FromForm] string title)
+    public async Task<IActionResult> UploadDocument(Guid projectId, IFormFile? file, [FromForm] string title)
     {
         var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can upload documents");
+        if (file == null || file.Length == 0)
+            return BadRequest(new { message = "A file must be provided." });
         await using var stream = file.OpenReadStream();
         var dto = await _materials.UploadDocumentAsync(projectId, orgId, title, file.FileName, stream);
         return Created($"/api/projects/{projectId}/documents/{dto.Id}", dto);

@@ -67,6 +67,22 @@ export class AttendanceService {
      * @returns any OK
      * @throws ApiError
      */
+    public static getApiEventsAttendanceMe(
+        eventId: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/events/{eventId}/attendance/me',
+            path: {
+                'eventId': eventId,
+            },
+        });
+    }
+    /**
+     * @param eventId
+     * @returns any OK
+     * @throws ApiError
+     */
     public static putApiEventsAttendanceMeExcused(
         eventId: string,
     ): CancelablePromise<any> {

@@ -12,7 +12,7 @@ public class AuditionSlotConfiguration : IEntityTypeConfiguration<AuditionSlot>
         builder.HasKey(a => a.Id);
         builder.Property(a => a.AuditionDateId).IsRequired();
         builder.Property(a => a.SlotTime).IsRequired();
-        builder.Property(a => a.MemberId);
+        builder.Property(a => a.MemberId).IsConcurrencyToken();
         builder.Property(a => a.Status)
             .IsRequired()
             .HasConversion(s => s.ToString(), s => Enum.Parse<AuditionStatus>(s));

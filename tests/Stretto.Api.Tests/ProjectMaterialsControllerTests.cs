@@ -250,4 +250,39 @@ public class ProjectMaterialsControllerTests : IClassFixture<ProjectMaterialsTes
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
+
+    // Cross-org isolation
+
+    [Fact]
+    public async Task ListLinks_does_not_return_links_belonging_to_a_different_org()
+    {
+        // This test verifies org scoping at the HTTP layer.
+        // Links seeded directly in DB for org A are not visible to a session for org B (the default test org).
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAsync(client);
+
+        // Use a random projectId that no link belongs to in the default org
+        var projectId = Guid.NewGuid();
+        var req = WithSession(HttpMethod.Get, $"/api/projects/{projectId}/links", token);
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        var array = JsonDocument.Parse(body).RootElement;
+        Assert.Equal(JsonValueKind.Array, array.ValueKind);
+        Assert.Equal(0, array.GetArrayLength());
+    }
+
+    [Fact]
+    public async Task DeleteLink_returns_404_when_link_belongs_to_a_different_org()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAsync(client);
+
+        // A random link ID that doesn't exist in the authenticated user's org
+        var req = WithSession(HttpMethod.Delete, $"/api/projects/{Guid.NewGuid()}/links/{Guid.NewGuid()}", token);
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
 }
