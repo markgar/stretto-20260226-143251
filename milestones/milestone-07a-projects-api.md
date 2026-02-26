@@ -27,4 +27,4 @@
 
 - [x] Create `src/Stretto.Api/Controllers/ProjectsController.cs` with `[ApiController]`, `[Route("api/projects")]`; constructor-inject `IProjectService` and `IAuthService`; add private `GetSessionAsync()` helper (identical pattern to `VenuesController`); implement: `GET /api/projects?programYearId={id}` → calls `GetSessionAsync()`, requires `programYearId` query param (return 400 if missing), calls `ListByProgramYearAsync`, returns `Ok(list)`; `GET /api/projects/{id}` → returns `Ok(dto)`; `POST /api/projects` → requires Admin role (throw `ForbiddenException` otherwise), calls `CreateAsync`, returns `Created($"/api/projects/{dto.Id}", dto)`; `PUT /api/projects/{id}` → requires Admin role, returns `Ok(dto)`; `DELETE /api/projects/{id}` → requires Admin role, returns `NoContent()`
 
-- [ ] Regenerate the TypeScript client: run `cd src/Stretto.Web && npm run generate` so the new `/api/projects` endpoints appear in `src/Stretto.Web/src/api/generated/`
+- [x] Regenerate the TypeScript client: run `cd src/Stretto.Web && npm run generate` so the new `/api/projects` endpoints appear in `src/Stretto.Web/src/api/generated/`
