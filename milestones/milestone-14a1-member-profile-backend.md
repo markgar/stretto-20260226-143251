@@ -15,14 +15,14 @@
 
 ## Tasks
 
-- [ ] Add `NotificationOptOut bool` property (defaulting to `false`) to `Member` entity in `src/Stretto.Domain/Entities/Member.cs`
+- [x] Add `NotificationOptOut bool` property (defaulting to `false`) to `Member` entity in `src/Stretto.Domain/Entities/Member.cs`
 
-- [ ] Update `MemberDto` record in `src/Stretto.Application/DTOs/MemberDtos.cs` to add `NotificationOptOut bool` as the final positional parameter; add `UpdateMemberProfileRequest` record with `[Required][MaxLength(100)] string FirstName`, `[Required][MaxLength(100)] string LastName`, `[Required][EmailAddress][MaxLength(200)] string Email`, `bool NotificationOptOut`
+- [x] Update `MemberDto` record in `src/Stretto.Application/DTOs/MemberDtos.cs` to add `NotificationOptOut bool` as the final positional parameter; add `UpdateMemberProfileRequest` record with `[Required][MaxLength(100)] string FirstName`, `[Required][MaxLength(100)] string LastName`, `[Required][EmailAddress][MaxLength(200)] string Email`, `bool NotificationOptOut`
 
-- [ ] Update `MemberService.ToDto` in `src/Stretto.Application/Services/MemberService.cs` to include `NotificationOptOut` in the returned `MemberDto`; update `CreateAsync` to initialise `NotificationOptOut = false`
+- [x] Update `MemberService.ToDto` in `src/Stretto.Application/Services/MemberService.cs` to include `NotificationOptOut` in the returned `MemberDto`; update `CreateAsync` to initialise `NotificationOptOut = false`
 
-- [ ] Add `GetMeAsync(Guid memberId, Guid orgId)` and `UpdateMeAsync(Guid memberId, Guid orgId, UpdateMemberProfileRequest req)` method signatures to `IMemberService` in `src/Stretto.Application/Interfaces/IMemberService.cs`
+- [x] Add `GetMeAsync(Guid memberId, Guid orgId)` and `UpdateMeAsync(Guid memberId, Guid orgId, UpdateMemberProfileRequest req)` method signatures to `IMemberService` in `src/Stretto.Application/Interfaces/IMemberService.cs`
 
-- [ ] Implement `GetMeAsync` and `UpdateMeAsync` in `MemberService`: `GetMeAsync` calls `GetByIdAsync` and throws `NotFoundException` if absent; `UpdateMeAsync` validates uniqueness of the new email (excluding the member's own current email), updates `FirstName`, `LastName`, `Email`, and `NotificationOptOut`, then calls `UpdateAsync`
+- [x] Implement `GetMeAsync` and `UpdateMeAsync` in `MemberService`: `GetMeAsync` calls `GetByIdAsync` and throws `NotFoundException` if absent; `UpdateMeAsync` validates uniqueness of the new email (excluding the member's own current email), updates `FirstName`, `LastName`, `Email`, and `NotificationOptOut`, then calls `UpdateAsync`
 
-- [ ] Cleanup #198: Update `IAuditionService.ListByProgramYearAsync` in `src/Stretto.Application/Interfaces/IAuditionService.cs` to return `Task<IReadOnlyList<AuditionDateDto>>` instead of `Task<List<AuditionDateDto>>`; update the corresponding return type in `AuditionService.ListByProgramYearAsync` implementation in `src/Stretto.Application/Services/AuditionService.cs`
+- [x] Cleanup #198: Update `IAuditionService.ListByProgramYearAsync` in `src/Stretto.Application/Interfaces/IAuditionService.cs` to return `Task<IReadOnlyList<AuditionDateDto>>` instead of `Task<List<AuditionDateDto>>`; update the corresponding return type in `AuditionService.ListByProgramYearAsync` implementation in `src/Stretto.Application/Services/AuditionService.cs`

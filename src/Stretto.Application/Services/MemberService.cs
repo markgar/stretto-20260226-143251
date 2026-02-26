@@ -79,6 +79,7 @@ public class MemberService : IMemberService
             Email = req.Email,
             Role = role,
             IsActive = true,
+            NotificationOptOut = false,
             OrganizationId = orgId
         };
         await _members.AddAsync(member);
@@ -119,6 +120,33 @@ public class MemberService : IMemberService
         return ToDto(member);
     }
 
+    public async Task<MemberDto> GetMeAsync(Guid memberId, Guid orgId)
+    {
+        var member = await _members.GetByIdAsync(memberId, orgId);
+        if (member is null)
+            throw new NotFoundException("Member not found");
+        return ToDto(member);
+    }
+
+    public async Task<MemberDto> UpdateMeAsync(Guid memberId, Guid orgId, UpdateMemberProfileRequest req)
+    {
+        var member = await _members.GetByIdAsync(memberId, orgId);
+        if (member is null)
+            throw new NotFoundException("Member not found");
+
+        var duplicate = await _members.FindOneAsync(m => m.OrganizationId == orgId && m.Id != memberId && m.Email.ToLower() == req.Email.ToLower());
+        if (duplicate is not null)
+            throw new ValidationException(new Dictionary<string, string[]> { ["email"] = new[] { "Email already in use" } });
+
+        member.FirstName = req.FirstName;
+        member.LastName = req.LastName;
+        member.Email = req.Email;
+        member.NotificationOptOut = req.NotificationOptOut;
+
+        await _members.UpdateAsync(member);
+        return ToDto(member);
+    }
+
     private static MemberDto ToDto(Member m) =>
-        new(m.Id, m.FirstName, m.LastName, m.Email, m.Role.ToString(), m.IsActive);
+        new(m.Id, m.FirstName, m.LastName, m.Email, m.Role.ToString(), m.IsActive, m.NotificationOptOut);
 }

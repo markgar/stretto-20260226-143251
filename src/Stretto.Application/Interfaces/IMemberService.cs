@@ -10,4 +10,6 @@ public interface IMemberService
     Task<MemberDto> CreateAsync(Guid orgId, CreateMemberRequest req);
     Task<MemberDto> UpdateAsync(Guid id, Guid orgId, UpdateMemberRequest req);
     Task<MemberDto> DeactivateAsync(Guid id, Guid orgId);
+    Task<MemberDto> GetMeAsync(Guid memberId, Guid orgId);
+    Task<MemberDto> UpdateMeAsync(Guid memberId, Guid orgId, UpdateMemberProfileRequest req);
 }
