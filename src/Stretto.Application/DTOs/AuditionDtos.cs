@@ -27,3 +27,15 @@ public record CreateAuditionDateRequest(
 public record UpdateSlotStatusRequest(string Status);
 
 public record UpdateSlotNotesRequest(string? Notes);
+
+public record AuditionSignUpRequest(string FirstName, string LastName, string Email);
+
+public record PublicAuditionSlotDto(Guid Id, TimeOnly SlotTime, bool IsAvailable);
+
+public record PublicAuditionDateDto(
+    Guid Id,
+    DateOnly Date,
+    TimeOnly StartTime,
+    TimeOnly EndTime,
+    int BlockLengthMinutes,
+    List<PublicAuditionSlotDto> Slots);

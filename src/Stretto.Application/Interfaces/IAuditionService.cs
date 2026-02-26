@@ -10,4 +10,6 @@ public interface IAuditionService
     Task DeleteAsync(Guid id, Guid orgId);
     Task<AuditionSlotDto> UpdateSlotStatusAsync(Guid slotId, Guid orgId, string status);
     Task<AuditionSlotDto> UpdateSlotNotesAsync(Guid slotId, Guid orgId, string? notes);
+    Task<PublicAuditionDateDto> GetPublicAuditionDateAsync(Guid auditionDateId);
+    Task<AuditionSlotDto> SignUpForSlotAsync(Guid slotId, AuditionSignUpRequest req);
 }

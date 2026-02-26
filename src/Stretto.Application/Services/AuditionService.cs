@@ -10,11 +10,13 @@ public class AuditionService : IAuditionService
 {
     private readonly IRepository<AuditionDate> _dates;
     private readonly IRepository<AuditionSlot> _slots;
+    private readonly IRepository<Member> _members;
 
-    public AuditionService(IRepository<AuditionDate> dates, IRepository<AuditionSlot> slots)
+    public AuditionService(IRepository<AuditionDate> dates, IRepository<AuditionSlot> slots, IRepository<Member> members)
     {
         _dates = dates;
         _slots = slots;
+        _members = members;
     }
 
     public async Task<List<AuditionDateDto>> ListByProgramYearAsync(Guid programYearId, Guid orgId)
@@ -48,6 +50,12 @@ public class AuditionService : IAuditionService
             throw new ValidationException(new Dictionary<string, string[]>
             {
                 ["startTime"] = ["Start time must be before end time"]
+            });
+
+        if (req.BlockLengthMinutes <= 0)
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["blockLengthMinutes"] = ["Block length must be a positive number"]
             });
 
         var totalMinutes = (int)(req.EndTime - req.StartTime).TotalMinutes;
@@ -135,4 +143,57 @@ public class AuditionService : IAuditionService
     private static AuditionDateDto ToDto(AuditionDate date, List<AuditionSlot> slots) =>
         new(date.Id, date.ProgramYearId, date.Date, date.StartTime, date.EndTime, date.BlockLengthMinutes,
             slots.Select(ToSlotDto).ToList());
+
+    public async Task<PublicAuditionDateDto> GetPublicAuditionDateAsync(Guid auditionDateId)
+    {
+        var date = await _dates.FindOneAsync(d => d.Id == auditionDateId);
+        if (date is null)
+            throw new NotFoundException("Audition date not found");
+
+        var slots = await _slots.ListAsync(date.OrganizationId, s => s.AuditionDateId == auditionDateId);
+        var publicSlots = slots
+            .OrderBy(s => s.SlotTime)
+            .Select(s => new PublicAuditionSlotDto(s.Id, s.SlotTime, s.MemberId == null && s.Status == AuditionStatus.Pending))
+            .ToList();
+
+        return new PublicAuditionDateDto(date.Id, date.Date, date.StartTime, date.EndTime, date.BlockLengthMinutes, publicSlots);
+    }
+
+    public async Task<AuditionSlotDto> SignUpForSlotAsync(Guid slotId, AuditionSignUpRequest req)
+    {
+        var slot = await _slots.FindOneAsync(s => s.Id == slotId);
+        if (slot is null)
+            throw new NotFoundException("Audition slot not found");
+
+        if (slot.MemberId != null)
+            throw new ConflictException("This slot has already been claimed");
+
+        if (string.IsNullOrWhiteSpace(req.Email))
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["email"] = ["Email is required"]
+            });
+
+        var member = await _members.FindOneAsync(
+            m => m.OrganizationId == slot.OrganizationId && m.Email.ToLower() == req.Email.Trim().ToLower());
+
+        if (member is null)
+        {
+            member = new Member
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = slot.OrganizationId,
+                FirstName = req.FirstName.Trim(),
+                LastName = req.LastName.Trim(),
+                Email = req.Email.Trim(),
+                Role = Role.Member,
+                IsActive = true
+            };
+            await _members.AddAsync(member);
+        }
+
+        slot.MemberId = member.Id;
+        await _slots.UpdateAsync(slot);
+        return ToSlotDto(slot);
+    }
 }

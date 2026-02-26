@@ -20,7 +20,7 @@ public class AuditionSlotsController : ProtectedControllerBase
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] Guid? auditionDateId)
     {
-        var (orgId, _) = await GetSessionAsync();
+        var (orgId, _, _) = await GetSessionAsync();
         if (auditionDateId is null)
             return BadRequest(new { message = "auditionDateId query parameter is required" });
         var dto = await _auditionService.GetAsync(auditionDateId.Value, orgId);
@@ -30,7 +30,7 @@ public class AuditionSlotsController : ProtectedControllerBase
     [HttpPut("{id:guid}/status")]
     public async Task<IActionResult> UpdateStatus(Guid id, [FromBody] UpdateSlotStatusRequest req)
     {
-        var (orgId, role) = await GetSessionAsync();
+        var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can update slot status");
         var dto = await _auditionService.UpdateSlotStatusAsync(id, orgId, req.Status);
@@ -40,7 +40,7 @@ public class AuditionSlotsController : ProtectedControllerBase
     [HttpPut("{id:guid}/notes")]
     public async Task<IActionResult> UpdateNotes(Guid id, [FromBody] UpdateSlotNotesRequest req)
     {
-        var (orgId, role) = await GetSessionAsync();
+        var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can update slot notes");
         var dto = await _auditionService.UpdateSlotNotesAsync(id, orgId, req.Notes);
