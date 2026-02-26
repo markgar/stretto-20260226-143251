@@ -22,6 +22,7 @@ builder.Services.AddScoped<IProgramYearService, ProgramYearService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IAuditionService, AuditionService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 var app = builder.Build();
 

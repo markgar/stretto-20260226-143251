@@ -30,6 +30,6 @@
 
 - [x] Add `src/Stretto.Api/Controllers/AttendanceController.cs` extending `ProtectedControllerBase`; inject `IAttendanceService`; `GET /api/events/{eventId}/attendance` — admin only (throw ForbiddenException if role != "Admin"), returns `GetForEventAsync(eventId, orgId)`; `PUT /api/events/{eventId}/attendance/{memberId}` — admin only, parses `SetAttendanceStatusRequest.Status` via `Enum.TryParse<AttendanceStatus>`, throws `ValidationException` on invalid value, calls `SetStatusAsync`, returns 200; `POST /api/checkin/{eventId}` — any authenticated member, calls `CheckInAsync(eventId, memberId, orgId)`, returns 200; `PUT /api/events/{eventId}/attendance/me/excused` — any authenticated member, calls `ToggleExcusedAsync(eventId, memberId, orgId)`, returns 200
 
-- [ ] Register `IAttendanceService` → `AttendanceService` as scoped in `src/Stretto.Api/Program.cs` following the pattern of the existing service registrations
+- [x] Register `IAttendanceService` → `AttendanceService` as scoped in `src/Stretto.Api/Program.cs` following the pattern of the existing service registrations
 
 - [ ] [Cleanup #139] Migrate `ProjectsController` and `MembersController` and `EventsController` to extend `ProtectedControllerBase` (inject `IAuthService` via `base(authService)`) and remove their duplicated private `GetSessionAsync()` methods; update all callers inside each controller to use `var (orgId, role, _) = await GetSessionAsync()` (or `var (orgId, _,  memberId)` where memberId is needed)
