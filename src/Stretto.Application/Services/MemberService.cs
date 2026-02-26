@@ -79,6 +79,7 @@ public class MemberService : IMemberService
             Email = req.Email,
             Role = role,
             IsActive = true,
+            NotificationOptOut = false,
             OrganizationId = orgId
         };
         await _members.AddAsync(member);

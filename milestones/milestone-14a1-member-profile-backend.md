@@ -19,7 +19,7 @@
 
 - [x] Update `MemberDto` record in `src/Stretto.Application/DTOs/MemberDtos.cs` to add `NotificationOptOut bool` as the final positional parameter; add `UpdateMemberProfileRequest` record with `[Required][MaxLength(100)] string FirstName`, `[Required][MaxLength(100)] string LastName`, `[Required][EmailAddress][MaxLength(200)] string Email`, `bool NotificationOptOut`
 
-- [ ] Update `MemberService.ToDto` in `src/Stretto.Application/Services/MemberService.cs` to include `NotificationOptOut` in the returned `MemberDto`; update `CreateAsync` to initialise `NotificationOptOut = false`
+- [x] Update `MemberService.ToDto` in `src/Stretto.Application/Services/MemberService.cs` to include `NotificationOptOut` in the returned `MemberDto`; update `CreateAsync` to initialise `NotificationOptOut = false`
 
 - [ ] Add `GetMeAsync(Guid memberId, Guid orgId)` and `UpdateMeAsync(Guid memberId, Guid orgId, UpdateMemberProfileRequest req)` method signatures to `IMemberService` in `src/Stretto.Application/Interfaces/IMemberService.cs`
 
