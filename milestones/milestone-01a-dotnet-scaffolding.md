@@ -8,7 +8,7 @@
 > **Reference files:**
 > This is the first milestone — no prior patterns exist. The builder establishes the patterns that all future milestones will follow.
 
-- [ ] Create `Stretto.sln` solution file and `src/Stretto.Domain` class library project targeting net10.0 with `<Nullable>enable</Nullable>` and `<ImplicitUsings>enable</ImplicitUsings>`; add Domain to the solution
+- [x] Create `Stretto.sln` solution file and `src/Stretto.Domain` class library project targeting net10.0 with `<Nullable>enable</Nullable>` and `<ImplicitUsings>enable</ImplicitUsings>`; add Domain to the solution
 - [ ] Add `src/Stretto.Application` class library project (net10.0, Nullable=enable, ImplicitUsings=enable); add a project reference from Application to Domain; add Application to the solution
 - [ ] Add `src/Stretto.Infrastructure` class library project (net10.0, Nullable=enable, ImplicitUsings=enable); add a project reference from Infrastructure to Application; add `Microsoft.EntityFrameworkCore.InMemory` NuGet package; add Infrastructure to the solution
 - [ ] Add `src/Stretto.Api` ASP.NET Core Web API project (net10.0, Nullable=enable, ImplicitUsings=enable); add project references to Application and Infrastructure; add Stretto.Api to the solution
