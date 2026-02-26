@@ -1,4 +1,4 @@
-## Milestone: Auditions — Admin Setup
+## Milestone: Auditions — Backend
 
 > **Validates:**
 > - `POST /api/auth/login` with `mgarner22@gmail.com`; then `GET /api/program-years` to get a program year id
@@ -12,9 +12,6 @@
 > - `PUT /api/audition-slots/{slotId}/notes` with body `{"notes":"Good range"}` returns HTTP 200 with updated `notes` value
 > - `DELETE /api/audition-dates/{id}` returns HTTP 204; subsequent `GET /api/audition-dates/{id}` returns HTTP 404
 > - `POST /api/audition-dates` authenticated as `mgarner@outlook.com` (Member role) returns HTTP 403
-> - Browser navigates to `/auditions?programYearId={id}` and renders a list of audition dates
-> - Browser navigates to `/auditions/new?programYearId={id}` and renders a create form
-> - Browser navigates to `/auditions/{id}` and renders a slot grid with colored status badges (amber=Pending, green=Accepted, red=Rejected, blue=Waitlisted)
 
 > **Reference files:**
 > - `src/Stretto.Domain/Entities/AuditionDate.cs` — AuditionDate entity (Id, ProgramYearId, Date, StartTime, EndTime, BlockLengthMinutes, OrganizationId)
@@ -22,9 +19,6 @@
 > - `src/Stretto.Infrastructure/Repositories/BaseRepository.cs` — `ListAsync(orgId, predicate)` for filtering by AuditionDateId/ProgramYearId
 > - `src/Stretto.Application/Services/ProjectService.cs` — validation pattern, `ToDto` helper, service constructor injection
 > - `src/Stretto.Api/Controllers/ProjectsController.cs` — thin controller extending `ProtectedControllerBase`; `GetSessionAsync()` + role check pattern
-> - `src/Stretto.Web/src/pages/ProgramYearsListPage.tsx` — list page using `useQuery`, shadcn list, link to detail
-> - `src/Stretto.Web/src/pages/VenueFormPage.tsx` — create form using React Hook Form + Zod + `useMutation`
-> - `src/Stretto.Web/src/App.tsx` — route registration; add audition routes here
 > - `src/Stretto.Api/Program.cs` — DI registration; add `IAuditionService` here
 
 - [ ] Create `src/Stretto.Application/DTOs/AuditionDtos.cs` with six records: `AuditionSlotDto(Guid Id, Guid AuditionDateId, TimeOnly SlotTime, Guid? MemberId, string Status, string? Notes)`; `AuditionDateDto(Guid Id, Guid ProgramYearId, DateOnly Date, TimeOnly StartTime, TimeOnly EndTime, int BlockLengthMinutes, int SlotCount)`; `AuditionDateDetailDto(Guid Id, Guid ProgramYearId, DateOnly Date, TimeOnly StartTime, TimeOnly EndTime, int BlockLengthMinutes, List<AuditionSlotDto> Slots)`; `CreateAuditionDateRequest(Guid ProgramYearId, DateOnly Date, TimeOnly StartTime, TimeOnly EndTime, int BlockLengthMinutes)`; `UpdateSlotStatusRequest(string Status)`; `UpdateSlotNotesRequest(string? Notes)` — use `string` for Status in DTOs so the JSON surface stays simple; parse to enum inside the service
@@ -38,13 +32,3 @@
 - [ ] Create `src/Stretto.Api/Controllers/AuditionDatesController.cs` with `[ApiController]`, `[Route("api/audition-dates")]`, extending `ProtectedControllerBase`; constructor-inject `IAuditionService`; implement: `GET /api/audition-dates?programYearId={id}` (return 400 if query param missing, else call `ListByProgramYearAsync` and return `Ok(list)`); `GET /api/audition-dates/{id:guid}` (call `GetAsync`, return `Ok(dto)`); `POST /api/audition-dates` (require Admin role via role check, call `CreateAsync`, return `Created($"/api/audition-dates/{dto.Id}", dto)`); `DELETE /api/audition-dates/{id:guid}` (require Admin role, call `DeleteAsync`, return `NoContent()`)
 
 - [ ] Create `src/Stretto.Api/Controllers/AuditionSlotsController.cs` with `[ApiController]`, `[Route("api/audition-slots")]`, extending `ProtectedControllerBase`; constructor-inject `IAuditionService`; implement: `PUT /api/audition-slots/{id:guid}/status` (require Admin role, call `UpdateSlotStatusAsync(id, orgId, req.Status)`, return `Ok(dto)`); `PUT /api/audition-slots/{id:guid}/notes` (require Admin role, call `UpdateSlotNotesAsync(id, orgId, req.Notes)`, return `Ok(dto)`)
-
-- [ ] Regenerate the TypeScript client: run `cd src/Stretto.Web && npm run generate` so `AuditionDateDto`, `AuditionDateDetailDto`, `AuditionSlotDto`, `CreateAuditionDateRequest`, `UpdateSlotStatusRequest`, `UpdateSlotNotesRequest`, and the `/api/audition-dates` and `/api/audition-slots` endpoints appear in `src/Stretto.Web/src/api/generated/`
-
-- [ ] Create `src/Stretto.Web/src/pages/AuditionsListPage.tsx`: reads `programYearId` from the URL query string with `useSearchParams`; uses `useQuery` to call `AuditionDatesService.getApiAuditionDates({ programYearId })`; renders a heading "Audition Dates" with an Admin-only "Add Audition Date" button (data-testid `add-audition-date-button`) linking to `/auditions/new?programYearId={programYearId}`; renders a list where each item shows the date formatted as `MMM d, yyyy` (date-fns `format`), start and end times, block length in minutes, slot count, linked to `/auditions/{id}`; shows a skeleton loader while loading; shows empty state ("No audition dates scheduled — add one to get started") when list is empty
-
-- [ ] Create `src/Stretto.Web/src/pages/AuditionDateCreatePage.tsx`: reads `programYearId` from the URL query string; Zod schema: `programYearId` (UUID, derived from query param not user input), `date` (required date string), `startTime` (required string in `HH:mm:ss` format), `endTime` (required string in `HH:mm:ss` format, must be after `startTime`), `blockLengthMinutes` (positive integer min 5 max 480); wires to `useForm` with `zodResolver`; `useMutation` calling `AuditionDatesService.postApiAuditionDates` with the form values; on success navigates to `/auditions/{createdDto.id}`; cancel button navigates to `/auditions?programYearId={programYearId}`; all inputs carry `data-testid` attributes (`date-input`, `start-time-input`, `end-time-input`, `block-length-input`, `submit-button`); shows field-level error messages from Zod and a banner for server errors
-
-- [ ] Create `src/Stretto.Web/src/pages/AuditionSlotGridPage.tsx`: fetches audition date detail by route param `id` using `useQuery` calling `AuditionDatesService.getApiAuditionDatesId({ id })`; renders a heading with the date formatted as `EEEE, MMMM d, yyyy` and a subheading showing start time, end time, and block length; renders a grid (CSS grid or table) of all slots sorted by `slotTime`; each slot cell shows the time and a status badge color-coded by Tailwind classes: Pending = `bg-amber-100 text-amber-800`, Accepted = `bg-green-100 text-green-800`, Rejected = `bg-red-100 text-red-800`, Waitlisted = `bg-blue-100 text-blue-800`; Admin-only: each slot has a status `<select>` (data-testid `slot-status-select-{slotId}`) with options Pending/Accepted/Rejected/Waitlisted that calls `AuditionSlotsService.putApiAuditionSlotsIdStatus({ id: slot.id, requestBody: { status } })` via `useMutation` and invalidates the detail query on success; Admin-only: each slot has a notes textarea (data-testid `slot-notes-input-{slotId}`) with an `onBlur` handler that calls `AuditionSlotsService.putApiAuditionSlotsIdNotes({ id: slot.id, requestBody: { notes } })` via `useMutation` when the value has changed; shows skeleton loader while loading; a "Back to Audition Dates" link navigates to `/auditions?programYearId={programYearId}`
-
-- [ ] Update `src/Stretto.Web/src/App.tsx`: add imports for `AuditionsListPage`, `AuditionDateCreatePage`, `AuditionSlotGridPage`; replace `<Route path="/auditions" element={<ComingSoon />} />` with three routes inside the protected block: `/auditions` → `AuditionsListPage`, `/auditions/new` → `AuditionDateCreatePage`, `/auditions/:id` → `AuditionSlotGridPage`
