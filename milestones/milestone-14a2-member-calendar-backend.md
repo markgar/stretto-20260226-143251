@@ -18,7 +18,7 @@
 
 - [x] Add `CalendarEventDto` record to a new file `src/Stretto.Application/DTOs/MemberCalendarDtos.cs` with parameters `Guid EventId`, `Guid ProjectId`, `string ProjectName`, `string EventType`, `DateOnly Date`, `TimeOnly StartTime`, `int DurationMinutes`, `string? VenueName`; add `MemberProjectSummaryDto` record with `Guid ProjectId`, `string ProjectName`, `DateOnly StartDate`, `DateOnly EndDate`, `int UpcomingEventCount`
 
-- [ ] Create `IMemberCalendarService` interface in `src/Stretto.Application/Interfaces/IMemberCalendarService.cs` with two methods: `Task<List<MemberProjectSummaryDto>> GetProjectsAsync(Guid memberId, Guid orgId)` and `Task<List<CalendarEventDto>> GetUpcomingEventsAsync(Guid memberId, Guid orgId)`
+- [x] Create `IMemberCalendarService` interface in `src/Stretto.Application/Interfaces/IMemberCalendarService.cs` with two methods: `Task<List<MemberProjectSummaryDto>> GetProjectsAsync(Guid memberId, Guid orgId)` and `Task<List<CalendarEventDto>> GetUpcomingEventsAsync(Guid memberId, Guid orgId)`
 
 - [ ] Create `MemberCalendarService` in `src/Stretto.Application/Services/MemberCalendarService.cs` implementing `IMemberCalendarService`; inject `IRepository<ProjectAssignment>`, `IRepository<Event>`, `IRepository<Project>`, `IRepository<Venue>`; `GetProjectsAsync` finds all assignments for the member, loads each project, counts upcoming events (date >= today) per project, returns sorted by project name; `GetUpcomingEventsAsync` finds all assignments, loads events with date >= today across all assigned projects, joins venue name, returns sorted by date then start time
 
