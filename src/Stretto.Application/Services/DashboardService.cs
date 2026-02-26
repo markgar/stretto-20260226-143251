@@ -82,7 +82,7 @@ public class DashboardService : IDashboardService
             .Select(m => new RecentActivityItem("NewMember", $"{m.FirstName} {m.LastName} joined as a member", m.CreatedAt))
             .ToList();
 
-        var recentAssignments = await _assignments.ListAsync(orgId, a => a.CreatedAt >= cutoff);
+        var recentAssignments = await _assignments.ListAsync(orgId, a => a.CreatedAt >= cutoff && projectIds.Contains(a.ProjectId));
         var memberMap = (await _members.ListAsync(orgId)).ToDictionary(m => m.Id, m => $"{m.FirstName} {m.LastName}");
 
         var assignmentActivity = recentAssignments
