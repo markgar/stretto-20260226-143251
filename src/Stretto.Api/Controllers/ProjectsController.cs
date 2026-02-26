@@ -10,11 +10,13 @@ namespace Stretto.Api.Controllers;
 public class ProjectsController : ProtectedControllerBase
 {
     private readonly IProjectService _projectService;
+    private readonly IProjectAssignmentService _assignmentService;
 
-    public ProjectsController(IProjectService projectService, IAuthService authService)
+    public ProjectsController(IProjectService projectService, IProjectAssignmentService assignmentService, IAuthService authService)
         : base(authService)
     {
         _projectService = projectService;
+        _assignmentService = assignmentService;
     }
 
     [HttpGet]
@@ -62,6 +64,34 @@ public class ProjectsController : ProtectedControllerBase
         if (role != "Admin")
             throw new ForbiddenException("Only admins can delete projects");
         await _projectService.DeleteAsync(id, orgId);
+        return NoContent();
+    }
+
+    [HttpGet("{id:guid}/members")]
+    public async Task<IActionResult> ListMembers(Guid id)
+    {
+        var (orgId, _, _) = await GetSessionAsync();
+        var members = await _assignmentService.ListProjectMembersAsync(id, orgId);
+        return Ok(members);
+    }
+
+    [HttpPost("{id:guid}/members")]
+    public async Task<IActionResult> AssignMember(Guid id, [FromBody] AssignMemberRequest req)
+    {
+        var (orgId, role, _) = await GetSessionAsync();
+        if (role != "Admin")
+            throw new ForbiddenException("Only admins can assign members");
+        await _assignmentService.AssignAsync(id, req.MemberId, orgId);
+        return Created(string.Empty, null);
+    }
+
+    [HttpDelete("{id:guid}/members/{memberId:guid}")]
+    public async Task<IActionResult> UnassignMember(Guid id, Guid memberId)
+    {
+        var (orgId, role, _) = await GetSessionAsync();
+        if (role != "Admin")
+            throw new ForbiddenException("Only admins can unassign members");
+        await _assignmentService.UnassignAsync(id, memberId, orgId);
         return NoContent();
     }
 }
