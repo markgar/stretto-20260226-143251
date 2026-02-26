@@ -1,0 +1,42 @@
+## Milestone: Audition Sign-Up — Public API and Pages
+
+> **Validates:**
+> - `GET /api/public/auditions/{auditionDateId}` (unauthenticated, no cookie) returns HTTP 200 with JSON containing `id`, `date`, `startTime`, `endTime`, `blockLengthMinutes`, and a `slots` array where each slot has `id`, `slotTime`, `isAvailable: true`
+> - `POST /api/public/auditions/{slotId}/signup` with body `{"firstName":"Jane","lastName":"Doe","email":"jane@example.com"}` returns HTTP 200 with `AuditionSlotDto` containing the slot's `id`, `slotTime`, `status: "Pending"`, and non-null `memberId`
+> - A second `POST /api/public/auditions/{slotId}/signup` to the same slot returns HTTP 422 with `message` indicating the slot is already taken
+> - `GET /api/public/auditions/{auditionDateId}` after sign-up shows the claimed slot with `isAvailable: false`
+> - `GET /auditions/{auditionDateId}` (browser) renders without redirecting to login
+> - `GET /auditions/confirmation` (browser) renders a confirmation message without redirecting to login
+
+> **Reference files:**
+> - `src/Stretto.Application/DTOs/AuditionDtos.cs` — existing DTO records; add new records here
+> - `src/Stretto.Application/Interfaces/IAuditionService.cs` — service interface; add new method signatures here
+> - `src/Stretto.Application/Services/AuditionService.cs` — existing service; extend with new methods and `IRepository<Member>` injection
+> - `src/Stretto.Api/Controllers/AuthController.cs` — example of a public (no-auth) controller with plain `ControllerBase`
+> - `src/Stretto.Api/Program.cs` — DI registration; confirm no new registrations are needed (generic repos are already registered)
+> - `src/Stretto.Web/src/App.tsx` — route definitions; add public routes outside `ProtectedRoute`
+> - `src/Stretto.Web/src/pages/LoginPage.tsx` — Zod + RHF + useMutation pattern for a public form page
+
+- [ ] Fix bug #224: in `src/Stretto.Application/Services/AuditionService.cs` `CreateAsync`, add a guard before the modulo check — if `req.BlockLengthMinutes <= 0` throw `ValidationException` with `["blockLengthMinutes"] = ["Block length must be a positive number"]`
+
+- [ ] Add three new DTO records to `src/Stretto.Application/DTOs/AuditionDtos.cs`: `AuditionSignUpRequest(string FirstName, string LastName, string Email)`; `PublicAuditionSlotDto(Guid Id, TimeOnly SlotTime, bool IsAvailable)`; `PublicAuditionDateDto(Guid Id, DateOnly Date, TimeOnly StartTime, TimeOnly EndTime, int BlockLengthMinutes, List<PublicAuditionSlotDto> Slots)`
+
+- [ ] Add two method signatures to `src/Stretto.Application/Interfaces/IAuditionService.cs`: `Task<PublicAuditionDateDto> GetPublicAuditionDateAsync(Guid auditionDateId)` and `Task<AuditionSlotDto> SignUpForSlotAsync(Guid slotId, AuditionSignUpRequest req)`
+
+- [ ] Add `IRepository<Member> _members` to `AuditionService` constructor: update constructor signature in `src/Stretto.Application/Services/AuditionService.cs` to also accept `IRepository<Member> members`; assign to `private readonly IRepository<Member> _members`; add `using Stretto.Domain.Entities;` if not already present
+
+- [ ] Implement `GetPublicAuditionDateAsync` in `AuditionService`: call `_dates.FindOneAsync(d => d.Id == auditionDateId)`, throw `NotFoundException("Audition date not found")` if null; load slots via `_slots.ListAsync(date.OrganizationId, s => s.AuditionDateId == auditionDateId)` ordered by `SlotTime`; map each slot to `PublicAuditionSlotDto` with `IsAvailable = slot.MemberId == null && slot.Status == AuditionStatus.Pending`; return `new PublicAuditionDateDto(date.Id, date.Date, date.StartTime, date.EndTime, date.BlockLengthMinutes, publicSlots)`
+
+- [ ] Implement `SignUpForSlotAsync` in `AuditionService`: call `_slots.FindOneAsync(s => s.Id == slotId)`, throw `NotFoundException("Audition slot not found")` if null; if `slot.MemberId != null` throw `ValidationException(new Dictionary<string, string[]> { ["slot"] = ["This slot has already been claimed"] })`; validate `req.Email` is not null or whitespace (throw `ValidationException` with `["email"] = ["Email is required"]` if invalid); call `_members.FindOneAsync(m => m.OrganizationId == slot.OrganizationId && m.Email.ToLower() == req.Email.Trim().ToLower())` to find existing member; if null, create and `AddAsync` a new `Member` with `Id = Guid.NewGuid()`, `OrganizationId = slot.OrganizationId`, `FirstName = req.FirstName.Trim()`, `LastName = req.LastName.Trim()`, `Email = req.Email.Trim()`, `Role = Role.Member`, `IsActive = true`; set `slot.MemberId = member.Id`; call `_slots.UpdateAsync(slot)`; return `ToSlotDto(slot)`
+
+- [ ] Create `src/Stretto.Api/Controllers/PublicAuditionsController.cs`: `[ApiController]`, `[Route("api/public/auditions")]`, inherits `ControllerBase` (NOT `ProtectedControllerBase`); constructor-inject `IAuditionService`; implement `GET /{auditionDateId:guid}` calling `GetPublicAuditionDateAsync` and returning `Ok(dto)`; implement `POST /{slotId:guid}/signup` accepting `[FromBody] AuditionSignUpRequest req`, calling `SignUpForSlotAsync`, returning `Ok(dto)`
+
+- [ ] Regenerate TypeScript client: run `cd src/Stretto.Web && npm run generate` so `PublicAuditionSlotDto`, `PublicAuditionDateDto`, `AuditionSignUpRequest`, and the `/api/public/auditions` endpoints appear in `src/Stretto.Web/src/api/generated/`
+
+- [ ] Add two public routes outside `<Route element={<ProtectedRoute />}>` in `src/Stretto.Web/src/App.tsx`: `<Route path="/auditions/:auditionDateId" element={<AuditionSignUpPage />} />` and `<Route path="/auditions/confirmation" element={<AuditionConfirmationPage />} />`; add the corresponding imports at the top of the file
+
+- [ ] Create `src/Stretto.Web/src/pages/AuditionSignUpPage.tsx`: use `useParams` to get `auditionDateId`; call `GET /api/public/auditions/${auditionDateId}` with `useQuery` (use raw `fetch`, no credentials, since this is public); render date header (formatted date, time range); render a slot grid listing each slot's `slotTime` with an "Available" or "Taken" badge; for each available slot render a "Sign Up" button that sets a `selectedSlotId` state
+
+- [ ] Add the sign-up form to `AuditionSignUpPage.tsx`: when `selectedSlotId` is set, render a form below the grid with Zod schema `z.object({ firstName: z.string().min(1), lastName: z.string().min(1), email: z.string().email() })`; wire with `useForm` + `zodResolver`; on submit call `POST /api/public/auditions/${selectedSlotId}/signup` with `useMutation`; on success navigate to `/auditions/confirmation` passing `{ state: { slotTime, date } }` via `useNavigate`; on API error display the `message` field from the response body
+
+- [ ] Create `src/Stretto.Web/src/pages/AuditionConfirmationPage.tsx`: read `location.state` (via `useLocation`) for `slotTime` and `date` passed from the sign-up page; render a centred confirmation card with heading "You're signed up!", a summary line showing the formatted date and time slot, and a note "Please arrive a few minutes early"
