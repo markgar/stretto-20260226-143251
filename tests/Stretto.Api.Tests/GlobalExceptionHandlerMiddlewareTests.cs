@@ -113,6 +113,22 @@ public class GlobalExceptionHandlerMiddlewareTests
     }
 
     [Fact]
+    public async Task UnprocessableEntityException_returns_422_with_message_body()
+    {
+        var (context, body) = CreateHttpContext();
+        RequestDelegate next = _ => throw new UnprocessableEntityException("Block length must evenly divide the total duration");
+        var middleware = new GlobalExceptionHandlerMiddleware(next, NullLogger<GlobalExceptionHandlerMiddleware>.Instance);
+
+        await middleware.InvokeAsync(context);
+
+        Assert.Equal(422, context.Response.StatusCode);
+        Assert.Equal("application/json", context.Response.ContentType);
+        var json = await ReadBodyAsync(body);
+        using var doc = JsonDocument.Parse(json);
+        Assert.Equal("Block length must evenly divide the total duration", doc.RootElement.GetProperty("message").GetString());
+    }
+
+    [Fact]
     public async Task Non_throwing_next_middleware_passes_status_through()
     {
         var (context, _) = CreateHttpContext();
