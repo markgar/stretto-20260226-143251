@@ -16,6 +16,7 @@ builder.Services.AddDbContext<AppDbContext>(o => o.UseInMemoryDatabase("StrettoD
 builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 builder.Services.AddSingleton<IAuthSessionStore, InMemoryAuthSessionStore>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<VenueService>();
 
 var app = builder.Build();
 
