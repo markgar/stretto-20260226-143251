@@ -4,6 +4,7 @@ import { format, parseISO } from 'date-fns';
 import AppShell from '../components/AppShell';
 import ProjectEventsTab from '../components/ProjectEventsTab';
 import ProjectMembersTab from '../components/ProjectMembersTab';
+import ProjectMaterialsTab from '../components/ProjectMaterialsTab';
 import { ProjectsService } from '../api/generated/services/ProjectsService';
 import { useAuthStore } from '../stores/authStore';
 
@@ -124,9 +125,7 @@ export default function ProjectDetailPage() {
             )}
             {activeTab === 'events' && <ProjectEventsTab projectId={id!} />}
             {activeTab === 'members' && <ProjectMembersTab projectId={id!} />}
-            {activeTab === 'materials' && (
-              <p className="text-muted-foreground">Coming soon</p>
-            )}
+            {activeTab === 'materials' && <ProjectMaterialsTab projectId={id!} />}
           </>
         )}
       </div>
