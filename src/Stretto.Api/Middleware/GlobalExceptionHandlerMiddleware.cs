@@ -18,6 +18,13 @@ public class GlobalExceptionHandlerMiddleware
         {
             await _next(context);
         }
+        catch (UnauthorizedException ex)
+        {
+            context.Response.StatusCode = 401;
+            context.Response.ContentType = "application/json";
+            var body = JsonSerializer.Serialize(new { message = ex.Message });
+            await context.Response.WriteAsync(body);
+        }
         catch (NotFoundException ex)
         {
             context.Response.StatusCode = 404;
