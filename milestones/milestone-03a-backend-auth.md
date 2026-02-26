@@ -21,7 +21,7 @@
 
 - [x] Create `IAuthSessionStore` interface in `Stretto.Application/Interfaces/IAuthSessionStore.cs` with three methods: `string CreateSession(Guid memberId)`, `Guid? GetMemberId(string token)`, `void DeleteSession(string token)`
 
-- [ ] Create `InMemoryAuthSessionStore` in `Stretto.Infrastructure/Auth/InMemoryAuthSessionStore.cs` implementing `IAuthSessionStore`; use `ConcurrentDictionary<string, Guid>` as backing store; `CreateSession` generates a token via `Guid.NewGuid().ToString("N")`, stores `{token → memberId}`, returns the token; `GetMemberId` returns the value or `null` if absent; `DeleteSession` removes the key
+- [x] Create `InMemoryAuthSessionStore` in `Stretto.Infrastructure/Auth/InMemoryAuthSessionStore.cs` implementing `IAuthSessionStore`; use `ConcurrentDictionary<string, Guid>` as backing store; `CreateSession` generates a token via `Guid.NewGuid().ToString("N")`, stores `{token → memberId}`, returns the token; `GetMemberId` returns the value or `null` if absent; `DeleteSession` removes the key
 
 - [ ] Create auth DTOs as records in `Stretto.Application/DTOs/AuthDtos.cs`: `LoginRequest(string Email)` and `AuthUserDto(Guid Id, string Email, string FirstName, string LastName, string Role, Guid OrgId, string OrgName)`
 
