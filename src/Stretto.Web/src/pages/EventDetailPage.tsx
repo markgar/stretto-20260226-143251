@@ -100,7 +100,42 @@ function AttendancePanel({ eventId }: { eventId: string }) {
   );
 }
 
-export default function EventDetailPage() {
+function MemberAttendanceSection({ eventId, memberId }: { eventId: string; memberId: string }) {
+  const queryClient = useQueryClient();
+
+  const { data: attendance } = useQuery<AttendanceSummaryItem[]>({
+    queryKey: ['attendance', eventId],
+    queryFn: () => AttendanceService.getApiEventsAttendance(eventId),
+  });
+
+  const myRecord = attendance?.find((a) => a.memberId === memberId) ?? null;
+  const isExcused = myRecord?.status === 'Excused';
+
+  const toggleMutation = useMutation({
+    mutationFn: () => AttendanceService.putApiEventsAttendanceMeExcused(eventId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['attendance', eventId] }),
+  });
+
+  return (
+    <section className="mt-8 rounded-lg border p-4 max-w-md">
+      <h2 className="text-lg font-semibold mb-3">My Attendance</h2>
+      <div className="flex items-center gap-3 mb-4">
+        <span className="text-sm font-medium">Status</span>
+        <AttendanceStatusBadge status={myRecord?.status ?? null} />
+      </div>
+      <button
+        data-testid="excuse-toggle"
+        onClick={() => toggleMutation.mutate()}
+        disabled={toggleMutation.isPending}
+        className="rounded-md border px-4 py-2 text-sm hover:bg-accent disabled:opacity-50"
+      >
+        {isExcused ? 'Remove excuse' : 'Excuse my absence'}
+      </button>
+    </section>
+  );
+}
+
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
@@ -184,6 +219,7 @@ export default function EventDetailPage() {
               </div>
             </div>
             {isAdmin && <AttendancePanel eventId={id!} />}
+            {user?.role === 'Member' && <MemberAttendanceSection eventId={id!} memberId={user.id} />}
           </>
         )}
       </div>
