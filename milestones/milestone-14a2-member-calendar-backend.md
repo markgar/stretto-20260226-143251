@@ -24,6 +24,6 @@
 
 - [x] Create `ICalFeedGenerator` static class in `src/Stretto.Application/` (new file `ICalFeedGenerator.cs`) with a single static method `Generate(IEnumerable<CalendarEventDto> events, string calendarName) -> string` that builds a valid RFC 5545 iCal feed: `BEGIN:VCALENDAR`, `VERSION:2.0`, `PRODID:-//Stretto//Stretto//EN`, `X-WR-CALNAME:{calendarName}`, one `VEVENT` per event with `UID:{EventId}@stretto`, `DTSTART;VALUE=DATE:{Date:yyyyMMdd}`, `DTEND` computed from `StartTime + DurationMinutes`, `SUMMARY:{ProjectName} – {EventType}`, `END:VEVENT`, then `END:VCALENDAR`; fold lines longer than 75 octets per RFC 5545
 
-- [ ] Register `IMemberCalendarService` → `MemberCalendarService` as scoped in `src/Stretto.Api/Program.cs`
+- [x] Register `IMemberCalendarService` → `MemberCalendarService` as scoped in `src/Stretto.Api/Program.cs`
 
 - [ ] Create `MemberMeController` in `src/Stretto.Api/Controllers/MemberMeController.cs` extending `ProtectedControllerBase` with route prefix `api/members/me`; inject `IMemberService` and `IMemberCalendarService`; implement `GET /api/members/me` (calls `GetMeAsync(memberId, orgId)`), `PUT /api/members/me` (calls `UpdateMeAsync`), `GET /api/members/me/projects` (calls `GetProjectsAsync`), `GET /api/members/me/calendar` (calls `GetUpcomingEventsAsync`), `GET /api/members/me/calendar.ics` (calls `GetUpcomingEventsAsync` then `ICalFeedGenerator.Generate`, returns `Content("text/calendar", icalText)` with `Content-Disposition: attachment; filename="my-calendar.ics"` response header)

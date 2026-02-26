@@ -28,6 +28,7 @@ builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IStorageProvider, LocalFileStorageProvider>();
 builder.Services.AddScoped<IProjectMaterialsService, ProjectMaterialsService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
+builder.Services.AddScoped<IMemberCalendarService, MemberCalendarService>();
 
 var app = builder.Build();
 
