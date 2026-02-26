@@ -19,7 +19,7 @@
 
 - [x] Add two method signatures to `src/Stretto.Application/Interfaces/IAuditionService.cs`: `Task<PublicAuditionDateDto> GetPublicAuditionDateAsync(Guid auditionDateId)` and `Task<AuditionSlotDto> SignUpForSlotAsync(Guid slotId, AuditionSignUpRequest req)`
 
-- [ ] Add `IRepository<Member> _members` to `AuditionService` constructor: update constructor signature in `src/Stretto.Application/Services/AuditionService.cs` to also accept `IRepository<Member> members`; assign to `private readonly IRepository<Member> _members`; add `using Stretto.Domain.Entities;` if not already present
+- [x] Add `IRepository<Member> _members` to `AuditionService` constructor: update constructor signature in `src/Stretto.Application/Services/AuditionService.cs` to also accept `IRepository<Member> members`; assign to `private readonly IRepository<Member> _members`; add `using Stretto.Domain.Entities;` if not already present
 
 - [ ] Implement `GetPublicAuditionDateAsync` in `AuditionService`: call `_dates.FindOneAsync(d => d.Id == auditionDateId)`, throw `NotFoundException("Audition date not found")` if null; load slots via `_slots.ListAsync(date.OrganizationId, s => s.AuditionDateId == auditionDateId)` ordered by `SlotTime`; map each slot to `PublicAuditionSlotDto` with `IsAvailable = slot.MemberId == null && slot.Status == AuditionStatus.Pending`; return `new PublicAuditionDateDto(date.Id, date.Date, date.StartTime, date.EndTime, date.BlockLengthMinutes, publicSlots)`
 

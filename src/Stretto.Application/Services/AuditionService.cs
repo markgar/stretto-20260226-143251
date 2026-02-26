@@ -10,11 +10,13 @@ public class AuditionService : IAuditionService
 {
     private readonly IRepository<AuditionDate> _dates;
     private readonly IRepository<AuditionSlot> _slots;
+    private readonly IRepository<Member> _members;
 
-    public AuditionService(IRepository<AuditionDate> dates, IRepository<AuditionSlot> slots)
+    public AuditionService(IRepository<AuditionDate> dates, IRepository<AuditionSlot> slots, IRepository<Member> members)
     {
         _dates = dates;
         _slots = slots;
+        _members = members;
     }
 
     public async Task<List<AuditionDateDto>> ListByProgramYearAsync(Guid programYearId, Guid orgId)
