@@ -5,5 +5,6 @@ public class ProjectAssignment
     public Guid Id { get; set; }
     public Guid ProjectId { get; set; }
     public Guid MemberId { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public Guid OrganizationId { get; set; }
 }
