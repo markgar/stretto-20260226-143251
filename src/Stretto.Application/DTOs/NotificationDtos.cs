@@ -5,11 +5,11 @@ namespace Stretto.Application.DTOs;
 public record RecipientDto(Guid MemberId, string Name, string Email);
 
 public record SendAssignmentAnnouncementRequest(
-    [Required] Guid ProgramYearId,
+    Guid ProgramYearId,
     [Required] string Subject,
     [Required] string Body);
 
 public record SendAuditionAnnouncementRequest(
-    [Required] Guid AuditionDateId,
+    Guid AuditionDateId,
     [Required] string Subject,
     [Required] string Body);

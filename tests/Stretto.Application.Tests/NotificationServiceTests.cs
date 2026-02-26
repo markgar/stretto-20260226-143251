@@ -41,7 +41,7 @@ public class NotificationServiceTests
         string lastName = "Soprano",
         string email = "alice@choir.org",
         bool isActive = true,
-        bool notificationsEnabled = true,
+        bool notificationOptOut = false,
         Guid? orgId = null) => new()
     {
         Id = Guid.NewGuid(),
@@ -50,7 +50,7 @@ public class NotificationServiceTests
         Email = email,
         Role = Role.Member,
         IsActive = isActive,
-        NotificationsEnabled = notificationsEnabled,
+        NotificationOptOut = notificationOptOut,
         OrganizationId = orgId ?? OrgId
     };
 
@@ -112,8 +112,8 @@ public class NotificationServiceTests
     {
         var ctx = CreateContext();
         var programYearId = Guid.NewGuid();
-        var optedOut = MakeMember("Bob", "Bass", "bob@choir.org", notificationsEnabled: false);
-        var active = MakeMember("Alice", "Soprano", "alice@choir.org", notificationsEnabled: true);
+        var optedOut = MakeMember("Bob", "Bass", "bob@choir.org", notificationOptOut: true);
+        var active = MakeMember("Alice", "Soprano", "alice@choir.org", notificationOptOut: false);
         var project = MakeProject(programYearId);
         ctx.Members.AddRange(optedOut, active);
         ctx.Projects.Add(project);
@@ -257,8 +257,8 @@ public class NotificationServiceTests
     {
         var ctx = CreateContext();
         var auditionDate = MakeAuditionDate();
-        var enabledMember = MakeMember("Alice", "Soprano", "alice@choir.org", notificationsEnabled: true);
-        var disabledMember = MakeMember("Bob", "Bass", "bob@choir.org", notificationsEnabled: false);
+        var enabledMember = MakeMember("Alice", "Soprano", "alice@choir.org", notificationOptOut: false);
+        var disabledMember = MakeMember("Bob", "Bass", "bob@choir.org", notificationOptOut: true);
         ctx.AuditionDates.Add(auditionDate);
         ctx.Members.AddRange(enabledMember, disabledMember);
         await ctx.SaveChangesAsync();

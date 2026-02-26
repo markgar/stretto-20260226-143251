@@ -70,25 +70,7 @@ public class AttendanceService : IAttendanceService
         if (ev is null)
             throw new NotFoundException("Event not found");
 
-        var record = await _records.FindOneAsync(r => r.EventId == eventId && r.MemberId == memberId && r.OrganizationId == orgId);
-        if (record is null)
-        {
-            record = new AttendanceRecord
-            {
-                Id = Guid.NewGuid(),
-                EventId = eventId,
-                MemberId = memberId,
-                OrganizationId = orgId,
-                Status = status
-            };
-            await _records.AddAsync(record);
-        }
-        else
-        {
-            record.Status = status;
-            await _records.UpdateAsync(record);
-        }
-        return ToDto(record);
+        return await UpsertStatusAsync(eventId, memberId, orgId, status);
     }
 
     public async Task<AttendanceRecordDto> CheckInAsync(Guid eventId, Guid memberId, Guid orgId)
@@ -102,7 +84,7 @@ public class AttendanceService : IAttendanceService
         if (assignment is null)
             throw new ForbiddenException("Member is not assigned to this event's project");
 
-        return await SetStatusAsync(eventId, memberId, orgId, AttendanceStatus.Present);
+        return await UpsertStatusAsync(eventId, memberId, orgId, AttendanceStatus.Present);
     }
 
     public async Task<AttendanceRecordDto> ToggleExcusedAsync(Guid eventId, Guid memberId, Guid orgId)
@@ -134,6 +116,29 @@ public class AttendanceService : IAttendanceService
             record.Status = record.Status == AttendanceStatus.Excused
                 ? AttendanceStatus.Absent
                 : AttendanceStatus.Excused;
+            await _records.UpdateAsync(record);
+        }
+        return ToDto(record);
+    }
+
+    private async Task<AttendanceRecordDto> UpsertStatusAsync(Guid eventId, Guid memberId, Guid orgId, AttendanceStatus status)
+    {
+        var record = await _records.FindOneAsync(r => r.EventId == eventId && r.MemberId == memberId && r.OrganizationId == orgId);
+        if (record is null)
+        {
+            record = new AttendanceRecord
+            {
+                Id = Guid.NewGuid(),
+                EventId = eventId,
+                MemberId = memberId,
+                OrganizationId = orgId,
+                Status = status
+            };
+            await _records.AddAsync(record);
+        }
+        else
+        {
+            record.Status = status;
             await _records.UpdateAsync(record);
         }
         return ToDto(record);

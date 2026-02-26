@@ -29,6 +29,9 @@ public class NotificationService : INotificationService
 
     public async Task<List<RecipientDto>> GetAssignmentRecipientsAsync(Guid programYearId, Guid orgId)
     {
+        if (programYearId == Guid.Empty)
+            throw new ValidationException(new Dictionary<string, string[]> { ["programYearId"] = ["Program year ID is required."] });
+
         var projects = await _projects.ListAsync(orgId, p => p.ProgramYearId == programYearId);
         var projectIds = projects.Select(p => p.Id).ToHashSet();
 
@@ -38,7 +41,7 @@ public class NotificationService : INotificationService
             .Select(a => a.MemberId)
             .ToHashSet();
 
-        var members = await _members.ListAsync(orgId, m => m.IsActive && m.NotificationsEnabled);
+        var members = await _members.ListAsync(orgId, m => m.IsActive && !m.NotificationOptOut);
         return members
             .Where(m => memberIds.Contains(m.Id))
             .Select(m => new RecipientDto(m.Id, $"{m.FirstName} {m.LastName}", m.Email))
@@ -54,11 +57,14 @@ public class NotificationService : INotificationService
 
     public async Task<List<RecipientDto>> GetAuditionRecipientsAsync(Guid auditionDateId, Guid orgId)
     {
+        if (auditionDateId == Guid.Empty)
+            throw new ValidationException(new Dictionary<string, string[]> { ["auditionDateId"] = ["Audition date ID is required."] });
+
         var auditionDate = await _auditionDates.GetByIdAsync(auditionDateId, orgId);
         if (auditionDate is null)
             throw new NotFoundException("Audition date not found");
 
-        var members = await _members.ListAsync(orgId, m => m.IsActive && m.NotificationsEnabled);
+        var members = await _members.ListAsync(orgId, m => m.IsActive && !m.NotificationOptOut);
         return members
             .Select(m => new RecipientDto(m.Id, $"{m.FirstName} {m.LastName}", m.Email))
             .ToList();

@@ -14,7 +14,7 @@ public class LogNotificationProvider : INotificationProvider
 
     public Task SendAsync(string to, string subject, string body)
     {
-        _logger.LogInformation("[NOTIFICATION] To: {to} | Subject: {subject} | Body: {body}", to, subject, body);
+        _logger.LogDebug("[NOTIFICATION] Subject: {subject}", subject);
         return Task.CompletedTask;
     }
 }
