@@ -8,6 +8,9 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { AddLinkRequest } from './models/AddLinkRequest';
+export type { DashboardSummaryDto } from './models/DashboardSummaryDto';
+export type { UpcomingEventDto } from './models/UpcomingEventDto';
+export type { RecentActivityItem } from './models/RecentActivityItem';
 export type { AssignMemberRequest } from './models/AssignMemberRequest';
 export type { AuditionSignUpRequest } from './models/AuditionSignUpRequest';
 export type { CreateAuditionDateRequest } from './models/CreateAuditionDateRequest';
@@ -30,6 +33,7 @@ export { AttendanceService } from './services/AttendanceService';
 export { AuditionDatesService } from './services/AuditionDatesService';
 export { AuditionSlotsService } from './services/AuditionSlotsService';
 export { AuthService } from './services/AuthService';
+export { DashboardService } from './services/DashboardService';
 export { EventsService } from './services/EventsService';
 export { HealthService } from './services/HealthService';
 export { MembersService } from './services/MembersService';
