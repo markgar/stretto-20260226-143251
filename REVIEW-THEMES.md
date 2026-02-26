@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Domain Entities + Application Interfaces
+Last updated: Database + Infrastructure + API Wiring
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -10,3 +10,6 @@ Last updated: Domain Entities + Application Interfaces
 6. **Duplicate ESLint config formats** — ESLint 9 uses flat config (`eslint.config.js`) exclusively and silently ignores `.eslintrc.cjs`; never commit both files; configure all plugins once in `eslint.config.js` using the flat config API.
 7. **Development environment baked into Docker image** — Never set `ENV ASPNETCORE_ENVIRONMENT=Development` (or equivalent) in the Dockerfile itself; keep it only in docker-compose for local dev so production deployments default to a safe environment.
 8. **Entity named for a concept it doesn't store** — When an entity is named after a temporal concept (e.g., `AuditionDate`, `EventDay`), verify it carries a `Date: DateOnly` or `DateTimeOffset` property; a time-only entity without a date is unschedulable and breaks downstream calendar/slot generation logic.
+9. **Post-load tenant check instead of DB-level filter** — In repository `GetById` methods, always include the `OrganizationId` filter in the SQL query (via `EF.Property` or a typed predicate) rather than loading the entity first and checking in memory; a post-load check still materialises the wrong-tenant row into the EF change tracker.
+10. **Hardcoded personal or real email addresses in seed data** — Use `@example.com` addresses (an IANA-reserved domain that cannot receive email) for all development seed data; never commit real personal addresses — they become a permanent privacy exposure in git history.
+11. **Missing unique index on authentication key** — Whenever an entity uses an email address (or other unique token) as an authentication credential, declare a database-level unique index on that column; omitting it allows duplicate credentials and breaks lookup-by-identity logic silently.
