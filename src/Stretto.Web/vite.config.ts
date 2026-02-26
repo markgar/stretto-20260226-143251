@@ -12,6 +12,13 @@ export default defineConfig({
   },
   server: {
     allowedHosts: true,
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'http://localhost:8080',
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        changeOrigin: true,
+      },
+    },
   },
   test: {
     globals: true,

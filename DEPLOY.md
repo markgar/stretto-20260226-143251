@@ -80,6 +80,7 @@ Validated in milestone `milestone-02b-database-and-wiring`:
 - **37 tests pass**: `dotnet test Stretto.sln` passes all 37 tests.
 - **Playwright**: All 4 UI tests pass against frontend at `http://frontend:5173`.
 
+<<<<<<< HEAD
 ## Milestone 03a: Authentication — Backend
 
 Validated in milestone `milestone-03a-backend-auth`:
@@ -90,9 +91,23 @@ Validated in milestone `milestone-03a-backend-auth`:
 - **UnauthorizedException**: Mapped to HTTP 401 `{"message":"..."}` by `GlobalExceptionHandlerMiddleware`.
 - **Seed data bug**: `DataSeeder` uses `admin@example.com` and `member@example.com` but REQUIREMENTS.md specifies `mgarner22@gmail.com` and `mgarner@outlook.com`. Bug filed as issue #54. **Use `admin@example.com` for auth testing until this is fixed.**
 - **All 8 auth Playwright tests pass** using the `admin@example.com` seeded email.
+=======
+## Milestone 03b: Authentication — App Shell
+
+Validated in milestone `milestone-03b-frontend-app-shell`:
+
+- **Vite proxy required**: Added `server.proxy` in `vite.config.ts` to forward `/api/*` requests to the backend (rewriting `/api` prefix away). Uses env var `VITE_API_URL` (set to `http://app:8080` in docker-compose.yml `frontend` service environment). Without this, `fetch('/api/auth/login')` from the frontend would 404.
+- **Seed data fix**: `DataSeeder.cs` was using `admin@example.com` / `member@example.com` instead of the required `mgarner22@gmail.com` / `mgarner@outlook.com`. Fixed to match REQUIREMENTS.md. GitHub issue #54 existed for this.
+- **Login flow**: POST `/api/auth/login` (proxied from frontend) → `/auth/login` on API → 200 with user JSON + `stretto_session` HttpOnly cookie.
+- **Protected route**: Navigating to `/dashboard` without auth redirects to `/login`. After login, `/dashboard` shows the dashboard heading.
+- **App shell**: Admin nav renders with `data-testid="nav-{label}"` attributes. Multiple nav elements exist (sidebar + mobile tab bar) — use `.first()` when selecting by testid.
+- **All 10 Playwright tests pass** after fixes.
+>>>>>>> a3efced ([validator] Validate milestone-03b: Authentication — App Shell)
 
 ## Known Gotchas
 
+- **Vite proxy for API calls**: The frontend calls `/api/*` relative URLs. Vite's `server.proxy` in `vite.config.ts` must rewrite `/api` → `` and target `http://app:8080` (via `VITE_API_URL` env var). Without this proxy, API calls 404. The `VITE_API_URL=http://app:8080` env var is set in docker-compose.yml for the frontend service.
+- **Multiple nav testids**: The app shell renders navigation in multiple locations (desktop sidebar, tablet sidebar, mobile bottom tab bar). Each nav item has the same `data-testid`. Use `.first()` when selecting to avoid strict mode violations.
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **.dockerignore**: Excludes `bin/`, `obj/`, `.git/`, etc. to keep build context small and prevent stale artifacts.
