@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Stretto.Application.DTOs;
 using Stretto.Application.Exceptions;
+using Stretto.Application.Interfaces;
 using Stretto.Application.Services;
 
 namespace Stretto.Api.Controllers;
@@ -10,9 +11,9 @@ namespace Stretto.Api.Controllers;
 public class ProgramYearsController : ControllerBase
 {
     private readonly ProgramYearService _programYears;
-    private readonly AuthService _authService;
+    private readonly IAuthService _authService;
 
-    public ProgramYearsController(ProgramYearService programYears, AuthService authService)
+    public ProgramYearsController(ProgramYearService programYears, IAuthService authService)
     {
         _programYears = programYears;
         _authService = authService;

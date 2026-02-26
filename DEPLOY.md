@@ -81,6 +81,7 @@ Validated in milestone `milestone-02b-database-and-wiring`:
 - **Playwright**: All 4 UI tests pass against frontend at `http://frontend:5173`.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## Milestone 03a: Authentication — Backend
 
 Validated in milestone `milestone-03a-backend-auth`:
@@ -92,16 +93,20 @@ Validated in milestone `milestone-03a-backend-auth`:
 - **Seed data fix**: `DataSeeder` was using `admin@example.com` / `member@example.com` but REQUIREMENTS.md specifies `mgarner22@gmail.com` and `mgarner@outlook.com`. Fixed in milestone-03b. Use `mgarner22@gmail.com` for all auth testing.
 - **All auth endpoints verified**: `POST /auth/login` → 200 + user JSON, `GET /auth/validate` → 200, `POST /auth/logout` → 204.
 
+=======
+>>>>>>> 74a9ed4 ([validator] Validate milestone-04b: Program Years Admin Pages)
 ## Milestone 03b: Authentication — App Shell
 
 Validated in milestone `milestone-03b-frontend-app-shell`:
 
 - **Vite proxy required**: Added `server.proxy` in `vite.config.ts` to forward `/api/*` requests to the backend (rewriting `/api` prefix away). Uses env var `VITE_API_URL` (set to `http://app:8080` in docker-compose.yml `frontend` service environment). Without this, `fetch('/api/auth/login')` from the frontend would 404.
-- **Seed data fix**: `DataSeeder.cs` was using `admin@example.com` / `member@example.com` instead of the required `mgarner22@gmail.com` / `mgarner@outlook.com`. Fixed to match REQUIREMENTS.md. GitHub issue #54 existed for this.
 - **Login flow**: POST `/api/auth/login` (proxied from frontend) → `/auth/login` on API → 200 with user JSON + `stretto_session` HttpOnly cookie.
 - **Protected route**: Navigating to `/dashboard` without auth redirects to `/login`. After login, `/dashboard` shows the dashboard heading.
+<<<<<<< HEAD
 - **App shell**: Admin nav renders with `data-testid="nav-{label}"` attributes. Multiple nav elements exist (sidebar + mobile tab bar) — use `.first()` when selecting by testid.
 - **All 10 Playwright tests pass** after fixes.
+=======
+>>>>>>> 74a9ed4 ([validator] Validate milestone-04b: Program Years Admin Pages)
 
 <<<<<<< HEAD
 ## Milestone 06a: Venues — CRUD API
@@ -121,6 +126,7 @@ Validated in milestone `milestone-06a-venues-crud-api`:
 ## Known Gotchas
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ## Milestone 06b: Venues — Admin Pages
 
@@ -139,11 +145,11 @@ Validated in milestone `milestone-06b-venues-admin-pages`:
 - **Auth restore on reload (App.tsx)**: `App.tsx` calls `GET /api/auth/validate` on mount to restore auth state from the session cookie. This works in HTTPS production but NOT in the HTTP Docker dev setup due to the Secure cookie issue above.
 - **Venues API route**: `GET /api/venues` (with `/api` prefix, proxied by Vite) returns `[]` for empty list, `401` without auth. Direct backend call: `GET http://localhost:7777/api/venues`.
 >>>>>>> c00bb06 ([validator] Validate milestone-06b: Venues — Admin Pages)
-- **Vite proxy for API calls**: The frontend calls `/api/*` relative URLs. Vite's `server.proxy` in `vite.config.ts` must rewrite `/api` → `` and target `http://app:8080` (via `VITE_API_URL` env var). Without this proxy, API calls 404. The `VITE_API_URL=http://app:8080` env var is set in docker-compose.yml for the frontend service.
-- **Multiple nav testids**: The app shell renders navigation in multiple locations (desktop sidebar, tablet sidebar, mobile bottom tab bar). Each nav item has the same `data-testid`. Use `.first()` when selecting to avoid strict mode violations.
 =======
-- **Seed data email update**: `DataSeeder` was updated in milestone 06a to seed `mgarner22@gmail.com` and `mgarner@outlook.com` (replacing the old `admin@example.com`). Use `mgarner22@gmail.com` for all authentication tests.
->>>>>>> cdaf636 ([validator] Add venues Playwright tests and update DEPLOY.md for milestone-06a)
+>>>>>>> 74a9ed4 ([validator] Validate milestone-04b: Program Years Admin Pages)
+- **Vite proxy for API calls**: The frontend calls `/api/*` relative URLs. Vite's `server.proxy` in `vite.config.ts` must rewrite `/api` → `` and target `http://app:8080` (via `VITE_API_URL` env var). Without this proxy, API calls 404. The `VITE_API_URL=http://app:8080` env var is set in docker-compose.yml for the frontend service.
+- **AppShell nav testids (milestone 04b)**: Nav items now use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
+- **Seed data email**: `DataSeeder` still seeds `admin@example.com` and `member@example.com` (NOT `mgarner22@gmail.com`). Use `admin@example.com` for all authentication tests (issue #54 is still open).
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **.dockerignore**: Excludes `bin/`, `obj/`, `.git/`, etc. to keep build context small and prevent stale artifacts.
@@ -151,6 +157,7 @@ Validated in milestone `milestone-06b-venues-admin-pages`:
 - **Vite allowedHosts**: Without `server.allowedHosts: true` in `vite.config.ts`, Playwright requests from within Docker will be blocked with "Blocked request. This host not allowed."
 - **Frontend npm install delay**: The frontend container runs `npm install` on first start — expect ~15-30 seconds before the Vite dev server is ready at http://localhost:7778/.
 
+<<<<<<< HEAD
 ## Milestone 04a: Program Years — API
 
 Validated in milestone `milestone-04a-program-years-api`:
@@ -161,6 +168,19 @@ Validated in milestone `milestone-04a-program-years-api`:
 - **Archive behavior**: `POST /api/program-years/{id}/archive` sets `isArchived=true` and `isCurrent=false`.
 - **All 8 Playwright J-1 smoke tests pass**: sidebar shows Program Years nav link, clicking it loads without JS errors.
 - **Cookie expiry fix**: `AuthController.Login` now sets `Expires = DateTimeOffset.UtcNow.AddHours(8)` on the session cookie (finding #61 fix).
+=======
+## Milestone 04b: Program Years — Admin Pages
+
+Validated in milestone `milestone-04b-program-years-admin-pages`:
+
+- **Bug fixed**: `ProgramYearsController` was injecting `AuthService` (concrete) instead of `IAuthService`. All `/api/program-years` endpoints returned HTTP 500. Fixed by changing constructor parameter to `IAuthService`. (issue #127)
+- **Program Years API**: Full CRUD at `/api/program-years` — GET list (200), POST create (201), GET by id (200), PUT update (200), POST activate (200), POST archive (200). All require `stretto_session` cookie.
+- **Frontend pages**: `/program-years` renders `data-testid="program-years-heading"`. `/program-years/new` renders `data-testid="name-input"` and `data-testid="submit-button"`. Both pages are protected (unauthenticated → redirect to /login).
+- **localStorage auth persistence**: `authStore.ts` now persists user in localStorage — page refresh no longer redirects to `/login`.
+- **AppShell testid regression**: Nav testids changed from `nav-{label}` to `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Existing test in `ui-validation.spec.ts:72` now fails. (issue #126)
+- **Seed data**: DataSeeder still uses `admin@example.com` (NOT `mgarner22@gmail.com` despite REQUIREMENTS.md — issue #54 unresolved).
+- **All 9 new Playwright tests pass** in `e2e/program-years-validation.spec.ts`.
+>>>>>>> 74a9ed4 ([validator] Validate milestone-04b: Program Years Admin Pages)
 
 ## Building and Testing Locally (without Docker)
 
