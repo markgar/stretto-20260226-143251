@@ -10,6 +10,7 @@ public class AuditionDateConfiguration : IEntityTypeConfiguration<AuditionDate>
     {
         builder.HasKey(a => a.Id);
         builder.Property(a => a.ProgramYearId).IsRequired();
+        builder.Property(a => a.Date).IsRequired();
         builder.Property(a => a.StartTime).IsRequired();
         builder.Property(a => a.EndTime).IsRequired();
         builder.Property(a => a.BlockLengthMinutes).IsRequired();
