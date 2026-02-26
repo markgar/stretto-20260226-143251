@@ -1,0 +1,51 @@
+## Milestone: Events — API and Pages
+
+> **Validates:**
+> - `GET /api/events?projectId={id}` without a session cookie returns HTTP 401
+> - `POST /api/auth/login` with `mgarner22@gmail.com`; then `GET /api/program-years` to get a program year id; then `POST /api/projects` with dates within the program year; then `POST /api/events` with body `{"projectId":"<id>","type":0,"date":"<date within project range>","startTime":"18:30:00","durationMinutes":120,"venueId":null}` returns HTTP 201 with JSON body containing `id`, `projectId`, `type`, `date`, `startTime`, `durationMinutes`
+> - `GET /api/events?projectId={id}` returns HTTP 200 with a JSON array containing the created event
+> - `GET /api/events/{id}` returns HTTP 200 with matching `type` and `date`
+> - `PUT /api/events/{id}` with updated `durationMinutes` returns HTTP 200 with updated value
+> - `DELETE /api/events/{id}` returns HTTP 204; subsequent `GET /api/events/{id}` returns HTTP 404
+> - `POST /api/events` with a `date` outside the project's `startDate`–`endDate` range returns HTTP 422
+> - `POST /api/events` authenticated as `mgarner@outlook.com` (Member role) returns HTTP 403
+> - Browser navigates to `/projects?programYearId={id}` and renders a list of projects
+> - Browser navigates to `/projects/{id}` and renders a project detail page with an Events tab
+> - Clicking the Events tab shows a table of events with type badges
+> - Browser navigates to `/events/{id}` and renders the event detail page showing type, date, and duration
+
+> **Reference files:**
+> - `src/Stretto.Domain/Entities/Event.cs` — Event entity (Id, ProjectId, EventType, Date, StartTime, DurationMinutes, VenueId, OrganizationId)
+> - `src/Stretto.Infrastructure/Repositories/BaseRepository.cs` — `ListAsync(orgId, predicate)` for filtering by ProjectId
+> - `src/Stretto.Application/Services/ProjectService.cs` — pattern for date-range validation and `ToDto` helper
+> - `src/Stretto.Api/Controllers/ProjectsController.cs` — thin controller inheriting `ProtectedControllerBase`; role check pattern for Admin-only actions
+> - `src/Stretto.Web/src/pages/VenuesListPage.tsx` — list page using `useQuery` and shadcn DataTable
+> - `src/Stretto.Web/src/pages/VenueFormPage.tsx` — create/edit form using React Hook Form + Zod + `useMutation`
+> - `src/Stretto.Web/src/App.tsx` — route registration; add project and event routes here
+> - `src/Stretto.Api/Program.cs` — DI registration; add `IEventService` here
+
+- [ ] Create `src/Stretto.Application/DTOs/EventDtos.cs` with three records: `EventDto(Guid Id, Guid ProjectId, EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId, string? VenueName)`; `CreateEventRequest(Guid ProjectId, EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId)`; `UpdateEventRequest(EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId)`
+
+- [ ] Create `src/Stretto.Application/Interfaces/IEventService.cs` with five method signatures: `Task<List<EventDto>> ListByProjectAsync(Guid projectId, Guid orgId)`; `Task<EventDto> GetAsync(Guid id, Guid orgId)`; `Task<EventDto> CreateAsync(Guid orgId, CreateEventRequest req)`; `Task<EventDto> UpdateAsync(Guid id, Guid orgId, UpdateEventRequest req)`; `Task DeleteAsync(Guid id, Guid orgId)`
+
+- [ ] Create `src/Stretto.Application/Services/EventService.cs` implementing `IEventService`; constructor-inject `IRepository<Event>`, `IRepository<Project>`, and `IRepository<Venue>`; `ListByProjectAsync` calls `_events.ListAsync(orgId, e => e.ProjectId == projectId)` then maps each event to `EventDto` (resolve `VenueName` via a pre-loaded venue list from `_venues.ListAsync(orgId)`); `GetAsync` calls `GetByIdAsync(id, orgId)` (throw `NotFoundException("Event not found")` if null), then resolves `VenueName`; `CreateAsync` fetches the project with `_projects.GetByIdAsync(req.ProjectId, orgId)` (throw `NotFoundException("Project not found")` if null), then validates `req.Date >= project.StartDate && req.Date <= project.EndDate` (throw `ValidationException(new Dictionary<string,string[]>{["date"]=["Event date must fall within the project date range"]})` on failure), creates the entity and calls `_events.AddAsync`; `UpdateAsync` re-fetches the event (throw `NotFoundException` if null), re-fetches the project for the same date validation, updates fields; `DeleteAsync` fetches event (throw `NotFoundException` if null) then calls `_events.DeleteAsync`
+
+- [ ] Register `IEventService` in `src/Stretto.Api/Program.cs`: add `builder.Services.AddScoped<IEventService, EventService>();` after the existing `AddScoped<IProjectService, ProjectService>()` line; add `using Stretto.Application.Interfaces;` and `using Stretto.Application.Services;` if not already present
+
+- [ ] Create `src/Stretto.Api/Controllers/EventsController.cs` with `[ApiController]`, `[Route("api/events")]`, inheriting `ProtectedControllerBase`; constructor-inject `IEventService` and `IAuthService`; implement: `GET /api/events?projectId={id}` (return 400 if `projectId` query param is missing, else call `ListByProjectAsync` and return `Ok(list)`); `GET /api/events/{id:guid}` (call `GetAsync`, return `Ok(dto)`); `POST /api/events` (require Admin role, call `CreateAsync`, return `Created($"/api/events/{dto.Id}", dto)`); `PUT /api/events/{id:guid}` (require Admin role, call `UpdateAsync`, return `Ok(dto)`); `DELETE /api/events/{id:guid}` (require Admin role, call `DeleteAsync`, return `NoContent()`)
+
+- [ ] Regenerate the TypeScript client: run `cd src/Stretto.Web && npm run generate` so `EventDto`, `CreateEventRequest`, `UpdateEventRequest`, and the `/api/events` endpoints appear in `src/Stretto.Web/src/api/generated/`
+
+- [ ] Create `src/Stretto.Web/src/pages/ProjectsListPage.tsx`: reads `programYearId` from the URL query string; uses `useQuery` to call `ProjectsService.apiProjectsGet({ programYearId })`; renders a table with columns: project name (linked to `/projects/{id}`), start date, end date; includes an "Add project" button (visible to Admin role from auth store) that links to `/projects/new?programYearId={programYearId}`; shows a skeleton loader while loading; shows an empty state ("No projects yet — create your first project") when the list is empty; shows an inline error banner if the query fails
+
+- [ ] Create `src/Stretto.Web/src/pages/ProjectFormPage.tsx`: handles both create (path `/projects/new`, reads `programYearId` from query string) and edit (path `/projects/:id/edit`, fetches existing project with `useQuery`); Zod schema: `name` (non-empty string), `startDate` (required date string), `endDate` (required date string, must be after `startDate`); uses `useMutation` to call `ProjectsService.apiProjectsPost` for create or `ProjectsService.apiProjectsIdPut` for edit; on success navigates to `/projects/{id}` (create) or `/projects/{id}` (edit); cancel button navigates back
+
+- [ ] Create `src/Stretto.Web/src/pages/ProjectDetailPage.tsx`: fetches the project by route param `id` using `useQuery` calling `ProjectsService.apiProjectsIdGet`; renders the project name as a page heading with start–end dates below; uses shadcn `<Tabs>` to render four tabs labelled Overview, Events, Members, Materials; Overview tab shows project name and date range in a card; Members tab and Materials tab render a "Coming soon" placeholder; Events tab renders `<ProjectEventsTab projectId={id} />` (imported from the component created in the next task); Admin-only header actions: "Edit" button linking to `/projects/{id}/edit` and "Delete" button that calls `ProjectsService.apiProjectsIdDelete` via `useMutation` then navigates to `/program-years/{programYearId}`
+
+- [ ] Create `src/Stretto.Web/src/components/ProjectEventsTab.tsx` accepting prop `projectId: string`; uses `useQuery` calling `EventsService.apiEventsGet({ projectId })`; renders a table with columns: date (formatted `MMM d, yyyy` using date-fns `format`), start time, type badge (Rehearsal = indigo badge, Performance = purple badge using Tailwind classes), venue name (or "—" if none), duration in minutes; each row is linked to `/events/{id}`; Admin-only "Add event" button above the table links to `/events/new?projectId={projectId}`; shows a skeleton loader while loading; shows empty state ("No events scheduled yet") when list is empty
+
+- [ ] Create `src/Stretto.Web/src/pages/EventFormPage.tsx`: handles create (path `/events/new`, reads `projectId` from query string) and edit (path `/events/:id/edit`, fetches existing event); Zod schema fields: `type` (enum `"0" | "1"` mapping to Rehearsal/Performance rendered as a select), `date` (required date string), `startTime` (required string in `HH:mm` format), `durationMinutes` (positive integer), `venueId` (optional UUID string); fetches venue list using `useQuery` to populate a select dropdown; uses `useMutation` to call `EventsService.apiEventsPost` (create) or `EventsService.apiEventsIdPut` (edit); on success navigates to `/events/{id}` (create) or `/events/{id}` (edit); cancel navigates back to `/projects/{projectId}`
+
+- [ ] Create `src/Stretto.Web/src/pages/EventDetailPage.tsx`: fetches event by route param `id` using `useQuery` calling `EventsService.apiEventsIdGet`; displays a card with: type badge (Rehearsal/Performance), date formatted as `EEEE, MMMM d, yyyy`, start time, duration in minutes, venue name (or "No venue"), link to parent project (`/projects/{projectId}`); Admin-only action buttons: "Edit" navigates to `/events/{id}/edit`, "Delete" calls `EventsService.apiEventsIdDelete` via `useMutation` then navigates to `/projects/{projectId}`; shows skeleton loader while loading; shows inline error on fetch failure
+
+- [ ] Update `src/Stretto.Web/src/App.tsx`: add imports for `ProjectsListPage`, `ProjectFormPage`, `ProjectDetailPage`, `EventFormPage`, `EventDetailPage`; replace `<Route path="/projects" element={<ComingSoon />} />` with individual routes: `/projects` → `ProjectsListPage`, `/projects/new` → `ProjectFormPage`, `/projects/:id` → `ProjectDetailPage`, `/projects/:id/edit` → `ProjectFormPage`; add new routes inside the protected block: `/events/new` → `EventFormPage`, `/events/:id` → `EventDetailPage`, `/events/:id/edit` → `EventFormPage`
