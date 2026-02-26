@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Events — API
+Last updated: Events — Pages
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -36,3 +36,7 @@ Last updated: Events — API
 32. **Refactoring migrations must be completed atomically** — When extracting a shared method into a base class or shared module, migrate ALL call sites in the same commit; leaving some callers with the old private copy alongside the new base class creates two competing patterns, requires a second pass to finish the job, and negates the cleanup.
 33. **Validate all optional FK fields, not just required ones** — When a service validates a required FK (e.g. ProjectId throws NotFoundException if missing), apply the same existence-and-org-scope check to every optional FK (e.g. VenueId); omitting it lets callers silently store orphaned references that manifest as unexpected nulls in response DTOs.
 34. **Apply decomposition consistently across all pages in a milestone** — When a milestone refactors one page to extract a custom hook (e.g. `useVenueForm`), apply the same decomposition to every other page changed in that milestone that exceeds the function-size threshold; leaving some pages decomposed and others monolithic creates an inconsistent codebase and defers technical debt to a later milestone.
+35. **Match frontend Zod validation format to backend serialization format** — When validating string fields that map to typed backend types (e.g. `TimeOnly`, `DateOnly`), verify how .NET serializes those types to JSON (e.g. `TimeOnly` → `"HH:mm:ss"`) and ensure the Zod regex or coercion accepts that format; a mismatch means edit forms cannot be saved without the user manually re-entering the pre-populated value.
+36. **Always render mutation error states, not just loading states** — Every `useMutation` call that can fail (create, update, delete) must render a user-visible error message when `mutation.isError` is true; silently swallowing mutation errors is a class of bug that recurs across pages and leaves users with no feedback on data loss.
+37. **Extract shared UI components rather than copy-pasting** — When a sub-component (e.g. `EventTypeBadge`) or local type definition is needed in two or more files in the same milestone, extract it to a shared component or types file immediately; copy-pasting creates divergence risk that compounds with every future change.
+38. **Confirm before irreversible actions** — Every Delete button that triggers a non-undoable action must include a confirmation step (e.g. `window.confirm()` or an AlertDialog) before firing the mutation; a bare `onClick={() => deleteMutation.mutate()}` with no guard leads to accidental data loss in production.
