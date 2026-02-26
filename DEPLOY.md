@@ -122,7 +122,6 @@ Validated in milestone `milestone-04b-program-years-admin-pages`:
 - **localStorage auth persistence**: `authStore.ts` now persists user in localStorage — page refresh no longer redirects to `/login`.
 - **AppShell testid pattern**: Nav testids use suffixed format: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`.
 - **All 9 new Playwright tests pass** in `e2e/program-years-validation.spec.ts`.
-
 ## Milestone 06a: Venues — CRUD API
 
 Validated in milestone `milestone-06a-venues-crud-api`:
@@ -148,10 +147,13 @@ Validated in milestone `milestone-06b-venues-admin-pages`:
 
 - **Vite proxy for API calls**: The frontend calls `/api/*` relative URLs. Vite's `server.proxy` in `vite.config.ts` must rewrite `/api` → `` and target `http://app:8080` (via `VITE_API_URL` env var). Without this proxy, API calls 404. The `VITE_API_URL=http://app:8080` env var is set in docker-compose.yml for the frontend service.
 - **AppShell nav testids (milestone 04b)**: Nav items use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
-- **Seed data email**: `DataSeeder` seeds `admin@example.com` and `member@example.com`. Use `admin@example.com` for all authentication tests.
+- **Seed data email**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all authentication tests. (Note: REQUIREMENTS.md mentions `mgarner22@gmail.com` but DataSeeder uses `admin@example.com`.)
+- **Secure cookie prevents page reload auth restore**: The `stretto_session` cookie is set with `Secure` flag. In the Docker HTTP setup, the browser does NOT send this cookie on page reload (only over HTTPS). Zustand state is lost on full page reload (`page.goto()`). In Playwright tests, use React Router client-side navigation (click nav links) instead of `page.goto()` for pages that require auth. The `loginAsAdmin` helper + nav link clicks work correctly.
+- **Auth restore on reload (App.tsx)**: `App.tsx` calls `GET /api/auth/validate` on mount to restore auth state from the session cookie. This works in HTTPS production but NOT in the HTTP Docker dev setup due to the Secure cookie issue above.
+- **Venues API route**: `GET /api/venues` (with `/api` prefix, proxied by Vite) returns `[]` for empty list, `401` without auth. Direct backend call: `GET http://localhost:7777/api/venues`.
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
-- **.dockerignore**: Excludes `bin/`, `obj/`, `.git/`, etc. to keep build context small and prevent stale artifacts.
+- **Dockerfile must copy ALL test project files**: Before `dotnet restore`, the Dockerfile must `COPY` all `.csproj` files referenced in `Stretto.sln`, including all test projects (`Stretto.Api.Tests`, `Stretto.Domain.Tests`, `Stretto.Application.Tests`, `Stretto.Infrastructure.Tests`). Missing any causes `dotnet restore` to fail with MSB3202.
 - **Playwright version pinning**: `@playwright/test` in `e2e/package.json` must be pinned to match the Playwright Docker image version. Using `^1.52.0` will resolve to a newer version and fail. Use exact `1.52.0`.
 - **Vite allowedHosts**: Without `server.allowedHosts: true` in `vite.config.ts`, Playwright requests from within Docker will be blocked with "Blocked request. This host not allowed."
 - **Frontend npm install delay**: The frontend container runs `npm install` on first start — expect ~15-30 seconds before the Vite dev server is ready at http://localhost:7778/.
@@ -179,3 +181,16 @@ Validated in milestone `milestone-07a-projects-api`:
 - **Date validation**: `POST /api/projects` with `startDate >= endDate` returns HTTP 400 with `{"message":"Validation failed","errors":{"startDate":["Start date must be before end date"]}}`.
 - **App shell nav**: Projects nav item uses testid `nav-desktop-projects` (not `nav-projects`) due to multi-breakpoint nav pattern in AppShell.tsx.
 - **All 14 Playwright tests pass** in `e2e/projects-validation.spec.ts`.
+
+## Milestone 09a: Events — API
+
+Validated in milestone `milestone-09a-events-api`:
+
+- **EventsController**: Registered at `api/events`. All 5 endpoints work: GET list by projectId, POST create, GET by id, PUT update, DELETE.
+- **Authentication guard**: All endpoints return HTTP 401 without a valid `stretto_session` cookie.
+- **Authorization**: `POST`, `PUT`, `DELETE` require Admin role. Member role returns HTTP 403.
+- **Date validation**: `POST /api/events` with date outside project's startDate–endDate range throws `ValidationException` mapped to HTTP 400. (Note: spec says 422 but implementation returns 400 — see issue #231.)
+- **VenueName resolution**: `EventDto` includes `venueName` field resolved from the venue. When `venueId` is provided, `venueName` is populated.
+- **EventType enum**: `type=0` is Rehearsal, `type=1` is Performance (integer enum).
+- **All 10 Playwright tests pass** in `e2e/events-api-validation.spec.ts`.
+- **EventService pattern**: Uses `_events.ListAsync(orgId, e => e.ProjectId == projectId)` for filtering. `IRepository<Event>`, `IRepository<Project>`, `IRepository<Venue>` all constructor-injected.
