@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import AppShell from '../components/AppShell';
 import { ProjectsService } from '../api/generated/services/ProjectsService';
 import { useAuthStore } from '../stores/authStore';
@@ -66,8 +66,8 @@ export default function ProjectsListPage() {
                       {p.name}
                     </Link>
                   </td>
-                  <td className="py-2 pr-4">{format(new Date(p.startDate), 'MMM d, yyyy')}</td>
-                  <td className="py-2">{format(new Date(p.endDate), 'MMM d, yyyy')}</td>
+                  <td className="py-2 pr-4">{format(parseISO(p.startDate), 'MMM d, yyyy')}</td>
+                  <td className="py-2">{format(parseISO(p.endDate), 'MMM d, yyyy')}</td>
                 </tr>
               ))}
             </tbody>

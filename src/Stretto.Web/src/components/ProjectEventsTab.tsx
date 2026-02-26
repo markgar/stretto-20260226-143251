@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { EventsService } from '../api/generated/services/EventsService';
 import { useAuthStore } from '../stores/authStore';
+import EventTypeBadge from './EventTypeBadge';
 
 type Event = {
   id: string;
@@ -12,21 +13,6 @@ type Event = {
   venueName?: string;
   durationMinutes: number;
 };
-
-function EventTypeBadge({ type }: { type: number }) {
-  if (type === 0) {
-    return (
-      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-700">
-        Rehearsal
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700">
-      Performance
-    </span>
-  );
-}
 
 type Props = { projectId: string };
 
@@ -76,7 +62,7 @@ export default function ProjectEventsTab({ projectId }: Props) {
               <tr key={e.id} className="border-b">
                 <td className="py-2 pr-4">
                   <Link to={`/events/${e.id}`} className="text-primary hover:underline">
-                    {format(new Date(e.date), 'MMM d, yyyy')}
+                    {format(parseISO(e.date), 'MMM d, yyyy')}
                   </Link>
                 </td>
                 <td className="py-2 pr-4">{e.startTime}</td>

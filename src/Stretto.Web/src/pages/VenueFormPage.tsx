@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import AppShell from '../components/AppShell';
 import { useVenueForm } from './useVenueForm';
+import { getErrorMessage } from '../lib/utils';
 
 const inputClass =
   'w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring';
@@ -51,7 +52,7 @@ export default function VenueFormPage() {
           </button>
           {saveMutation.isError && (
             <p data-testid="form-error" className="text-destructive text-sm">
-              {(saveMutation.error as Error).message}
+              {getErrorMessage(saveMutation.error)}
             </p>
           )}
         </form>

@@ -7,11 +7,12 @@ import { z } from 'zod';
 import AppShell from '../components/AppShell';
 import { EventsService } from '../api/generated/services/EventsService';
 import { VenuesService } from '../api/generated/services/VenuesService';
+import { getErrorMessage } from '../lib/utils';
 
 const schema = z.object({
   type: z.enum(['0', '1']),
   date: z.string().min(1, 'Date is required'),
-  startTime: z.string().min(1, 'Start time is required').regex(/^\d{2}:\d{2}$/, 'Use HH:mm format'),
+  startTime: z.string().min(1, 'Start time is required').regex(/^\d{2}:\d{2}(:\d{2})?$/, 'Use HH:mm format'),
   durationMinutes: z.number().int().positive('Duration must be a positive number'),
   venueId: z.string().optional(),
 });
@@ -139,7 +140,7 @@ export default function EventFormPage() {
           </div>
           {saveMutation.isError && (
             <p data-testid="form-error" className="text-destructive text-sm">
-              {(saveMutation.error as Error).message}
+              {getErrorMessage(saveMutation.error)}
             </p>
           )}
         </form>

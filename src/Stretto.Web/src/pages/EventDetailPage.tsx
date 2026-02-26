@@ -1,7 +1,8 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import AppShell from '../components/AppShell';
+import EventTypeBadge from '../components/EventTypeBadge';
 import { EventsService } from '../api/generated/services/EventsService';
 import { AttendanceService } from '../api/generated/services/AttendanceService';
 import { useAuthStore } from '../stores/authStore';
@@ -21,21 +22,6 @@ type AttendanceSummaryItem = {
   memberName: string;
   status: string | null;
 };
-
-function EventTypeBadge({ type }: { type: number }) {
-  if (type === 0) {
-    return (
-      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-700">
-        Rehearsal
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700">
-      Performance
-    </span>
-  );
-}
 
 function AttendanceStatusBadge({ status }: { status: string | null }) {
   if (status === 'Present') return <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700">Present</span>;
@@ -190,6 +176,9 @@ export default function EventDetailPage() {
                 </div>
               )}
             </div>
+            {deleteMutation.isError && (
+              <p className="text-destructive text-sm mb-4">Failed to delete. Please try again.</p>
+            )}
             <div className="rounded-lg border p-4 max-w-md space-y-3">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium w-32">Type</span>
@@ -197,7 +186,7 @@ export default function EventDetailPage() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium w-32">Date</span>
-                <span className="text-sm">{format(new Date(event.date), 'EEEE, MMMM d, yyyy')}</span>
+                <span className="text-sm">{format(parseISO(event.date), 'EEEE, MMMM d, yyyy')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-medium w-32">Start Time</span>

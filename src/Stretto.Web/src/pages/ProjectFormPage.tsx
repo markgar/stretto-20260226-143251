@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import AppShell from '../components/AppShell';
 import { ProjectsService } from '../api/generated/services/ProjectsService';
+import { getErrorMessage } from '../lib/utils';
 
 const schema = z
   .object({
@@ -96,7 +97,7 @@ export default function ProjectFormPage() {
           </div>
           {saveMutation.isError && (
             <p data-testid="form-error" className="text-destructive text-sm">
-              {(saveMutation.error as Error).message}
+              {getErrorMessage(saveMutation.error)}
             </p>
           )}
         </form>

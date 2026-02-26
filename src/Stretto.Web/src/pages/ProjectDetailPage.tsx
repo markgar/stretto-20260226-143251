@@ -1,6 +1,6 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import AppShell from '../components/AppShell';
 import ProjectEventsTab from '../components/ProjectEventsTab';
 import { ProjectsService } from '../api/generated/services/ProjectsService';
@@ -65,8 +65,8 @@ export default function ProjectDetailPage() {
               <div>
                 <h1 className="text-2xl font-semibold">{project.name}</h1>
                 <p className="text-muted-foreground text-sm mt-1">
-                  {format(new Date(project.startDate), 'MMM d, yyyy')} –{' '}
-                  {format(new Date(project.endDate), 'MMM d, yyyy')}
+                  {format(parseISO(project.startDate), 'MMM d, yyyy')} –{' '}
+                  {format(parseISO(project.endDate), 'MMM d, yyyy')}
                 </p>
               </div>
               {isAdmin && (
@@ -89,6 +89,9 @@ export default function ProjectDetailPage() {
                 </div>
               )}
             </div>
+            {deleteMutation.isError && (
+              <p className="text-destructive text-sm mb-4">Failed to delete. Please try again.</p>
+            )}
 
             <div className="border-b mb-4">
               <nav className="flex gap-4">
@@ -113,8 +116,8 @@ export default function ProjectDetailPage() {
               <div className="rounded-lg border p-4 max-w-md">
                 <p className="font-medium">{project.name}</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {format(new Date(project.startDate), 'MMM d, yyyy')} –{' '}
-                  {format(new Date(project.endDate), 'MMM d, yyyy')}
+                  {format(parseISO(project.startDate), 'MMM d, yyyy')} –{' '}
+                  {format(parseISO(project.endDate), 'MMM d, yyyy')}
                 </p>
               </div>
             )}

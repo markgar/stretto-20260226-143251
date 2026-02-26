@@ -121,13 +121,14 @@ test('navigates to /program-years after archive from detail page', async () => {
   mockUseQuery.mockReturnValue({
     data: { id: 'py1', name: '2025–2026', startDate: '2025-09-01', endDate: '2026-06-30', isCurrent: false, isArchived: false },
   });
-  let onSuccess: (() => void) | undefined;
+  const capturedOnSuccess: Array<(() => void) | undefined> = [];
   mockUseMutation.mockImplementation((opts: { onSuccess?: () => void }) => {
-    onSuccess = opts.onSuccess;
+    capturedOnSuccess.push(opts.onSuccess);
     return { mutate: vi.fn(), isPending: false };
   });
   renderPage();
-  onSuccess?.();
+  // useProgramYearDetail calls useMutation 3 times: saveMutation (0), archiveMutation (1), activateMutation (2)
+  capturedOnSuccess[1]?.();
   await waitFor(() => {
     expect(screen.getByTestId('program-years-list')).toBeInTheDocument();
   });
