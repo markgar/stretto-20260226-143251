@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Venues — Admin Pages
+Last updated: Program Years — API
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -25,3 +25,6 @@ Last updated: Venues — Admin Pages
 21. **Always check response.ok before parsing fetch() responses** — In React pages and hooks, every `fetch()` call must check `response.ok` (or throw) before calling `.json()`; `fetch()` resolves on any HTTP status, so unchecked calls silently treat 401/400/500 error bodies as successful data, causing runtime crashes and silent data loss.
 22. **Use the generated API client, not raw fetch** — When a TypeScript API client has been generated from the OpenAPI spec (`src/Stretto.Web/src/api/generated/`), all API calls in page components and hooks must use the generated service classes; bypassing the client with raw `fetch()` duplicates URL logic, ships dead code, and diverges from the established project convention.
 23. **Page-level React components must be decomposed** — Single-page components that combine data fetching, mutation logic, and rendering regularly exceed the 40-line function-size guideline; always extract custom hooks for data concerns (e.g. `useVenues`, `useSaveVenue`) and sub-components for recurring UI patterns (e.g. form fields, table rows) to keep each function single-purpose and under ~40 lines.
+24. **Test every new service and controller, not just auth** — Every new Application-layer service and API controller must ship with unit tests (service layer) and integration tests (controller HTTP contract) in the same commit; missing tests on the primary milestone deliverable is a blocker, not a follow-up.
+25. **Service tests must use real repos, not hand-rolled fakes** — Use EF Core InMemory database with real `BaseRepository<T>` for service tests; hand-rolled fake repositories silently pass update assertions because their `UpdateAsync` is a no-op, making the tests unreliable; the project convention is explicit: no mocking unless unavoidable.
+26. **Multi-step writes need safe ordering** — When a business operation activates one record and deactivates others (e.g. `MarkCurrentAsync`), always deactivate others first then activate the target; activating first creates a window where two records are simultaneously active, and any subsequent failure leaves the database in a corrupt state.
