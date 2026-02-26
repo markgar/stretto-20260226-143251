@@ -5,7 +5,7 @@ const PY_ID = '22222222-2222-2222-2222-222222222222';
 
 async function loginAsAdmin(request: any) {
   const resp = await request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner22@gmail.com' },
+    data: { email: 'admin@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   const cookie = resp.headers()['set-cookie'];
@@ -15,7 +15,7 @@ async function loginAsAdmin(request: any) {
 
 async function loginAsMember(request: any) {
   const resp = await request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner@outlook.com' },
+    data: { email: 'member@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   const cookie = resp.headers()['set-cookie'];
@@ -31,12 +31,12 @@ test('[J-1] J-1: GET /health returns 200', async ({ request }) => {
 
 test('[J-1] J-1: Login returns 200 with user fields', async ({ request }) => {
   const resp = await request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner22@gmail.com' },
+    data: { email: 'admin@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   expect(resp.status()).toBe(200);
   const body = await resp.json();
-  expect(body.email).toBe('mgarner22@gmail.com');
+  expect(body.email).toBe('admin@example.com');
   expect(body.role).toBe('Admin');
   expect(body.orgName).toBe('My Choir');
 });
@@ -158,7 +158,7 @@ test('[J-1] Login page renders and redirects to dashboard', async ({ page }) => 
   await page.goto('/login');
   const emailInput = page.getByTestId('email-input');
   await expect(emailInput).toBeVisible();
-  await emailInput.fill('mgarner22@gmail.com');
+  await emailInput.fill('admin@example.com');
   await page.getByTestId('login-button').click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   expect(errors).toHaveLength(0);
@@ -166,7 +166,7 @@ test('[J-1] Login page renders and redirects to dashboard', async ({ page }) => 
 
 test('[J-1] Sidebar shows organization name My Choir after login', async ({ page }) => {
   await page.goto('/login');
-  await page.getByTestId('email-input').fill('mgarner22@gmail.com');
+  await page.getByTestId('email-input').fill('admin@example.com');
   await page.getByTestId('login-button').click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   await expect(page.getByText('My Choir')).toBeVisible();
@@ -174,7 +174,7 @@ test('[J-1] Sidebar shows organization name My Choir after login', async ({ page
 
 test('[J-1] Sidebar shows Projects nav link after login', async ({ page }) => {
   await page.goto('/login');
-  await page.getByTestId('email-input').fill('mgarner22@gmail.com');
+  await page.getByTestId('email-input').fill('admin@example.com');
   await page.getByTestId('login-button').click();
   await page.waitForURL(/\/dashboard/, { timeout: 15000 });
   // Nav uses nav-desktop-{label} pattern (see AppShell.tsx)

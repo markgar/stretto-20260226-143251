@@ -7,26 +7,14 @@ namespace Stretto.Api.Controllers;
 
 [ApiController]
 [Route("api/projects")]
-public class ProjectsController : ControllerBase
+public class ProjectsController : ProtectedControllerBase
 {
     private readonly IProjectService _projectService;
-    private readonly IAuthService _authService;
 
     public ProjectsController(IProjectService projectService, IAuthService authService)
+        : base(authService)
     {
         _projectService = projectService;
-        _authService = authService;
-    }
-
-    private async Task<(Guid orgId, string role)> GetSessionAsync()
-    {
-        var token = Request.Cookies["stretto_session"];
-        if (token is null)
-            throw new UnauthorizedException();
-        var dto = await _authService.ValidateAsync(token);
-        if (dto is null)
-            throw new UnauthorizedException();
-        return (dto.OrgId, dto.Role);
     }
 
     [HttpGet]

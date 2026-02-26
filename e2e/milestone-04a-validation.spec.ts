@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 // Milestone 04a — Program Years API
 // J-1: Smoke — Login and Navigate the App Shell
 
-const ADMIN_EMAIL = 'mgarner22@gmail.com';
+const ADMIN_EMAIL = 'admin@example.com';
 
 test.describe('J-1: Smoke — Login and Navigate the App Shell', () => {
   test('unauthenticated root redirects to /login', async ({ page }) => {

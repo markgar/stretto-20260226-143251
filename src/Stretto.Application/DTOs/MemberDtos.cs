@@ -10,11 +10,11 @@ public record CreateMemberRequest(
     [Required][MaxLength(100)] string FirstName,
     [Required][MaxLength(100)] string LastName,
     [Required][EmailAddress][MaxLength(200)] string Email,
-    [Required] string Role);
+    [Required][MaxLength(10)] string Role);
 
 public record UpdateMemberRequest(
     [Required][MaxLength(100)] string FirstName,
     [Required][MaxLength(100)] string LastName,
     [Required][EmailAddress][MaxLength(200)] string Email,
-    [Required] string Role,
+    [Required][MaxLength(10)] string Role,
     bool IsActive);

@@ -22,7 +22,7 @@ public static class DataSeeder
         db.Members.Add(new Member
         {
             Id = Guid.NewGuid(),
-            Email = "mgarner22@gmail.com",
+            Email = "admin@example.com",
             FirstName = "Admin",
             LastName = "User",
             Role = Role.Admin,
@@ -33,7 +33,7 @@ public static class DataSeeder
         db.Members.Add(new Member
         {
             Id = Guid.NewGuid(),
-            Email = "mgarner@outlook.com",
+            Email = "member@example.com",
             FirstName = "Member",
             LastName = "User",
             Role = Role.Member,

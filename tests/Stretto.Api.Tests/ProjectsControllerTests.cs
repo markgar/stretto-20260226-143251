@@ -44,7 +44,7 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
         _factory = factory;
     }
 
-    private async Task<string> LoginAndGetTokenAsync(HttpClient client, string email = "mgarner22@gmail.com")
+    private async Task<string> LoginAndGetTokenAsync(HttpClient client, string email = "admin@example.com")
     {
         var response = await client.PostAsJsonAsync("/auth/login", new { email });
         response.EnsureSuccessStatusCode();
@@ -101,7 +101,7 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
     public async Task Create_with_member_role_returns_403()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-        var memberToken = await LoginAndGetTokenAsync(client, "mgarner@outlook.com");
+        var memberToken = await LoginAndGetTokenAsync(client, "member@example.com");
 
         var req = WithSession(HttpMethod.Post, "/api/projects", memberToken);
         req.Content = JsonContent.Create(new
@@ -141,7 +141,7 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
     }
 
     [Fact]
-    public async Task Create_with_start_date_equal_to_end_date_returns_422()
+    public async Task Create_with_start_date_equal_to_end_date_returns_400()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
         var token = await LoginAndGetTokenAsync(client);
@@ -156,7 +156,7 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
         });
         var response = await client.SendAsync(req);
 
-        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
@@ -324,7 +324,7 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
     public async Task Update_with_member_role_returns_403()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-        var memberToken = await LoginAndGetTokenAsync(client, "mgarner@outlook.com");
+        var memberToken = await LoginAndGetTokenAsync(client, "member@example.com");
 
         var req = WithSession(HttpMethod.Put, $"/api/projects/{Guid.NewGuid()}", memberToken);
         req.Content = JsonContent.Create(new
@@ -342,7 +342,7 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
     public async Task Delete_with_member_role_returns_403()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
-        var memberToken = await LoginAndGetTokenAsync(client, "mgarner@outlook.com");
+        var memberToken = await LoginAndGetTokenAsync(client, "member@example.com");
 
         var req = WithSession(HttpMethod.Delete, $"/api/projects/{Guid.NewGuid()}", memberToken);
         var response = await client.SendAsync(req);
@@ -351,7 +351,7 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
     }
 
     [Fact]
-    public async Task Create_with_dates_outside_program_year_returns_422()
+    public async Task Create_with_dates_outside_program_year_returns_400()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
         var token = await LoginAndGetTokenAsync(client);
@@ -366,11 +366,11 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
         });
         var response = await client.SendAsync(req);
 
-        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]
-    public async Task Update_with_invalid_dates_returns_422()
+    public async Task Update_with_invalid_dates_returns_400()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
         var token = await LoginAndGetTokenAsync(client);
@@ -396,7 +396,7 @@ public class ProjectsControllerTests : IClassFixture<ProjectsTestFactory>
         });
         var updateResp = await client.SendAsync(updateReq);
 
-        Assert.Equal(HttpStatusCode.UnprocessableEntity, updateResp.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, updateResp.StatusCode);
     }
 
     [Fact]

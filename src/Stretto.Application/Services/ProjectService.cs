@@ -87,10 +87,16 @@ public class ProjectService : IProjectService
                 ["startDate"] = ["Start date must be before end date"]
             });
 
-        if (startDate < programYear.StartDate || endDate > programYear.EndDate)
+        if (startDate < programYear.StartDate)
             throw new ValidationException(new Dictionary<string, string[]>
             {
-                ["startDate"] = ["Project dates must fall within the program year"]
+                ["startDate"] = ["Start date must fall within the program year"]
+            });
+
+        if (endDate > programYear.EndDate)
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["endDate"] = ["End date must fall within the program year"]
             });
     }
 

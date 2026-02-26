@@ -64,10 +64,10 @@ public class MemberService : IMemberService
 
     public async Task<MemberDto> CreateAsync(Guid orgId, CreateMemberRequest req)
     {
-        if (!Enum.TryParse<Role>(req.Role, out var role))
+        if (!Enum.TryParse<Role>(req.Role, ignoreCase: true, out var role))
             throw new ValidationException(new Dictionary<string, string[]> { ["role"] = new[] { "Invalid role" } });
 
-        var existing = await _members.FindOneAsync(m => m.OrganizationId == orgId && m.Email == req.Email);
+        var existing = await _members.FindOneAsync(m => m.OrganizationId == orgId && m.Email.ToLower() == req.Email.ToLower());
         if (existing is not null)
             throw new ValidationException(new Dictionary<string, string[]> { ["email"] = new[] { "Email already in use" } });
 
@@ -91,8 +91,12 @@ public class MemberService : IMemberService
         if (member is null)
             throw new NotFoundException("Member not found");
 
-        if (!Enum.TryParse<Role>(req.Role, out var role))
+        if (!Enum.TryParse<Role>(req.Role, ignoreCase: true, out var role))
             throw new ValidationException(new Dictionary<string, string[]> { ["role"] = new[] { "Invalid role" } });
+
+        var duplicate = await _members.FindOneAsync(m => m.OrganizationId == orgId && m.Id != id && m.Email.ToLower() == req.Email.ToLower());
+        if (duplicate is not null)
+            throw new ValidationException(new Dictionary<string, string[]> { ["email"] = new[] { "Email already in use" } });
 
         member.FirstName = req.FirstName;
         member.LastName = req.LastName;

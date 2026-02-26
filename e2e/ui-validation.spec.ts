@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test';
 
 async function loginAsAdmin(page: any) {
   await page.goto('/login');
-  await page.getByTestId('email-input').fill('mgarner22@gmail.com');
+  await page.getByTestId('email-input').fill('admin@example.com');
   await page.getByTestId('login-button').click();
   await page.waitForURL(/\/dashboard/, { timeout: 10000 });
 }

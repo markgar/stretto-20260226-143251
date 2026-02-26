@@ -40,7 +40,7 @@ public class ProgramYearsControllerTests : IClassFixture<ProgramYearsTestFactory
 
     private async Task<string> LoginAndGetTokenAsync(HttpClient client)
     {
-        var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
+        var response = await client.PostAsJsonAsync("/auth/login", new { email = "admin@example.com" });
         response.EnsureSuccessStatusCode();
         if (!response.Headers.TryGetValues("Set-Cookie", out var cookies))
             throw new InvalidOperationException("No Set-Cookie header in login response");

@@ -46,7 +46,7 @@ public class EventsControllerTests : IClassFixture<EventsTestFactory>
         _factory = factory;
     }
 
-    private async Task<string> LoginAsync(HttpClient client, string email = "mgarner22@gmail.com")
+    private async Task<string> LoginAsync(HttpClient client, string email = "admin@example.com")
     {
         var response = await client.PostAsJsonAsync("/auth/login", new { email });
         response.EnsureSuccessStatusCode();
@@ -107,7 +107,7 @@ public class EventsControllerTests : IClassFixture<EventsTestFactory>
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
         var adminToken = await LoginAsync(client);
         var projectId = await CreateProjectAsync(client, adminToken);
-        var memberToken = await LoginAsync(client, "mgarner@outlook.com");
+        var memberToken = await LoginAsync(client, "member@example.com");
 
         var req = WithSession(HttpMethod.Post, "/api/events", memberToken);
         req.Content = JsonContent.Create(new
@@ -281,7 +281,7 @@ public class EventsControllerTests : IClassFixture<EventsTestFactory>
     }
 
     [Fact]
-    public async Task Create_with_date_outside_project_range_returns_422()
+    public async Task Create_with_date_outside_project_range_returns_400()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
         var token = await LoginAsync(client);
@@ -299,7 +299,7 @@ public class EventsControllerTests : IClassFixture<EventsTestFactory>
         });
         var response = await client.SendAsync(req);
 
-        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
     [Fact]

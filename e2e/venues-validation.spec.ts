@@ -6,7 +6,7 @@ const UI_BASE = process.env.BASE_URL || 'http://frontend:5173';
 // Helper: login via API and inject auth state into Zustand store
 async function loginViaApi(page: Page): Promise<string> {
   const resp = await page.request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner22@gmail.com' },
+    data: { email: 'admin@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   const body = await resp.json();
@@ -98,7 +98,7 @@ test('GET /api/venues without auth returns 401', async ({ request }) => {
 
 test('POST /api/venues returns 201 with id, name, address', async ({ request }) => {
   const loginResp = await request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner22@gmail.com' },
+    data: { email: 'admin@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   expect(loginResp.status()).toBe(200);
@@ -119,7 +119,7 @@ test('POST /api/venues returns 201 with id, name, address', async ({ request }) 
 
 test('GET /api/venues/{id} returns 200 with matching name', async ({ request }) => {
   const loginResp = await request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner22@gmail.com' },
+    data: { email: 'admin@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   const cookie = loginResp.headers()['set-cookie'];
@@ -142,7 +142,7 @@ test('GET /api/venues/{id} returns 200 with matching name', async ({ request }) 
 
 test('PUT /api/venues/{id} returns 200 with updated name', async ({ request }) => {
   const loginResp = await request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner22@gmail.com' },
+    data: { email: 'admin@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   const cookie = loginResp.headers()['set-cookie'];
@@ -166,7 +166,7 @@ test('PUT /api/venues/{id} returns 200 with updated name', async ({ request }) =
 
 test('DELETE /api/venues/{id} returns 204 and subsequent GET returns 404', async ({ request }) => {
   const loginResp = await request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner22@gmail.com' },
+    data: { email: 'admin@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   const cookie = loginResp.headers()['set-cookie'];
@@ -192,7 +192,7 @@ test('DELETE /api/venues/{id} returns 204 and subsequent GET returns 404', async
 
 test('GET /api/venues returns 200 with JSON array', async ({ request }) => {
   const loginResp = await request.post(`${API_BASE}/auth/login`, {
-    data: { email: 'mgarner22@gmail.com' },
+    data: { email: 'admin@example.com' },
     headers: { 'Content-Type': 'application/json' },
   });
   const cookie = loginResp.headers()['set-cookie'];

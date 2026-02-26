@@ -84,6 +84,13 @@ public class ProgramYearService : IProgramYearService
 
     public async Task<ProgramYearDto> MarkCurrentAsync(Guid id, Guid orgId)
     {
+        var year = await _programYears.GetByIdAsync(id, orgId);
+        if (year is null)
+            throw new NotFoundException("Program year not found");
+
+        if (year.IsArchived)
+            throw new ValidationException(new Dictionary<string, string[]> { [""] = new[] { "Cannot activate an archived program year" } });
+
         var all = await _programYears.ListAsync(orgId);
         foreach (var py in all.Where(py => py.Id != id))
         {
@@ -93,13 +100,6 @@ public class ProgramYearService : IProgramYearService
                 await _programYears.UpdateAsync(py);
             }
         }
-
-        var year = await _programYears.GetByIdAsync(id, orgId);
-        if (year is null)
-            throw new NotFoundException("Program year not found");
-
-        if (year.IsArchived)
-            throw new ValidationException(new Dictionary<string, string[]> { [""] = new[] { "Cannot activate an archived program year" } });
 
         year.IsCurrent = true;
         await _programYears.UpdateAsync(year);
