@@ -1,5 +1,84 @@
 import { test, expect } from '@playwright/test';
 
+// Milestone 06b — Venues Admin Pages
+
+async function loginAsAdmin(page: any) {
+  await page.goto('/login');
+  await page.getByTestId('email-input').fill('mgarner22@gmail.com');
+  await page.getByTestId('login-button').click();
+  await page.waitForURL(/\/dashboard/, { timeout: 10000 });
+}
+
+async function navigateToVenues(page: any) {
+  // Use nav link click to avoid full-page reload (Zustand state preserved)
+  const venuesNav = page.getByTestId('nav-venues').first();
+  if (await venuesNav.isVisible()) {
+    await venuesNav.click();
+  } else {
+    await page.getByRole('link', { name: /venues/i }).first().click();
+  }
+  await page.waitForURL(/\/venues$/, { timeout: 10000 });
+}
+
+test('venues list page renders venues-heading after login', async ({ page }) => {
+  await loginAsAdmin(page);
+  await navigateToVenues(page);
+  const heading = page.getByTestId('venues-heading');
+  await expect(heading).toBeVisible();
+});
+
+test('venues list page loads without JavaScript errors', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (err) => errors.push(err.message));
+  await loginAsAdmin(page);
+  await navigateToVenues(page);
+  await page.waitForTimeout(1000);
+  expect(errors).toHaveLength(0);
+});
+
+test('venues/new renders name-input', async ({ page }) => {
+  await loginAsAdmin(page);
+  await navigateToVenues(page);
+  await page.getByTestId('add-venue-button').first().click();
+  await page.waitForURL(/\/venues\/new/, { timeout: 10000 });
+  const nameInput = page.getByTestId('name-input');
+  await expect(nameInput).toBeVisible();
+});
+
+test('venues/new renders submit-button', async ({ page }) => {
+  await loginAsAdmin(page);
+  await navigateToVenues(page);
+  await page.getByTestId('add-venue-button').first().click();
+  await page.waitForURL(/\/venues\/new/, { timeout: 10000 });
+  const submitButton = page.getByTestId('submit-button');
+  await expect(submitButton).toBeVisible();
+});
+
+test('venues/new page loads without JavaScript errors', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (err) => errors.push(err.message));
+  await loginAsAdmin(page);
+  await navigateToVenues(page);
+  await page.getByTestId('add-venue-button').first().click();
+  await page.waitForURL(/\/venues\/new/, { timeout: 10000 });
+  await page.waitForTimeout(1000);
+  expect(errors).toHaveLength(0);
+});
+
+test('venues list page has add-venue-button linking to /venues/new', async ({ page }) => {
+  await loginAsAdmin(page);
+  await navigateToVenues(page);
+  const addButton = page.getByTestId('add-venue-button').first();
+  await expect(addButton).toBeVisible();
+});
+
+test('clicking add-venue-button navigates to /venues/new', async ({ page }) => {
+  await loginAsAdmin(page);
+  await navigateToVenues(page);
+  await page.getByTestId('add-venue-button').first().click();
+  await expect(page).toHaveURL(/\/venues\/new/, { timeout: 10000 });
+});
+
 // Milestone 03b — Authentication / App Shell
 
 test('login page loads without JavaScript errors', async ({ page }) => {

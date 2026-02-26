@@ -89,9 +89,9 @@ Validated in milestone `milestone-03a-backend-auth`:
 - **Cookie**: `stretto_session` is set with `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/`. Contains a random 32-char hex token (not user data).
 - **Session store**: `InMemoryAuthSessionStore` (singleton) backed by `ConcurrentDictionary<string, Guid>`. Session is invalidated on logout.
 - **UnauthorizedException**: Mapped to HTTP 401 `{"message":"..."}` by `GlobalExceptionHandlerMiddleware`.
-- **Seed data bug**: `DataSeeder` uses `admin@example.com` and `member@example.com` but REQUIREMENTS.md specifies `mgarner22@gmail.com` and `mgarner@outlook.com`. Bug filed as issue #54. **Use `admin@example.com` for auth testing until this is fixed.**
-- **All 8 auth Playwright tests pass** using the `admin@example.com` seeded email.
-=======
+- **Seed data fix**: `DataSeeder` was using `admin@example.com` / `member@example.com` but REQUIREMENTS.md specifies `mgarner22@gmail.com` and `mgarner@outlook.com`. Fixed in milestone-03b. Use `mgarner22@gmail.com` for all auth testing.
+- **All auth endpoints verified**: `POST /auth/login` → 200 + user JSON, `GET /auth/validate` → 200, `POST /auth/logout` → 204.
+
 ## Milestone 03b: Authentication — App Shell
 
 Validated in milestone `milestone-03b-frontend-app-shell`:
@@ -102,8 +102,8 @@ Validated in milestone `milestone-03b-frontend-app-shell`:
 - **Protected route**: Navigating to `/dashboard` without auth redirects to `/login`. After login, `/dashboard` shows the dashboard heading.
 - **App shell**: Admin nav renders with `data-testid="nav-{label}"` attributes. Multiple nav elements exist (sidebar + mobile tab bar) — use `.first()` when selecting by testid.
 - **All 10 Playwright tests pass** after fixes.
->>>>>>> a3efced ([validator] Validate milestone-03b: Authentication — App Shell)
 
+<<<<<<< HEAD
 ## Milestone 06a: Venues — CRUD API
 
 Validated in milestone `milestone-06a-venues-crud-api`:
@@ -121,6 +121,24 @@ Validated in milestone `milestone-06a-venues-crud-api`:
 ## Known Gotchas
 
 <<<<<<< HEAD
+=======
+## Milestone 06b: Venues — Admin Pages
+
+Validated in milestone `milestone-06b-venues-admin-pages`:
+
+- **Venues list page**: `/venues` renders `<h1 data-testid="venues-heading">Venues</h1>` and `<Link data-testid="add-venue-button">Add Venue</Link>` inside AppShell.
+- **Venue form page**: `/venues/new` renders `data-testid="name-input"`, `data-testid="address-input"`, `data-testid="contact-name-input"`, `data-testid="contact-email-input"`, `data-testid="contact-phone-input"`, and `data-testid="submit-button"`.
+- **Routes added in App.tsx**: `/venues` → `VenuesListPage`, `/venues/new` → `VenueFormPage`, `/venues/:id/edit` → `VenueFormPage`.
+- **Auth restore in App.tsx**: Added `useEffect` in `App.tsx` that calls `GET /api/auth/validate` on mount and calls `setUser` if successful. Waits for auth check (`authChecked` state) before rendering routes. This prevents premature ProtectedRoute redirects.
+- **Playwright navigation**: Tests use React Router client-side navigation (click `data-testid="nav-venues"`) rather than `page.goto('/venues')` to avoid full page reload losing Zustand auth state (due to `Secure` cookie issue on HTTP).
+- **All 17 Playwright tests pass** (7 venues tests + 10 previous shell tests).
+
+
+
+- **Secure cookie prevents page reload auth restore**: The `stretto_session` cookie is set with `Secure` flag. In the Docker HTTP setup, the browser does NOT send this cookie on page reload (only over HTTPS). Zustand state is lost on full page reload (`page.goto()`). In Playwright tests, use React Router client-side navigation (click nav links) instead of `page.goto()` for pages that require auth. The `loginAsAdmin` helper + nav link clicks work correctly.
+- **Auth restore on reload (App.tsx)**: `App.tsx` calls `GET /api/auth/validate` on mount to restore auth state from the session cookie. This works in HTTPS production but NOT in the HTTP Docker dev setup due to the Secure cookie issue above.
+- **Venues API route**: `GET /api/venues` (with `/api` prefix, proxied by Vite) returns `[]` for empty list, `401` without auth. Direct backend call: `GET http://localhost:7777/api/venues`.
+>>>>>>> c00bb06 ([validator] Validate milestone-06b: Venues — Admin Pages)
 - **Vite proxy for API calls**: The frontend calls `/api/*` relative URLs. Vite's `server.proxy` in `vite.config.ts` must rewrite `/api` → `` and target `http://app:8080` (via `VITE_API_URL` env var). Without this proxy, API calls 404. The `VITE_API_URL=http://app:8080` env var is set in docker-compose.yml for the frontend service.
 - **Multiple nav testids**: The app shell renders navigation in multiple locations (desktop sidebar, tablet sidebar, mobile bottom tab bar). Each nav item has the same `data-testid`. Use `.first()` when selecting to avoid strict mode violations.
 =======

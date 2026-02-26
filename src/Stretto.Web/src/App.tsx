@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Navigate, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
@@ -8,6 +9,7 @@ import ProgramYearCreatePage from './pages/ProgramYearCreatePage';
 import ProgramYearDetailPage from './pages/ProgramYearDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
+import { useAuthStore } from './stores/authStore';
 
 function ComingSoon() {
   return (
@@ -18,6 +20,21 @@ function ComingSoon() {
 }
 
 function App() {
+  const setUser = useAuthStore((s) => s.setUser);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    fetch('/api/auth/validate', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((user) => {
+        if (user) setUser(user);
+      })
+      .catch(() => {})
+      .finally(() => setAuthChecked(true));
+  }, [setUser]);
+
+  if (!authChecked) return null;
+
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
