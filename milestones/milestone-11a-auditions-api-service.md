@@ -19,7 +19,7 @@
 
 - [x] Create `src/Stretto.Application/Interfaces/IAuditionService.cs` with six method signatures: `Task<List<AuditionDateDto>> ListByProgramYearAsync(Guid programYearId, Guid orgId)`; `Task<AuditionDateDto> GetAsync(Guid id, Guid orgId)`; `Task<AuditionDateDto> CreateAsync(Guid orgId, CreateAuditionDateRequest req)`; `Task DeleteAsync(Guid id, Guid orgId)`; `Task<AuditionSlotDto> UpdateSlotStatusAsync(Guid slotId, Guid orgId, string status)`; `Task<AuditionSlotDto> UpdateSlotNotesAsync(Guid slotId, Guid orgId, string? notes)`
 
-- [ ] Create `src/Stretto.Application/Services/AuditionService.cs` implementing `IAuditionService`; constructor-inject `IRepository<AuditionDate>` and `IRepository<AuditionSlot>`; add private `ToSlotDto` that maps `AuditionSlot` to `AuditionSlotDto` (map `Status` as `slot.Status.ToString()`); add private `ToDto` that maps `AuditionDate` plus its pre-loaded slots list to `AuditionDateDto`
+- [x] Create `src/Stretto.Application/Services/AuditionService.cs` implementing `IAuditionService`; constructor-inject `IRepository<AuditionDate>` and `IRepository<AuditionSlot>`; add private `ToSlotDto` that maps `AuditionSlot` to `AuditionSlotDto` (map `Status` as `slot.Status.ToString()`); add private `ToDto` that maps `AuditionDate` plus its pre-loaded slots list to `AuditionDateDto`
 
 - [ ] Implement `ListByProgramYearAsync` in `AuditionService`: call `_dates.ListAsync(orgId, d => d.ProgramYearId == programYearId)` to get dates; then call `_slots.ListAsync(orgId, s => dateIds.Contains(s.AuditionDateId))` where `dateIds` is the set of date IDs; group slots by `AuditionDateId`; map each date to `AuditionDateDto` using `ToDto` with its matching slots ordered by `SlotTime`
 
