@@ -1,6 +1,6 @@
 using Stretto.Infrastructure.Auth;
 
-namespace Stretto.Api.Tests;
+namespace Stretto.Infrastructure.Tests;
 
 /// <summary>
 /// Unit tests for InMemoryAuthSessionStore — covers create/get/delete round-trips and expiry.

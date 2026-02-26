@@ -8,7 +8,7 @@ using Stretto.Infrastructure.Auth;
 using Stretto.Infrastructure.Data;
 using Stretto.Infrastructure.Repositories;
 
-namespace Stretto.Api.Tests;
+namespace Stretto.Application.Tests;
 
 /// <summary>
 /// Unit tests for AuthService — covers login, validate, and logout business logic using real
