@@ -16,15 +16,10 @@ public class BaseRepository<T> : IRepository<T> where T : class
 
     public async Task<T?> GetByIdAsync(Guid id, Guid orgId)
     {
-        var entity = await _context.Set<T>().FindAsync(id);
-        if (entity is null)
-            return null;
-
-        var orgIdProp = typeof(T).GetProperty("OrganizationId");
-        if (orgIdProp is not null && (Guid)orgIdProp.GetValue(entity)! != orgId)
-            return null;
-
-        return entity;
+        return await _context.Set<T>()
+            .Where(e => EF.Property<Guid>(e, "Id") == id
+                     && EF.Property<Guid>(e, "OrganizationId") == orgId)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<List<T>> ListAsync(Guid orgId, Expression<Func<T, bool>>? predicate = null)
