@@ -29,25 +29,6 @@ const mockAdminUser = {
   orgName: 'Stretto Orchestra',
 };
 
-function renderWithRouter(initialPath: string, storeUser: typeof mockAdminUser | null = null) {
-  useAuthStore.getState().setUser(storeUser as typeof mockAdminUser);
-  return render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route path="/login" element={<div>Login Page</div>} />
-        <Route path="/dashboard" element={<div>Dashboard</div>} />
-        <Route element={<ProtectedRoute />}>
-          <Route path="/protected" element={<div>Protected Content</div>} />
-          <Route path="/admin-only" element={<div>Admin Content</div>} />
-        </Route>
-        <Route element={<ProtectedRoute requiredRole="Admin" />}>
-          <Route path="/admin-required" element={<div>Admin Only</div>} />
-        </Route>
-      </Routes>
-    </MemoryRouter>,
-  );
-}
-
 test('unauthenticated user is redirected to /login', () => {
   useAuthStore.getState().clearUser();
   render(
