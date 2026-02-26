@@ -143,4 +143,19 @@ public class AuditionService : IAuditionService
     private static AuditionDateDto ToDto(AuditionDate date, List<AuditionSlot> slots) =>
         new(date.Id, date.ProgramYearId, date.Date, date.StartTime, date.EndTime, date.BlockLengthMinutes,
             slots.Select(ToSlotDto).ToList());
+
+    public async Task<PublicAuditionDateDto> GetPublicAuditionDateAsync(Guid auditionDateId)
+    {
+        var date = await _dates.FindOneAsync(d => d.Id == auditionDateId);
+        if (date is null)
+            throw new NotFoundException("Audition date not found");
+
+        var slots = await _slots.ListAsync(date.OrganizationId, s => s.AuditionDateId == auditionDateId);
+        var publicSlots = slots
+            .OrderBy(s => s.SlotTime)
+            .Select(s => new PublicAuditionSlotDto(s.Id, s.SlotTime, s.MemberId == null && s.Status == AuditionStatus.Pending))
+            .ToList();
+
+        return new PublicAuditionDateDto(date.Id, date.Date, date.StartTime, date.EndTime, date.BlockLengthMinutes, publicSlots);
+    }
 }
