@@ -168,6 +168,19 @@ Validated in milestone `milestone-06b-venues-admin-pages`:
 - **Frontend npm install delay**: The frontend container runs `npm install` on first start — expect ~15-30 seconds before the Vite dev server is ready at http://localhost:7778/.
 - **Secure cookie prevents page reload auth restore**: The `stretto_session` cookie is set with `Secure` flag. In the Docker HTTP setup, the browser does NOT send this cookie on page reload (only over HTTPS). Zustand state is lost on full page reload (`page.goto()`). In Playwright tests, use React Router client-side navigation (click nav links) instead of `page.goto()` for pages that require auth.
 
+## Milestone 11b: Auditions — API Controllers
+
+Validated in milestone `milestone-11b-auditions-api-controllers`:
+
+- **AuditionDatesController**: Registered at `api/audition-dates`. All 4 endpoints work: GET list by programYearId, POST create (Admin only), GET by id, DELETE (Admin only).
+- **AuditionSlotsController**: Registered at `api/audition-slots`. All 3 endpoints work: GET list by auditionDateId, PUT status (Admin only), PUT notes (Admin only).
+- **IAuditionService registered**: `builder.Services.AddScoped<IAuditionService, AuditionService>()` in `Program.cs`.
+- **Auth enforcement**: All endpoints return HTTP 401 without a valid `stretto_session` cookie. POST/DELETE require Admin role — Member returns HTTP 403.
+- **Slot generation**: Creating an audition date automatically generates slots based on startTime, endTime, blockLengthMinutes (e.g., 09:00-12:00 / 15min = 12 slots). All slots start with status='Pending' and notes=null.
+- **Slot shape**: Each slot has `id`, `auditionDateId`, `slotTime`, `memberId`, `status`, `notes`.
+- **All 10 Playwright tests pass** in `e2e/auditions-validation.spec.ts`.
+- **All 11 API tests pass** via Python urllib tests.
+
 ## Building and Testing Locally (without Docker)
 
 ```bash
