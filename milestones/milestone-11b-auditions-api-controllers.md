@@ -16,7 +16,7 @@
 > - `src/Stretto.Api/Controllers/EventsController.cs` — thin controller with `GetSessionAsync()` helper and role guard pattern
 > - `src/Stretto.Api/Program.cs` — DI registration; add `IAuditionService` here
 
-- [ ] Register `IAuditionService` in `src/Stretto.Api/Program.cs`: add `builder.Services.AddScoped<IAuditionService, AuditionService>();` after the `AddScoped<IEventService, EventService>()` line; add `using Stretto.Application.Services;` if not already imported (it should be); confirm `using Stretto.Application.Interfaces;` is present
+- [x] Register `IAuditionService` in `src/Stretto.Api/Program.cs`: add `builder.Services.AddScoped<IAuditionService, AuditionService>();` after the `AddScoped<IEventService, EventService>()` line; add `using Stretto.Application.Services;` if not already imported (it should be); confirm `using Stretto.Application.Interfaces;` is present
 
 - [ ] Create `src/Stretto.Api/Controllers/AuditionDatesController.cs` with `[ApiController]`, `[Route("api/audition-dates")]`, inheriting `ControllerBase`; constructor-inject `IAuditionService` and `IAuthService`; include the `GetSessionAsync()` helper; implement: `GET /api/audition-dates?programYearId={id}` (return 400 if `programYearId` query param missing, else call `ListByProgramYearAsync` and return `Ok(list)`); `GET /api/audition-dates/{id:guid}` (call `GetAsync`, return `Ok(dto)`); `POST /api/audition-dates` (require Admin role, call `CreateAsync`, return `Created($"/api/audition-dates/{dto.Id}", dto)`); `DELETE /api/audition-dates/{id:guid}` (require Admin role, call `DeleteAsync`, return `NoContent()`)
 
