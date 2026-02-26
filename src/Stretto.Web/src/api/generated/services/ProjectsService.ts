@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { AssignMemberRequest } from '../models/AssignMemberRequest';
 import type { CreateProjectRequest } from '../models/CreateProjectRequest';
 import type { UpdateProjectRequest } from '../models/UpdateProjectRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
@@ -88,6 +89,61 @@ export class ProjectsService {
             url: '/api/projects/{id}',
             path: {
                 'id': id,
+            },
+        });
+    }
+    /**
+     * @param id
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static getApiProjectsMembers(
+        id: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/projects/{id}/members',
+            path: {
+                'id': id,
+            },
+        });
+    }
+    /**
+     * @param id
+     * @param requestBody
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static postApiProjectsMembers(
+        id: string,
+        requestBody?: AssignMemberRequest,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/projects/{id}/members',
+            path: {
+                'id': id,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * @param id
+     * @param memberId
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static deleteApiProjectsMembers(
+        id: string,
+        memberId: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/projects/{id}/members/{memberId}',
+            path: {
+                'id': id,
+                'memberId': memberId,
             },
         });
     }

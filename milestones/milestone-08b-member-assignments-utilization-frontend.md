@@ -16,7 +16,7 @@
 
 ### TypeScript Client
 
-- [ ] Regenerate the TypeScript API client by running `npm run generate` inside `src/Stretto.Web`. Verify the output in `src/Stretto.Web/src/api/generated/` contains new `ProjectAssignmentsService` (or similar) entries for the three new endpoints and that all previously existing service files (`AuditionDatesService`, `AuditionSlotsService`, `AttendanceService`, `EventsService`, `MembersService`, `ProgramYearsService`, `ProjectsService`, `PublicAuditionsService`, `VenuesService`, `AuthService`) are still present and unmodified. If `npm run generate` drops any existing file, do NOT commit; instead manually write only the new generated types/service files needed for assignments and utilization
+- [x] Regenerate the TypeScript API client by running `npm run generate` inside `src/Stretto.Web`. Verify the output in `src/Stretto.Web/src/api/generated/` contains new `ProjectAssignmentsService` (or similar) entries for the three new endpoints and that all previously existing service files (`AuditionDatesService`, `AuditionSlotsService`, `AttendanceService`, `EventsService`, `MembersService`, `ProgramYearsService`, `ProjectsService`, `PublicAuditionsService`, `VenuesService`, `AuthService`) are still present and unmodified. If `npm run generate` drops any existing file, do NOT commit; instead manually write only the new generated types/service files needed for assignments and utilization
 
 ---
 
