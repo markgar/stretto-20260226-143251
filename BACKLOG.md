@@ -20,7 +20,7 @@
 
 10. [ ] Attendance — Attendance record API (set status: Present/Excused/Absent); unique check-in URL per event (/checkin/{eventId}); mobile-optimized check-in page (full-width green "I'm here" button, no nav chrome); member excused-absence toggle from their event view; admin attendance view on event detail (all assigned members with status badges); re-generate TypeScript API client <!-- depends: 9 -->
 
-11. [3] Auditions — Admin Setup — Audition dates CRUD API (create with start time, end time, block length; validate block divides evenly; auto-generate time slots); admin Auditions pages: list audition dates by program year, create audition date form, slot grid view (status color-coding: Pending=amber, Accepted=green, Rejected=red, Waitlisted=blue), inline notes editor per slot, status update per slot; re-generate TypeScript API client <!-- depends: 4 -->
+11. [ ] Auditions — Admin Setup — Audition dates CRUD API (create with start time, end time, block length; validate block divides evenly; auto-generate time slots); admin Auditions pages: list audition dates by program year, create audition date form, slot grid view (status color-coding: Pending=amber, Accepted=green, Rejected=red, Waitlisted=blue), inline notes editor per slot, status update per slot; re-generate TypeScript API client <!-- depends: 4 -->
 
 12. [ ] Audition Sign-Up — Member-facing public audition listing page (no auth required to browse); sign-up API (claim slot, create member account if email is new, reject already-taken slots); sign-up form with email field; confirmation page; re-generate TypeScript API client <!-- depends: 11 -->
 
