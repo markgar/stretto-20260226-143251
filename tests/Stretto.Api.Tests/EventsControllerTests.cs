@@ -281,7 +281,7 @@ public class EventsControllerTests : IClassFixture<EventsTestFactory>
     }
 
     [Fact]
-    public async Task Create_with_date_outside_project_range_returns_400()
+    public async Task Create_with_date_outside_project_range_returns_422()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
         var token = await LoginAsync(client);
@@ -299,7 +299,7 @@ public class EventsControllerTests : IClassFixture<EventsTestFactory>
         });
         var response = await client.SendAsync(req);
 
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, response.StatusCode);
     }
 
     [Fact]

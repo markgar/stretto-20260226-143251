@@ -44,9 +44,16 @@ public class GlobalExceptionHandlerMiddleware
         }
         catch (ConflictException ex)
         {
-            context.Response.StatusCode = 422;
+            context.Response.StatusCode = 409;
             context.Response.ContentType = "application/json";
             var body = JsonSerializer.Serialize(new { message = ex.Message });
+            await context.Response.WriteAsync(body);
+        }
+        catch (UnprocessableEntityException ex)
+        {
+            context.Response.StatusCode = 422;
+            context.Response.ContentType = "application/json";
+            var body = JsonSerializer.Serialize(new { message = "Validation failed", errors = ex.Errors });
             await context.Response.WriteAsync(body);
         }
         catch (ValidationException ex)

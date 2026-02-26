@@ -46,6 +46,12 @@ public class AuditionService : IAuditionService
 
     public async Task<AuditionDateDto> CreateAsync(Guid orgId, CreateAuditionDateRequest req)
     {
+        if (req.BlockLengthMinutes <= 0)
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["blockLengthMinutes"] = ["Block length must be a positive number"]
+            });
+
         if (req.StartTime >= req.EndTime)
             throw new ValidationException(new Dictionary<string, string[]>
             {

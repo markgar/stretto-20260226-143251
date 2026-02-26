@@ -163,26 +163,26 @@ public class EventServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task CreateAsync_throws_ValidationException_when_date_before_project_start()
+    public async Task CreateAsync_throws_UnprocessableEntityException_when_date_before_project_start()
     {
         var project = await SeedProjectAsync(new DateOnly(2025, 10, 1), new DateOnly(2025, 11, 30));
         var req = new CreateEventRequest(project.Id, EventType.Rehearsal,
             new DateOnly(2025, 9, 30), new TimeOnly(18, 30), 120, null);
 
-        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+        var ex = await Assert.ThrowsAsync<UnprocessableEntityException>(() =>
             _service.CreateAsync(OrgId, req));
 
         Assert.True(ex.Errors.ContainsKey("date"));
     }
 
     [Fact]
-    public async Task CreateAsync_throws_ValidationException_when_date_after_project_end()
+    public async Task CreateAsync_throws_UnprocessableEntityException_when_date_after_project_end()
     {
         var project = await SeedProjectAsync(new DateOnly(2025, 10, 1), new DateOnly(2025, 11, 30));
         var req = new CreateEventRequest(project.Id, EventType.Rehearsal,
             new DateOnly(2025, 12, 1), new TimeOnly(18, 30), 120, null);
 
-        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+        var ex = await Assert.ThrowsAsync<UnprocessableEntityException>(() =>
             _service.CreateAsync(OrgId, req));
 
         Assert.True(ex.Errors.ContainsKey("date"));
@@ -275,14 +275,14 @@ public class EventServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task UpdateAsync_throws_ValidationException_when_date_outside_project_range()
+    public async Task UpdateAsync_throws_UnprocessableEntityException_when_date_outside_project_range()
     {
         var project = await SeedProjectAsync(new DateOnly(2025, 10, 1), new DateOnly(2025, 11, 30));
         var created = await _service.CreateAsync(OrgId, new CreateEventRequest(
             project.Id, EventType.Rehearsal,
             new DateOnly(2025, 10, 15), new TimeOnly(18, 30), 120, null));
 
-        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+        var ex = await Assert.ThrowsAsync<UnprocessableEntityException>(() =>
             _service.UpdateAsync(created.Id, OrgId,
                 new UpdateEventRequest(EventType.Rehearsal,
                     new DateOnly(2026, 1, 1), new TimeOnly(18, 30), 120, null)));

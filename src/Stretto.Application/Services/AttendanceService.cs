@@ -50,6 +50,10 @@ public class AttendanceService : IAttendanceService
 
     public async Task<AttendanceRecordDto> SetStatusAsync(Guid eventId, Guid memberId, Guid orgId, AttendanceStatus status)
     {
+        var ev = await _events.GetByIdAsync(eventId, orgId);
+        if (ev is null)
+            throw new NotFoundException("Event not found");
+
         var record = await _records.FindOneAsync(r => r.EventId == eventId && r.MemberId == memberId && r.OrganizationId == orgId);
         if (record is null)
         {
@@ -73,11 +77,29 @@ public class AttendanceService : IAttendanceService
 
     public async Task<AttendanceRecordDto> CheckInAsync(Guid eventId, Guid memberId, Guid orgId)
     {
+        var ev = await _events.GetByIdAsync(eventId, orgId);
+        if (ev is null)
+            throw new NotFoundException("Event not found");
+
+        var assignment = await _assignments.FindOneAsync(
+            a => a.ProjectId == ev.ProjectId && a.MemberId == memberId && a.OrganizationId == orgId);
+        if (assignment is null)
+            throw new ForbiddenException("Member is not assigned to this event's project");
+
         return await SetStatusAsync(eventId, memberId, orgId, AttendanceStatus.Present);
     }
 
     public async Task<AttendanceRecordDto> ToggleExcusedAsync(Guid eventId, Guid memberId, Guid orgId)
     {
+        var ev = await _events.GetByIdAsync(eventId, orgId);
+        if (ev is null)
+            throw new NotFoundException("Event not found");
+
+        var assignment = await _assignments.FindOneAsync(
+            a => a.ProjectId == ev.ProjectId && a.MemberId == memberId && a.OrganizationId == orgId);
+        if (assignment is null)
+            throw new ForbiddenException("Member is not assigned to this event's project");
+
         var record = await _records.FindOneAsync(r => r.EventId == eventId && r.MemberId == memberId && r.OrganizationId == orgId);
         var newStatus = record?.Status == AttendanceStatus.Excused ? AttendanceStatus.Absent : AttendanceStatus.Excused;
         return await SetStatusAsync(eventId, memberId, orgId, newStatus);

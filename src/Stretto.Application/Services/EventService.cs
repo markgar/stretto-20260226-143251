@@ -43,7 +43,7 @@ public class EventService : IEventService
             throw new NotFoundException("Project not found");
 
         if (req.Date < project.StartDate || req.Date > project.EndDate)
-            throw new ValidationException(new Dictionary<string, string[]>
+            throw new UnprocessableEntityException(new Dictionary<string, string[]>
             {
                 ["date"] = ["Event date must fall within the project date range"]
             });
@@ -90,7 +90,7 @@ public class EventService : IEventService
             throw new NotFoundException("Project not found");
 
         if (req.Date < project.StartDate || req.Date > project.EndDate)
-            throw new ValidationException(new Dictionary<string, string[]>
+            throw new UnprocessableEntityException(new Dictionary<string, string[]>
             {
                 ["date"] = ["Event date must fall within the project date range"]
             });

@@ -163,13 +163,16 @@ public class AttendanceServiceTests
     public async Task SetStatusAsync_creates_new_record_when_none_exists()
     {
         var ctx = CreateContext();
-        var eventId = Guid.NewGuid();
+        var projectId = Guid.NewGuid();
+        var ev = MakeEvent(projectId);
         var memberId = Guid.NewGuid();
+        ctx.Events.Add(ev);
+        await ctx.SaveChangesAsync();
         var service = CreateService(ctx);
 
-        var result = await service.SetStatusAsync(eventId, memberId, OrgId, AttendanceStatus.Present);
+        var result = await service.SetStatusAsync(ev.Id, memberId, OrgId, AttendanceStatus.Present);
 
-        Assert.Equal(eventId, result.EventId);
+        Assert.Equal(ev.Id, result.EventId);
         Assert.Equal(memberId, result.MemberId);
         Assert.Equal("Present", result.Status);
         Assert.Single(ctx.AttendanceRecords);
@@ -179,20 +182,22 @@ public class AttendanceServiceTests
     public async Task SetStatusAsync_updates_existing_record_instead_of_creating_duplicate()
     {
         var ctx = CreateContext();
-        var eventId = Guid.NewGuid();
+        var projectId = Guid.NewGuid();
+        var ev = MakeEvent(projectId);
         var memberId = Guid.NewGuid();
         var existing = new AttendanceRecord
         {
             Id = Guid.NewGuid(),
-            EventId = eventId,
+            EventId = ev.Id,
             MemberId = memberId,
             Status = AttendanceStatus.Absent,
             OrganizationId = OrgId
         };
+        ctx.Events.Add(ev);
         ctx.AttendanceRecords.Add(existing);
         await ctx.SaveChangesAsync();
 
-        var result = await CreateService(ctx).SetStatusAsync(eventId, memberId, OrgId, AttendanceStatus.Excused);
+        var result = await CreateService(ctx).SetStatusAsync(ev.Id, memberId, OrgId, AttendanceStatus.Excused);
 
         Assert.Equal("Excused", result.Status);
         Assert.Equal(existing.Id, result.Id);
@@ -205,10 +210,16 @@ public class AttendanceServiceTests
     public async Task CheckInAsync_sets_status_to_Present()
     {
         var ctx = CreateContext();
-        var eventId = Guid.NewGuid();
-        var memberId = Guid.NewGuid();
+        var projectId = Guid.NewGuid();
+        var ev = MakeEvent(projectId);
+        var member = MakeMember("Carol", "Cello");
+        var assignment = MakeAssignment(projectId, member.Id);
+        ctx.Events.Add(ev);
+        ctx.Members.Add(member);
+        ctx.ProjectAssignments.Add(assignment);
+        await ctx.SaveChangesAsync();
 
-        var result = await CreateService(ctx).CheckInAsync(eventId, memberId, OrgId);
+        var result = await CreateService(ctx).CheckInAsync(ev.Id, member.Id, OrgId);
 
         Assert.Equal("Present", result.Status);
     }
@@ -219,10 +230,16 @@ public class AttendanceServiceTests
     public async Task ToggleExcusedAsync_sets_Excused_when_no_existing_record()
     {
         var ctx = CreateContext();
-        var eventId = Guid.NewGuid();
-        var memberId = Guid.NewGuid();
+        var projectId = Guid.NewGuid();
+        var ev = MakeEvent(projectId);
+        var member = MakeMember("Dana", "Drum");
+        var assignment = MakeAssignment(projectId, member.Id);
+        ctx.Events.Add(ev);
+        ctx.Members.Add(member);
+        ctx.ProjectAssignments.Add(assignment);
+        await ctx.SaveChangesAsync();
 
-        var result = await CreateService(ctx).ToggleExcusedAsync(eventId, memberId, OrgId);
+        var result = await CreateService(ctx).ToggleExcusedAsync(ev.Id, member.Id, OrgId);
 
         Assert.Equal("Excused", result.Status);
     }
@@ -231,19 +248,24 @@ public class AttendanceServiceTests
     public async Task ToggleExcusedAsync_sets_Excused_when_currently_Absent()
     {
         var ctx = CreateContext();
-        var eventId = Guid.NewGuid();
-        var memberId = Guid.NewGuid();
+        var projectId = Guid.NewGuid();
+        var ev = MakeEvent(projectId);
+        var member = MakeMember("Eli", "Echo");
+        var assignment = MakeAssignment(projectId, member.Id);
+        ctx.Events.Add(ev);
+        ctx.Members.Add(member);
+        ctx.ProjectAssignments.Add(assignment);
         ctx.AttendanceRecords.Add(new AttendanceRecord
         {
             Id = Guid.NewGuid(),
-            EventId = eventId,
-            MemberId = memberId,
+            EventId = ev.Id,
+            MemberId = member.Id,
             Status = AttendanceStatus.Absent,
             OrganizationId = OrgId
         });
         await ctx.SaveChangesAsync();
 
-        var result = await CreateService(ctx).ToggleExcusedAsync(eventId, memberId, OrgId);
+        var result = await CreateService(ctx).ToggleExcusedAsync(ev.Id, member.Id, OrgId);
 
         Assert.Equal("Excused", result.Status);
     }
@@ -252,19 +274,24 @@ public class AttendanceServiceTests
     public async Task ToggleExcusedAsync_sets_Absent_when_currently_Excused()
     {
         var ctx = CreateContext();
-        var eventId = Guid.NewGuid();
-        var memberId = Guid.NewGuid();
+        var projectId = Guid.NewGuid();
+        var ev = MakeEvent(projectId);
+        var member = MakeMember("Fiona", "Flute");
+        var assignment = MakeAssignment(projectId, member.Id);
+        ctx.Events.Add(ev);
+        ctx.Members.Add(member);
+        ctx.ProjectAssignments.Add(assignment);
         ctx.AttendanceRecords.Add(new AttendanceRecord
         {
             Id = Guid.NewGuid(),
-            EventId = eventId,
-            MemberId = memberId,
+            EventId = ev.Id,
+            MemberId = member.Id,
             Status = AttendanceStatus.Excused,
             OrganizationId = OrgId
         });
         await ctx.SaveChangesAsync();
 
-        var result = await CreateService(ctx).ToggleExcusedAsync(eventId, memberId, OrgId);
+        var result = await CreateService(ctx).ToggleExcusedAsync(ev.Id, member.Id, OrgId);
 
         Assert.Equal("Absent", result.Status);
     }
@@ -273,19 +300,24 @@ public class AttendanceServiceTests
     public async Task ToggleExcusedAsync_sets_Excused_when_currently_Present()
     {
         var ctx = CreateContext();
-        var eventId = Guid.NewGuid();
-        var memberId = Guid.NewGuid();
+        var projectId = Guid.NewGuid();
+        var ev = MakeEvent(projectId);
+        var member = MakeMember("Gina", "Guitar");
+        var assignment = MakeAssignment(projectId, member.Id);
+        ctx.Events.Add(ev);
+        ctx.Members.Add(member);
+        ctx.ProjectAssignments.Add(assignment);
         ctx.AttendanceRecords.Add(new AttendanceRecord
         {
             Id = Guid.NewGuid(),
-            EventId = eventId,
-            MemberId = memberId,
+            EventId = ev.Id,
+            MemberId = member.Id,
             Status = AttendanceStatus.Present,
             OrganizationId = OrgId
         });
         await ctx.SaveChangesAsync();
 
-        var result = await CreateService(ctx).ToggleExcusedAsync(eventId, memberId, OrgId);
+        var result = await CreateService(ctx).ToggleExcusedAsync(ev.Id, member.Id, OrgId);
 
         Assert.Equal("Excused", result.Status);
     }
