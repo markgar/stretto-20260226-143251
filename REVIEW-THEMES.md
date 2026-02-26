@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Venues — CRUD API
+Last updated: Venues — Admin Pages
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -22,3 +22,6 @@ Last updated: Venues — CRUD API
 18. **Seed data emails must stay in sync with test fixtures** — Any change to seed data email addresses must be applied simultaneously to every test file that sends those emails (unit tests, integration tests, e2e tests); stale email references in tests cause silent test-suite failures with no build error.
 19. **Tests must be placed in the correct layer test project** — Each test class must live in the project that mirrors its subject layer (`Stretto.Application.Tests` for services, `Stretto.Infrastructure.Tests` for repositories/stores, `Stretto.Domain.Tests` for entities); placing tests in the wrong project creates false cross-layer dependencies and masks the architectural layer of a failure.
 20. **Controllers must inject interfaces, not concrete services** — All Application-layer service dependencies in API controllers must be declared as interfaces and registered as `AddScoped<IFoo, FooService>()`; injecting concrete types prevents controller unit-testing and couples the API layer to implementation details.
+21. **Always check response.ok before parsing fetch() responses** — In React pages and hooks, every `fetch()` call must check `response.ok` (or throw) before calling `.json()`; `fetch()` resolves on any HTTP status, so unchecked calls silently treat 401/400/500 error bodies as successful data, causing runtime crashes and silent data loss.
+22. **Use the generated API client, not raw fetch** — When a TypeScript API client has been generated from the OpenAPI spec (`src/Stretto.Web/src/api/generated/`), all API calls in page components and hooks must use the generated service classes; bypassing the client with raw `fetch()` duplicates URL logic, ships dead code, and diverges from the established project convention.
+23. **Page-level React components must be decomposed** — Single-page components that combine data fetching, mutation logic, and rendering regularly exceed the 40-line function-size guideline; always extract custom hooks for data concerns (e.g. `useVenues`, `useSaveVenue`) and sub-components for recurring UI patterns (e.g. form fields, table rows) to keep each function single-purpose and under ~40 lines.
