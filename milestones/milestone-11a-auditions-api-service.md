@@ -21,7 +21,7 @@
 
 - [x] Create `src/Stretto.Application/Services/AuditionService.cs` implementing `IAuditionService`; constructor-inject `IRepository<AuditionDate>` and `IRepository<AuditionSlot>`; add private `ToSlotDto` that maps `AuditionSlot` to `AuditionSlotDto` (map `Status` as `slot.Status.ToString()`); add private `ToDto` that maps `AuditionDate` plus its pre-loaded slots list to `AuditionDateDto`
 
-- [ ] Implement `ListByProgramYearAsync` in `AuditionService`: call `_dates.ListAsync(orgId, d => d.ProgramYearId == programYearId)` to get dates; then call `_slots.ListAsync(orgId, s => dateIds.Contains(s.AuditionDateId))` where `dateIds` is the set of date IDs; group slots by `AuditionDateId`; map each date to `AuditionDateDto` using `ToDto` with its matching slots ordered by `SlotTime`
+- [x] Implement `ListByProgramYearAsync` in `AuditionService`: call `_dates.ListAsync(orgId, d => d.ProgramYearId == programYearId)` to get dates; then call `_slots.ListAsync(orgId, s => dateIds.Contains(s.AuditionDateId))` where `dateIds` is the set of date IDs; group slots by `AuditionDateId`; map each date to `AuditionDateDto` using `ToDto` with its matching slots ordered by `SlotTime`
 
 - [ ] Implement `GetAsync` in `AuditionService`: call `_dates.GetByIdAsync(id, orgId)` (throw `NotFoundException("Audition date not found")` if null); load its slots with `_slots.ListAsync(orgId, s => s.AuditionDateId == id)` ordered by `SlotTime`; return `ToDto(date, slots)`
 
