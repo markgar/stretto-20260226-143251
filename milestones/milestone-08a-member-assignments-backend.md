@@ -29,6 +29,6 @@
 
 - [x] Add assignment sub-resource actions to `src/Stretto.Api/Controllers/ProjectsController.cs`: `GET /api/projects/{id}/members` calls `_assignmentService.ListProjectMembersAsync(id, orgId)` returning 200; `POST /api/projects/{id}/members` (admin-only) reads `[FromBody] AssignMemberRequest req`, calls `_assignmentService.AssignAsync(id, req.MemberId, orgId)` returning 201 with an empty body; `DELETE /api/projects/{id}/members/{memberId}` (admin-only) calls `_assignmentService.UnassignAsync(id, memberId, orgId)` returning 204. Inject `IProjectAssignmentService` via constructor alongside existing `IProjectService`
 
-- [ ] Add utilization action to `src/Stretto.Api/Controllers/ProgramYearsController.cs`: `GET /api/program-years/{id}/utilization` calls `_assignmentService.GetUtilizationGridAsync(id, orgId)` and returns 200. Inject `IProjectAssignmentService` via constructor
+- [x] Add utilization action to `src/Stretto.Api/Controllers/ProgramYearsController.cs`: `GET /api/program-years/{id}/utilization` calls `_assignmentService.GetUtilizationGridAsync(id, orgId)` and returns 200. Inject `IProjectAssignmentService` via constructor
 
 - [ ] Register `IProjectAssignmentService` → `ProjectAssignmentService` as scoped in `src/Stretto.Api/Program.cs`

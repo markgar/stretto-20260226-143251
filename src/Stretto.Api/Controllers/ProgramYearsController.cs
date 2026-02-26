@@ -9,11 +9,13 @@ namespace Stretto.Api.Controllers;
 public class ProgramYearsController : ProtectedControllerBase
 {
     private readonly IProgramYearService _programYears;
+    private readonly IProjectAssignmentService _assignmentService;
 
-    public ProgramYearsController(IProgramYearService programYears, IAuthService authService)
+    public ProgramYearsController(IProgramYearService programYears, IProjectAssignmentService assignmentService, IAuthService authService)
         : base(authService)
     {
         _programYears = programYears;
+        _assignmentService = assignmentService;
     }
 
     [HttpGet]
@@ -61,5 +63,13 @@ public class ProgramYearsController : ProtectedControllerBase
         var (orgId, _, _) = await GetSessionAsync();
         var dto = await _programYears.MarkCurrentAsync(id, orgId);
         return Ok(dto);
+    }
+
+    [HttpGet("{id:guid}/utilization")]
+    public async Task<IActionResult> Utilization(Guid id)
+    {
+        var (orgId, _, _) = await GetSessionAsync();
+        var grid = await _assignmentService.GetUtilizationGridAsync(id, orgId);
+        return Ok(grid);
     }
 }
