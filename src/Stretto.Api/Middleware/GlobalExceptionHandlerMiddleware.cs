@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Stretto.Application.Exceptions;
 
 namespace Stretto.Api.Middleware;
@@ -6,10 +7,12 @@ namespace Stretto.Api.Middleware;
 public class GlobalExceptionHandlerMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly ILogger<GlobalExceptionHandlerMiddleware> _logger;
 
-    public GlobalExceptionHandlerMiddleware(RequestDelegate next)
+    public GlobalExceptionHandlerMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandlerMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -39,8 +42,9 @@ public class GlobalExceptionHandlerMiddleware
             var body = JsonSerializer.Serialize(new { message = "Validation failed", errors = ex.Errors });
             await context.Response.WriteAsync(body);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogError(ex, "Unhandled exception for {Method} {Path}", context.Request.Method, context.Request.Path);
             context.Response.StatusCode = 500;
             context.Response.ContentType = "application/json";
             var body = JsonSerializer.Serialize(new { message = "An unexpected error occurred" });

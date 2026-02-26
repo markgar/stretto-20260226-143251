@@ -39,7 +39,7 @@ public class AuthService
             throw new UnauthorizedException();
 
         var member = await _members.FindOneAsync(m => m.Id == memberId);
-        if (member is null)
+        if (member is null || !member.IsActive)
             throw new UnauthorizedException();
 
         var org = await _orgs.FindOneAsync(o => o.Id == member.OrganizationId);

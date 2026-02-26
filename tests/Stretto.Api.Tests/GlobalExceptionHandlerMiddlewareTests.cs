@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging.Abstractions;
 using Stretto.Api.Middleware;
 using Stretto.Application.Exceptions;
 
@@ -30,7 +31,7 @@ public class GlobalExceptionHandlerMiddlewareTests
     {
         var (context, body) = CreateHttpContext();
         RequestDelegate next = _ => throw new NotFoundException("Member not found");
-        var middleware = new GlobalExceptionHandlerMiddleware(next);
+        var middleware = new GlobalExceptionHandlerMiddleware(next, NullLogger<GlobalExceptionHandlerMiddleware>.Instance);
 
         await middleware.InvokeAsync(context);
 
@@ -51,7 +52,7 @@ public class GlobalExceptionHandlerMiddlewareTests
             ["firstName"] = ["First name is required"],
         };
         RequestDelegate next = _ => throw new Stretto.Application.Exceptions.ValidationException(errors);
-        var middleware = new GlobalExceptionHandlerMiddleware(next);
+        var middleware = new GlobalExceptionHandlerMiddleware(next, NullLogger<GlobalExceptionHandlerMiddleware>.Instance);
 
         await middleware.InvokeAsync(context);
 
@@ -68,7 +69,7 @@ public class GlobalExceptionHandlerMiddlewareTests
     {
         var (context, body) = CreateHttpContext();
         RequestDelegate next = _ => throw new InvalidOperationException("Something went wrong");
-        var middleware = new GlobalExceptionHandlerMiddleware(next);
+        var middleware = new GlobalExceptionHandlerMiddleware(next, NullLogger<GlobalExceptionHandlerMiddleware>.Instance);
 
         await middleware.InvokeAsync(context);
 
@@ -89,7 +90,7 @@ public class GlobalExceptionHandlerMiddlewareTests
             ctx.Response.StatusCode = 201;
             return Task.CompletedTask;
         };
-        var middleware = new GlobalExceptionHandlerMiddleware(next);
+        var middleware = new GlobalExceptionHandlerMiddleware(next, NullLogger<GlobalExceptionHandlerMiddleware>.Instance);
 
         await middleware.InvokeAsync(context);
 
