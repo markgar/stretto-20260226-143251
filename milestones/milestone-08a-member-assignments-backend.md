@@ -21,7 +21,7 @@
 
 ### Backend
 
-- [ ] Create `src/Stretto.Application/DTOs/ProjectAssignmentDtos.cs` with four records: `ProjectMemberDto(Guid MemberId, string FullName, string Email, bool IsAssigned)`; `AssignMemberRequest(Guid MemberId)`; `UtilizationRowDto(Guid MemberId, string FullName, int AssignedCount, int TotalProjects, List<Guid> AssignedProjectIds)`; `UtilizationGridDto(List<ProjectDto> Projects, List<UtilizationRowDto> Members)`
+- [x] Create `src/Stretto.Application/DTOs/ProjectAssignmentDtos.cs` with four records: `ProjectMemberDto(Guid MemberId, string FullName, string Email, bool IsAssigned)`; `AssignMemberRequest(Guid MemberId)`; `UtilizationRowDto(Guid MemberId, string FullName, int AssignedCount, int TotalProjects, List<Guid> AssignedProjectIds)`; `UtilizationGridDto(List<ProjectDto> Projects, List<UtilizationRowDto> Members)`
 
 - [ ] Create `src/Stretto.Application/Interfaces/IProjectAssignmentService.cs` with four method signatures: `Task<List<ProjectMemberDto>> ListProjectMembersAsync(Guid projectId, Guid orgId)`; `Task AssignAsync(Guid projectId, Guid memberId, Guid orgId)`; `Task UnassignAsync(Guid projectId, Guid memberId, Guid orgId)`; `Task<UtilizationGridDto> GetUtilizationGridAsync(Guid programYearId, Guid orgId)`
 
