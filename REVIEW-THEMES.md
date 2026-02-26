@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Audition Sign-Up — Frontend Pages
+Last updated: Member Assignments – Backend
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -51,3 +51,5 @@ Last updated: Audition Sign-Up — Frontend Pages
 47. **Avoid redundant entity re-reads when delegating to a sub-method** — When a public service method validates an entity (e.g., `GetByIdAsync`) and then delegates to a private helper that repeats the same query, extract the load into a private method that accepts the already-loaded entity; loading the same row twice per request adds measurable latency and the double-read pattern silently multiplies as more callers are added.
 48. **Cover every new exception type in GlobalExceptionHandlerMiddlewareTests** — Each new exception class added to `GlobalExceptionHandlerMiddleware` must have a corresponding unit test asserting the correct HTTP status code and JSON body shape; the middleware is the single global error-handling surface and an untested branch can silently regress to a 500 on a path that should return a structured error response.
 49. **Extract shared utility functions instead of duplicating across page files** — When two or more page components in the same milestone need the same small helper (e.g., `formatTime`, `formatDate`), extract it to `src/Stretto.Web/src/lib/` immediately; copy-pasted helpers diverge silently across files and a future fix applied to one copy leaves the other broken.
+50. **Use parseISO for API date strings in date-fns** — Always parse ISO 8601 date strings coming from the API with `parseISO(str)` rather than `new Date(str)`; `new Date()` silently mishandles timezone offset handling across environments, producing off-by-one-day errors for date-only strings; `parseISO` treats `YYYY-MM-DD` as a local date, which is the correct interpretation for display.
+51. **Keep validation error messages in sync with the regex they guard** — When a Zod (or any validation schema) regex is updated to accept a broader format, update the error message in the same change; a message that describes a stricter format than the regex enforces misleads users into thinking valid input is rejected.
