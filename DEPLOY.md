@@ -104,10 +104,28 @@ Validated in milestone `milestone-03b-frontend-app-shell`:
 - **All 10 Playwright tests pass** after fixes.
 >>>>>>> a3efced ([validator] Validate milestone-03b: Authentication — App Shell)
 
+## Milestone 06a: Venues — CRUD API
+
+Validated in milestone `milestone-06a-venues-crud-api`:
+
+- **VenueService + VenuesController**: Full CRUD at `/api/venues` and `/api/venues/{id:guid}`. All endpoints require `stretto_session` cookie (enforced by `GetOrgIdAsync()` helper in controller).
+- **DataSeeder updated**: Now seeds `mgarner22@gmail.com` (Admin) and `mgarner@outlook.com` (Member). The old `admin@example.com` / `member@example.com` emails are gone. Use `mgarner22@gmail.com` for all auth testing.
+- **Session expiry**: `InMemoryAuthSessionStore` now stores expiry (`DateTime.UtcNow.AddHours(8)`). Sessions expire after 8 hours.
+- **Deactivated members**: `ValidateAsync` now throws `UnauthorizedException` for deactivated members.
+- **All venue API tests pass**: `GET /api/venues` (401 unauthenticated, 200 authenticated), `POST /api/venues` → 201, `GET /api/venues/{id}` → 200, `PUT /api/venues/{id}` → 200, `DELETE /api/venues/{id}` → 204, subsequent `GET` → 404.
+- **Auth route prefix inconsistency**: `AuthController` uses `[Route("auth")]` (no `/api` prefix), but `VenuesController` uses `[Route("api/venues")]`. Login URL is `/auth/login`, not `/api/auth/login`. Frontend `LoginPage.tsx` calls `/api/auth/login` — needs Vite proxy (see issue #90).
+- **Vite proxy missing**: The Vite dev server has no `server.proxy` config. The frontend's relative `fetch('/api/auth/login')` hits Vite (port 5173), not the API. Login form does not work in Docker without a proxy. Filed as issue #90.
+- **Zustand auth state not persisted**: The auth store uses Zustand with no localStorage sync. Page refresh or direct navigation to authenticated routes always redirects to `/login`. Filed as issue #66.
+- **Regression in auth-validation.spec.ts**: Existing Playwright auth tests use `admin@example.com` which is no longer seeded. Update to `mgarner22@gmail.com`. Filed as issue #83.
+
 ## Known Gotchas
 
+<<<<<<< HEAD
 - **Vite proxy for API calls**: The frontend calls `/api/*` relative URLs. Vite's `server.proxy` in `vite.config.ts` must rewrite `/api` → `` and target `http://app:8080` (via `VITE_API_URL` env var). Without this proxy, API calls 404. The `VITE_API_URL=http://app:8080` env var is set in docker-compose.yml for the frontend service.
 - **Multiple nav testids**: The app shell renders navigation in multiple locations (desktop sidebar, tablet sidebar, mobile bottom tab bar). Each nav item has the same `data-testid`. Use `.first()` when selecting to avoid strict mode violations.
+=======
+- **Seed data email update**: `DataSeeder` was updated in milestone 06a to seed `mgarner22@gmail.com` and `mgarner@outlook.com` (replacing the old `admin@example.com`). Use `mgarner22@gmail.com` for all authentication tests.
+>>>>>>> cdaf636 ([validator] Add venues Playwright tests and update DEPLOY.md for milestone-06a)
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **.dockerignore**: Excludes `bin/`, `obj/`, `.git/`, etc. to keep build context small and prevent stale artifacts.
