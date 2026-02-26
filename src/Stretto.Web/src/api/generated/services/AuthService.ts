@@ -4,21 +4,18 @@
 /* eslint-disable */
 import type { LoginRequest } from '../models/LoginRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
-import type { BaseHttpRequest } from '../core/BaseHttpRequest';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class AuthService {
-    public readonly httpRequest: BaseHttpRequest;
-    constructor(httpRequest: BaseHttpRequest) {
-        this.httpRequest = httpRequest;
-    }
     /**
      * @param requestBody
      * @returns any OK
      * @throws ApiError
      */
-    public postAuthLogin(
+    public static postAuthLogin(
         requestBody?: LoginRequest,
     ): CancelablePromise<any> {
-        return this.httpRequest.request({
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/auth/login',
             body: requestBody,
@@ -29,8 +26,8 @@ export class AuthService {
      * @returns any OK
      * @throws ApiError
      */
-    public getAuthValidate(): CancelablePromise<any> {
-        return this.httpRequest.request({
+    public static getAuthValidate(): CancelablePromise<any> {
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/auth/validate',
         });
@@ -39,8 +36,8 @@ export class AuthService {
      * @returns any OK
      * @throws ApiError
      */
-    public postAuthLogout(): CancelablePromise<any> {
-        return this.httpRequest.request({
+    public static postAuthLogout(): CancelablePromise<any> {
+        return __request(OpenAPI, {
             method: 'POST',
             url: '/auth/logout',
         });
