@@ -323,4 +323,113 @@ public class MemberServiceTests
         Assert.Equal(project.Id, result[0].ProjectId);
         Assert.Equal("Spring Concert", result[0].ProjectName);
     }
+
+    // GetMeAsync
+
+    [Fact]
+    public async Task GetMeAsync_returns_member_dto_with_notification_opt_out_field()
+    {
+        var ctx = CreateContext();
+        var member = MakeMember("Alice", "Soprano", "alice@choir.org");
+        member.NotificationOptOut = true;
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
+
+        var result = await CreateService(ctx).GetMeAsync(member.Id, OrgId);
+
+        Assert.Equal(member.Id, result.Id);
+        Assert.Equal("Alice", result.FirstName);
+        Assert.Equal("alice@choir.org", result.Email);
+        Assert.True(result.NotificationOptOut);
+    }
+
+    [Fact]
+    public async Task GetMeAsync_throws_NotFoundException_when_member_not_found()
+    {
+        var ctx = CreateContext();
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            CreateService(ctx).GetMeAsync(Guid.NewGuid(), OrgId));
+    }
+
+    [Fact]
+    public async Task GetMeAsync_throws_NotFoundException_for_member_in_different_org()
+    {
+        var ctx = CreateContext();
+        var member = MakeMember(orgId: OtherOrgId);
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            CreateService(ctx).GetMeAsync(member.Id, OrgId));
+    }
+
+    // UpdateMeAsync
+
+    [Fact]
+    public async Task UpdateMeAsync_updates_profile_fields_and_returns_dto()
+    {
+        var ctx = CreateContext();
+        var member = MakeMember("Jane", "Doe", "jane@example.com");
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
+        var req = new UpdateMemberProfileRequest("Jane", "Smith", "jane.smith@example.com", true);
+
+        var result = await CreateService(ctx).UpdateMeAsync(member.Id, OrgId, req);
+
+        Assert.Equal("Smith", result.LastName);
+        Assert.Equal("jane.smith@example.com", result.Email);
+        Assert.True(result.NotificationOptOut);
+    }
+
+    [Fact]
+    public async Task UpdateMeAsync_allows_member_to_keep_their_own_email()
+    {
+        var ctx = CreateContext();
+        var member = MakeMember("Jane", "Doe", "jane@example.com");
+        ctx.Members.Add(member);
+        await ctx.SaveChangesAsync();
+        var req = new UpdateMemberProfileRequest("Jane", "Doe", "jane@example.com", false);
+
+        var result = await CreateService(ctx).UpdateMeAsync(member.Id, OrgId, req);
+
+        Assert.Equal("jane@example.com", result.Email);
+    }
+
+    [Fact]
+    public async Task UpdateMeAsync_throws_NotFoundException_when_member_not_found()
+    {
+        var ctx = CreateContext();
+        var req = new UpdateMemberProfileRequest("Jane", "Doe", "jane@example.com", false);
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            CreateService(ctx).UpdateMeAsync(Guid.NewGuid(), OrgId, req));
+    }
+
+    [Fact]
+    public async Task UpdateMeAsync_throws_ValidationException_when_email_used_by_another_member()
+    {
+        var ctx = CreateContext();
+        var member1 = MakeMember("Jane", "Doe", "jane@example.com");
+        var member2 = MakeMember("Bob", "Bass", "bob@example.com");
+        ctx.Members.AddRange(member1, member2);
+        await ctx.SaveChangesAsync();
+        var req = new UpdateMemberProfileRequest("Jane", "Doe", "bob@example.com", false);
+
+        var ex = await Assert.ThrowsAsync<Stretto.Application.Exceptions.ValidationException>(() =>
+            CreateService(ctx).UpdateMeAsync(member1.Id, OrgId, req));
+
+        Assert.True(ex.Errors.ContainsKey("email"));
+    }
+
+    [Fact]
+    public async Task CreateAsync_sets_notification_opt_out_to_false_by_default()
+    {
+        var ctx = CreateContext();
+        var req = new CreateMemberRequest("Jane", "Doe", "jane@example.com", "Member");
+
+        var result = await CreateService(ctx).CreateAsync(OrgId, req);
+
+        Assert.False(result.NotificationOptOut);
+    }
 }
