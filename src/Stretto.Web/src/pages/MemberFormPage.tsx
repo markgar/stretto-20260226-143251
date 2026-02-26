@@ -17,7 +17,6 @@ const editSchema = createSchema.extend({
   isActive: z.boolean(),
 });
 
-type CreateFormValues = z.infer<typeof createSchema>;
 type EditFormValues = z.infer<typeof editSchema>;
 
 type MemberDto = EditFormValues & { id: string };
@@ -33,7 +32,8 @@ export default function MemberFormPage() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<EditFormValues>({
-    resolver: zodResolver(isEdit ? editSchema : createSchema),
+    resolver: zodResolver(editSchema),
+    defaultValues: { isActive: true },
   });
 
   const { data: member } = useQuery<MemberDto>({
@@ -48,7 +48,7 @@ export default function MemberFormPage() {
   }, [member, reset]);
 
   const saveMutation = useMutation({
-    mutationFn: async (values: CreateFormValues | EditFormValues) => {
+    mutationFn: async (values: EditFormValues) => {
       const url = isEdit ? `/api/members/${id}` : '/api/members';
       const method = isEdit ? 'PUT' : 'POST';
       const response = await fetch(url, {
