@@ -15,7 +15,7 @@
 
 - [x] Fix bug #224: in `src/Stretto.Application/Services/AuditionService.cs` `CreateAsync`, add a guard before the modulo check — if `req.BlockLengthMinutes <= 0` throw `ValidationException` with `["blockLengthMinutes"] = ["Block length must be a positive number"]`
 
-- [ ] Add three new DTO records to `src/Stretto.Application/DTOs/AuditionDtos.cs`: `AuditionSignUpRequest(string FirstName, string LastName, string Email)`; `PublicAuditionSlotDto(Guid Id, TimeOnly SlotTime, bool IsAvailable)`; `PublicAuditionDateDto(Guid Id, DateOnly Date, TimeOnly StartTime, TimeOnly EndTime, int BlockLengthMinutes, List<PublicAuditionSlotDto> Slots)`
+- [x] Add three new DTO records to `src/Stretto.Application/DTOs/AuditionDtos.cs`: `AuditionSignUpRequest(string FirstName, string LastName, string Email)`; `PublicAuditionSlotDto(Guid Id, TimeOnly SlotTime, bool IsAvailable)`; `PublicAuditionDateDto(Guid Id, DateOnly Date, TimeOnly StartTime, TimeOnly EndTime, int BlockLengthMinutes, List<PublicAuditionSlotDto> Slots)`
 
 - [ ] Add two method signatures to `src/Stretto.Application/Interfaces/IAuditionService.cs`: `Task<PublicAuditionDateDto> GetPublicAuditionDateAsync(Guid auditionDateId)` and `Task<AuditionSlotDto> SignUpForSlotAsync(Guid slotId, AuditionSignUpRequest req)`
 
