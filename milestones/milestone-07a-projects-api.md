@@ -17,7 +17,7 @@
 > - `src/Stretto.Api/Controllers/VenuesController.cs` — pattern for thin controller: read session cookie via `GetSessionAsync()`, delegate to service, return HTTP result
 > - `src/Stretto.Api/Program.cs` — register the new service with `builder.Services.AddScoped<IProjectService, ProjectService>()`
 
-- [ ] Create `src/Stretto.Application/DTOs/ProjectDtos.cs` with three records: `ProjectDto(Guid Id, string Name, Guid ProgramYearId, DateOnly StartDate, DateOnly EndDate)`; `CreateProjectRequest(Guid ProgramYearId, string Name, DateOnly StartDate, DateOnly EndDate)`; `UpdateProjectRequest(string Name, DateOnly StartDate, DateOnly EndDate)`
+- [x] Create `src/Stretto.Application/DTOs/ProjectDtos.cs` with three records: `ProjectDto(Guid Id, string Name, Guid ProgramYearId, DateOnly StartDate, DateOnly EndDate)`; `CreateProjectRequest(Guid ProgramYearId, string Name, DateOnly StartDate, DateOnly EndDate)`; `UpdateProjectRequest(string Name, DateOnly StartDate, DateOnly EndDate)`
 
 - [ ] Create `src/Stretto.Application/Interfaces/IProjectService.cs` with five method signatures: `Task<List<ProjectDto>> ListByProgramYearAsync(Guid programYearId, Guid orgId)`; `Task<ProjectDto> GetAsync(Guid id, Guid orgId)`; `Task<ProjectDto> CreateAsync(Guid orgId, CreateProjectRequest req)`; `Task<ProjectDto> UpdateAsync(Guid id, Guid orgId, UpdateProjectRequest req)`; `Task DeleteAsync(Guid id, Guid orgId)`
 
