@@ -21,7 +21,7 @@ public class VenuesController : ProtectedControllerBase
     [HttpGet]
     public async Task<IActionResult> List()
     {
-        var (orgId, _) = await GetSessionAsync();
+        var (orgId, _, _) = await GetSessionAsync();
         var list = await _venueService.ListAsync(orgId);
         return Ok(list);
     }
@@ -29,7 +29,7 @@ public class VenuesController : ProtectedControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
     {
-        var (orgId, _) = await GetSessionAsync();
+        var (orgId, _, _) = await GetSessionAsync();
         var dto = await _venueService.GetAsync(id, orgId);
         return Ok(dto);
     }
@@ -37,7 +37,7 @@ public class VenuesController : ProtectedControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] SaveVenueRequest req)
     {
-        var (orgId, role) = await GetSessionAsync();
+        var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can create venues");
         var dto = await _venueService.CreateAsync(orgId, req);
@@ -47,7 +47,7 @@ public class VenuesController : ProtectedControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] SaveVenueRequest req)
     {
-        var (orgId, role) = await GetSessionAsync();
+        var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can update venues");
         var dto = await _venueService.UpdateAsync(id, orgId, req);
@@ -57,7 +57,7 @@ public class VenuesController : ProtectedControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var (orgId, role) = await GetSessionAsync();
+        var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can delete venues");
         await _venueService.DeleteAsync(id, orgId);

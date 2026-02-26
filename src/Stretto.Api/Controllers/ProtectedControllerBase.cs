@@ -14,7 +14,7 @@ public abstract class ProtectedControllerBase : ControllerBase
         _authService = authService;
     }
 
-    protected async Task<(Guid orgId, string role)> GetSessionAsync()
+    protected async Task<(Guid orgId, string role, Guid memberId)> GetSessionAsync()
     {
         var token = Request.Cookies["stretto_session"];
         if (token is null)
@@ -22,6 +22,6 @@ public abstract class ProtectedControllerBase : ControllerBase
         var dto = await _authService.ValidateAsync(token);
         if (dto is null)
             throw new UnauthorizedException();
-        return (dto.OrgId, dto.Role);
+        return (dto.OrgId, dto.Role, dto.Id);
     }
 }

@@ -20,7 +20,7 @@ public class ProjectsController : ProtectedControllerBase
     [HttpGet]
     public async Task<IActionResult> List([FromQuery] Guid? programYearId)
     {
-        var (orgId, _) = await GetSessionAsync();
+        var (orgId, _, _) = await GetSessionAsync();
         if (programYearId is null)
             return BadRequest(new { message = "programYearId query parameter is required" });
         var list = await _projectService.ListByProgramYearAsync(programYearId.Value, orgId);
@@ -30,7 +30,7 @@ public class ProjectsController : ProtectedControllerBase
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> Get(Guid id)
     {
-        var (orgId, _) = await GetSessionAsync();
+        var (orgId, _, _) = await GetSessionAsync();
         var dto = await _projectService.GetAsync(id, orgId);
         return Ok(dto);
     }
@@ -38,7 +38,7 @@ public class ProjectsController : ProtectedControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProjectRequest req)
     {
-        var (orgId, role) = await GetSessionAsync();
+        var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can create projects");
         var dto = await _projectService.CreateAsync(orgId, req);
@@ -48,7 +48,7 @@ public class ProjectsController : ProtectedControllerBase
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjectRequest req)
     {
-        var (orgId, role) = await GetSessionAsync();
+        var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can update projects");
         var dto = await _projectService.UpdateAsync(id, orgId, req);
@@ -58,7 +58,7 @@ public class ProjectsController : ProtectedControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var (orgId, role) = await GetSessionAsync();
+        var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
             throw new ForbiddenException("Only admins can delete projects");
         await _projectService.DeleteAsync(id, orgId);
