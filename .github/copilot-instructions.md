@@ -42,6 +42,11 @@ Test projects mirror the source layout (e.g., `tests/Stretto.Domain.Tests/`, `te
 - `REQUIREMENTS.md` — Original project requirements and feature descriptions.
 - `README.md` — Setup, build, and run instructions.
 - `.gitignore` — Git ignore rules for the repository.
+- `src/Stretto.Web/src/App.tsx` — Root React component with route definitions.
+- `src/Stretto.Web/src/main.tsx` — React entry point; wraps app in `BrowserRouter`.
+- `src/Stretto.Web/components.json` — shadcn/ui configuration (New York style, Neutral color).
+- `src/Stretto.Web/src/lib/utils.ts` — shadcn/ui `cn` utility for Tailwind class merging.
+- `src/Stretto.Web/src/api/generated/` — Auto-generated TypeScript API client (run `npm run generate`).
 
 ## Architecture
 

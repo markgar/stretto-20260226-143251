@@ -13,6 +13,9 @@ node_modules/
 dist/
 .vite/
 .next/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Generated API client (regenerated from OpenAPI spec on build)
 # Checked in intentionally — see README
