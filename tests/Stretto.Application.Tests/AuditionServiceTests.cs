@@ -27,7 +27,8 @@ public class AuditionServiceTests : IDisposable
         _db = new AppDbContext(options);
         var dates = new BaseRepository<AuditionDate>(_db);
         var slots = new BaseRepository<AuditionSlot>(_db);
-        _service = new AuditionService(dates, slots);
+        var members = new BaseRepository<Member>(_db);
+        _service = new AuditionService(dates, slots, members);
     }
 
     public void Dispose() => _db.Dispose();

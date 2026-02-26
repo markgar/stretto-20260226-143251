@@ -166,10 +166,7 @@ public class AuditionService : IAuditionService
             throw new NotFoundException("Audition slot not found");
 
         if (slot.MemberId != null)
-            throw new ValidationException(new Dictionary<string, string[]>
-            {
-                ["slot"] = ["This slot has already been claimed"]
-            });
+            throw new ConflictException("This slot has already been claimed");
 
         if (string.IsNullOrWhiteSpace(req.Email))
             throw new ValidationException(new Dictionary<string, string[]>
