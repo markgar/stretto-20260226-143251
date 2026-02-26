@@ -158,4 +158,45 @@ public class AuditionService : IAuditionService
 
         return new PublicAuditionDateDto(date.Id, date.Date, date.StartTime, date.EndTime, date.BlockLengthMinutes, publicSlots);
     }
+
+    public async Task<AuditionSlotDto> SignUpForSlotAsync(Guid slotId, AuditionSignUpRequest req)
+    {
+        var slot = await _slots.FindOneAsync(s => s.Id == slotId);
+        if (slot is null)
+            throw new NotFoundException("Audition slot not found");
+
+        if (slot.MemberId != null)
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["slot"] = ["This slot has already been claimed"]
+            });
+
+        if (string.IsNullOrWhiteSpace(req.Email))
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["email"] = ["Email is required"]
+            });
+
+        var member = await _members.FindOneAsync(
+            m => m.OrganizationId == slot.OrganizationId && m.Email.ToLower() == req.Email.Trim().ToLower());
+
+        if (member is null)
+        {
+            member = new Member
+            {
+                Id = Guid.NewGuid(),
+                OrganizationId = slot.OrganizationId,
+                FirstName = req.FirstName.Trim(),
+                LastName = req.LastName.Trim(),
+                Email = req.Email.Trim(),
+                Role = Role.Member,
+                IsActive = true
+            };
+            await _members.AddAsync(member);
+        }
+
+        slot.MemberId = member.Id;
+        await _slots.UpdateAsync(slot);
+        return ToSlotDto(slot);
+    }
 }
