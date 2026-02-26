@@ -26,7 +26,8 @@ public class AuthController : ControllerBase
             Secure = true,
             SameSite = SameSiteMode.Strict,
             Path = "/",
-            Expires = DateTimeOffset.UtcNow.AddHours(8),
+            MaxAge = TimeSpan.FromHours(8),
+            Expires = DateTimeOffset.UtcNow.AddHours(8)
         });
         return Ok(dto);
     }

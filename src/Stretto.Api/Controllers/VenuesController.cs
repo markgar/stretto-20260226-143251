@@ -7,27 +7,16 @@ namespace Stretto.Api.Controllers;
 
 [ApiController]
 [Route("api/venues")]
-public class VenuesController : ControllerBase
+public class VenuesController : ProtectedControllerBase
 {
     private readonly IVenueService _venueService;
-    private readonly IAuthService _authService;
 
     public VenuesController(IVenueService venueService, IAuthService authService)
+        : base(authService)
     {
         _venueService = venueService;
-        _authService = authService;
     }
 
-    private async Task<(Guid orgId, string role)> GetSessionAsync()
-    {
-        var token = Request.Cookies["stretto_session"];
-        if (token is null)
-            throw new UnauthorizedException();
-        var dto = await _authService.ValidateAsync(token);
-        if (dto is null)
-            throw new UnauthorizedException();
-        return (dto.OrgId, dto.Role);
-    }
 
     [HttpGet]
     public async Task<IActionResult> List()

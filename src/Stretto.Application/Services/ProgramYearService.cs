@@ -5,7 +5,7 @@ using Stretto.Domain.Entities;
 
 namespace Stretto.Application.Services;
 
-public class ProgramYearService
+public class ProgramYearService : IProgramYearService
 {
     private readonly IRepository<ProgramYear> _programYears;
 
@@ -30,6 +30,9 @@ public class ProgramYearService
 
     public async Task<ProgramYearDto> CreateAsync(Guid orgId, CreateProgramYearRequest req)
     {
+        if (string.IsNullOrWhiteSpace(req.Name))
+            throw new ValidationException(new Dictionary<string, string[]> { ["name"] = new[] { "Name is required" } });
+
         if (req.StartDate >= req.EndDate)
             throw new ValidationException(new Dictionary<string, string[]> { ["startDate"] = new[] { "Start date must be before end date" } });
 
@@ -52,6 +55,9 @@ public class ProgramYearService
         var year = await _programYears.GetByIdAsync(id, orgId);
         if (year is null)
             throw new NotFoundException("Program year not found");
+
+        if (string.IsNullOrWhiteSpace(req.Name))
+            throw new ValidationException(new Dictionary<string, string[]> { ["name"] = new[] { "Name is required" } });
 
         if (req.StartDate >= req.EndDate)
             throw new ValidationException(new Dictionary<string, string[]> { ["startDate"] = new[] { "Start date must be before end date" } });
@@ -91,6 +97,9 @@ public class ProgramYearService
         var year = await _programYears.GetByIdAsync(id, orgId);
         if (year is null)
             throw new NotFoundException("Program year not found");
+
+        if (year.IsArchived)
+            throw new ValidationException(new Dictionary<string, string[]> { [""] = new[] { "Cannot activate an archived program year" } });
 
         year.IsCurrent = true;
         await _programYears.UpdateAsync(year);

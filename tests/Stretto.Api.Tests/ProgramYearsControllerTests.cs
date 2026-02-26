@@ -42,8 +42,12 @@ public class ProgramYearsControllerTests : IClassFixture<ProgramYearsTestFactory
     {
         var response = await client.PostAsJsonAsync("/auth/login", new { email = "mgarner22@gmail.com" });
         response.EnsureSuccessStatusCode();
-        var cookie = response.Headers.GetValues("Set-Cookie").First();
-        return cookie.Split(';').First().Split('=', 2).Last();
+        if (!response.Headers.TryGetValues("Set-Cookie", out var cookies))
+            throw new InvalidOperationException("No Set-Cookie header in login response");
+        foreach (var cookie in cookies)
+            if (cookie.StartsWith("stretto_session=", StringComparison.OrdinalIgnoreCase))
+                return cookie.Split(';')[0].Split('=', 2)[1];
+        throw new InvalidOperationException("stretto_session cookie not found in login response");
     }
 
     private static HttpRequestMessage WithSession(HttpMethod method, string url, string token)
