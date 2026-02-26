@@ -20,7 +20,7 @@
 
 - [x] Add `public DateTime CreatedAt { get; set; } = DateTime.UtcNow;` to `src/Stretto.Domain/Entities/ProjectAssignment.cs`; add `builder.Property(pa => pa.CreatedAt).IsRequired();` to `src/Stretto.Infrastructure/Data/Configurations/ProjectAssignmentConfiguration.cs`
 
-- [ ] Create `src/Stretto.Application/DTOs/DashboardDtos.cs` with three records: `UpcomingEventDto(Guid Id, Guid ProjectId, string ProjectName, EventType EventType, DateOnly Date, TimeOnly StartTime, int DurationMinutes, string? VenueName)`; `RecentActivityItem(string ActivityType, string Description, DateTime OccurredAt)` where `ActivityType` is either `"NewMember"` or `"NewAssignment"`; `DashboardSummaryDto(Guid? ProgramYearId, string? ProgramYearName, List<UpcomingEventDto> UpcomingEvents, List<RecentActivityItem> RecentActivity)`
+- [x] Create `src/Stretto.Application/DTOs/DashboardDtos.cs` with three records: `UpcomingEventDto(Guid Id, Guid ProjectId, string ProjectName, EventType EventType, DateOnly Date, TimeOnly StartTime, int DurationMinutes, string? VenueName)`; `RecentActivityItem(string ActivityType, string Description, DateTime OccurredAt)` where `ActivityType` is either `"NewMember"` or `"NewAssignment"`; `DashboardSummaryDto(Guid? ProgramYearId, string? ProgramYearName, List<UpcomingEventDto> UpcomingEvents, List<RecentActivityItem> RecentActivity)`
 
 - [ ] Create `src/Stretto.Application/Interfaces/IDashboardService.cs` with two method signatures: `Task<DashboardSummaryDto> GetCurrentSummaryAsync(Guid orgId)` (uses the IsCurrent program year, returns empty summary if none); `Task<DashboardSummaryDto> GetSummaryAsync(Guid programYearId, Guid orgId)` (throws `NotFoundException("Program year not found")` if not found)
 
