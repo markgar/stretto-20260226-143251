@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Stretto.Application.Interfaces;
 using Stretto.Application.Services;
+using Stretto.Infrastructure;
 using Stretto.Infrastructure.Auth;
 using Stretto.Infrastructure.Data;
 using Stretto.Infrastructure.Repositories;
@@ -23,6 +24,8 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IAuditionService, AuditionService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<IStorageProvider, LocalFileStorageProvider>();
+builder.Services.AddScoped<IProjectMaterialsService, ProjectMaterialsService>();
 
 var app = builder.Build();
 
