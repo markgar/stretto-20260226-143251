@@ -4,10 +4,21 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { ProjectMaterialsService } from '../api/generated/services/ProjectMaterialsService';
+import { OpenAPI } from '../api/generated/core/OpenAPI';
 import { useAuthStore } from '../stores/authStore';
 
 type ProjectLink = { id: string; title: string; url: string };
 type ProjectDocument = { id: string; title: string; fileName: string };
+
+function sanitizeHref(url: string): string {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') return url;
+  } catch {
+    // fall through
+  }
+  return '#';
+}
 
 const linkSchema = z.object({
   title: z.string().min(1),
@@ -29,7 +40,8 @@ function LoadingSkeleton() {
 
 function LinksSection({ projectId, isAdmin }: { projectId: string; isAdmin: boolean }) {
   const queryClient = useQueryClient();
-  const [linkMutationError, setLinkMutationError] = useState<string | null>(null);
+  const [deleteLinkError, setDeleteLinkError] = useState<string | null>(null);
+  const [addLinkError, setAddLinkError] = useState<string | null>(null);
 
   const { data: links = [], isLoading: linksLoading, isError: linksError } = useQuery<ProjectLink[]>({
     queryKey: ['projectLinks', projectId],
@@ -40,10 +52,10 @@ function LinksSection({ projectId, isAdmin }: { projectId: string; isAdmin: bool
     mutationFn: (linkId: string) =>
       ProjectMaterialsService.deleteApiProjectsLinks(projectId, linkId),
     onSuccess: () => {
-      setLinkMutationError(null);
+      setDeleteLinkError(null);
       queryClient.invalidateQueries({ queryKey: ['projectLinks', projectId] });
     },
-    onError: () => setLinkMutationError('Failed to delete link. Please try again.'),
+    onError: () => setDeleteLinkError('Failed to delete link. Please try again.'),
   });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<LinkFormValues>({
@@ -54,11 +66,11 @@ function LinksSection({ projectId, isAdmin }: { projectId: string; isAdmin: bool
     mutationFn: (values: LinkFormValues) =>
       ProjectMaterialsService.postApiProjectsLinks(projectId, values),
     onSuccess: () => {
-      setLinkMutationError(null);
+      setAddLinkError(null);
       reset();
       queryClient.invalidateQueries({ queryKey: ['projectLinks', projectId] });
     },
-    onError: () => setLinkMutationError('Failed to add link. Please try again.'),
+    onError: () => setAddLinkError('Failed to add link. Please try again.'),
   });
 
   const onAddLink = (values: LinkFormValues) => addLinkMutation.mutate(values);
@@ -66,8 +78,11 @@ function LinksSection({ projectId, isAdmin }: { projectId: string; isAdmin: bool
   return (
     <section className="mb-8">
       <h2 className="text-lg font-semibold mb-3">Links</h2>
-      {linkMutationError && (
-        <p className="mb-3 text-sm text-destructive">{linkMutationError}</p>
+      {addLinkError && (
+        <p className="mb-3 text-sm text-destructive">{addLinkError}</p>
+      )}
+      {deleteLinkError && (
+        <p className="mb-3 text-sm text-destructive">{deleteLinkError}</p>
       )}
       {isAdmin && (
         <form onSubmit={handleSubmit(onAddLink)} className="mb-4 flex flex-wrap gap-2 items-start">
@@ -116,7 +131,7 @@ function LinksSection({ projectId, isAdmin }: { projectId: string; isAdmin: bool
           {links.map((link) => (
             <li key={link.id} className="flex items-center gap-3">
               <a
-                href={link.url}
+                href={sanitizeHref(link.url)}
                 target="_blank"
                 rel="noreferrer"
                 data-testid={`link-${link.id}`}
@@ -148,7 +163,8 @@ function LinksSection({ projectId, isAdmin }: { projectId: string; isAdmin: bool
 
 function DocumentsSection({ projectId, isAdmin }: { projectId: string; isAdmin: boolean }) {
   const queryClient = useQueryClient();
-  const [docMutationError, setDocMutationError] = useState<string | null>(null);
+  const [deleteDocError, setDeleteDocError] = useState<string | null>(null);
+  const [uploadDocError, setUploadDocError] = useState<string | null>(null);
   const [uploadTitle, setUploadTitle] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -162,23 +178,23 @@ function DocumentsSection({ projectId, isAdmin }: { projectId: string; isAdmin: 
     mutationFn: (docId: string) =>
       ProjectMaterialsService.deleteApiProjectsDocuments(projectId, docId),
     onSuccess: () => {
-      setDocMutationError(null);
+      setDeleteDocError(null);
       queryClient.invalidateQueries({ queryKey: ['projectDocuments', projectId] });
     },
-    onError: () => setDocMutationError('Failed to delete document. Please try again.'),
+    onError: () => setDeleteDocError('Failed to delete document. Please try again.'),
   });
 
   const uploadDocMutation = useMutation({
     mutationFn: ({ file, title }: { file: File; title: string }) =>
       ProjectMaterialsService.postApiProjectsDocuments(projectId, { file, title }),
     onSuccess: () => {
-      setDocMutationError(null);
+      setUploadDocError(null);
       setUploadTitle('');
       setSelectedFile(null);
       if (fileInputRef.current) fileInputRef.current.value = '';
       queryClient.invalidateQueries({ queryKey: ['projectDocuments', projectId] });
     },
-    onError: () => setDocMutationError('Failed to upload document. Please try again.'),
+    onError: () => setUploadDocError('Failed to upload document. Please try again.'),
   });
 
   const handleUpload = () => {
@@ -190,8 +206,11 @@ function DocumentsSection({ projectId, isAdmin }: { projectId: string; isAdmin: 
   return (
     <section>
       <h2 className="text-lg font-semibold mb-3">Documents</h2>
-      {docMutationError && (
-        <p className="mb-3 text-sm text-destructive">{docMutationError}</p>
+      {uploadDocError && (
+        <p className="mb-3 text-sm text-destructive">{uploadDocError}</p>
+      )}
+      {deleteDocError && (
+        <p className="mb-3 text-sm text-destructive">{deleteDocError}</p>
       )}
       {isAdmin && (
         <div className="mb-4 flex flex-wrap gap-2 items-center">
@@ -232,7 +251,7 @@ function DocumentsSection({ projectId, isAdmin }: { projectId: string; isAdmin: 
             <li key={doc.id} className="flex items-center gap-3">
               <span className="text-sm">{doc.title}</span>
               <a
-                href={`/api/projects/${projectId}/documents/${doc.id}/download`}
+                href={`${OpenAPI.BASE}/api/projects/${projectId}/documents/${doc.id}/download`}
                 download={doc.fileName}
                 data-testid={`download-document-${doc.id}`}
                 className="text-primary hover:underline text-sm"

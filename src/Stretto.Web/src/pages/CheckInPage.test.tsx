@@ -1,35 +1,23 @@
-import { vi, beforeEach } from 'vitest';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-
-const mockUseMutation = vi.fn();
-
-vi.mock('@tanstack/react-query', () => ({
-  useMutation: (...args: unknown[]) => mockUseMutation(...args),
-}));
-
-vi.mock('../api/generated/services/AttendanceService', () => ({
-  AttendanceService: {
-    postApiCheckin: vi.fn(),
-  },
-}));
+import { http, HttpResponse } from 'msw';
+import { server } from '../mocks/server';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { createQueryClient } from '../mocks/testUtils';
 
 import CheckInPage from './CheckInPage';
 
 function renderPage(eventId = 'event-abc') {
   return render(
-    <MemoryRouter initialEntries={[`/checkin/${eventId}`]}>
-      <Routes>
-        <Route path="/checkin/:eventId" element={<CheckInPage />} />
-      </Routes>
-    </MemoryRouter>,
+    <QueryClientProvider client={createQueryClient()}>
+      <MemoryRouter initialEntries={[`/checkin/${eventId}`]}>
+        <Routes>
+          <Route path="/checkin/:eventId" element={<CheckInPage />} />
+        </Routes>
+      </MemoryRouter>
+    </QueryClientProvider>,
   );
 }
-
-beforeEach(() => {
-  vi.clearAllMocks();
-  mockUseMutation.mockReturnValue({ mutate: vi.fn(), isPending: false });
-});
 
 test('renders checkin-button with data-testid', () => {
   renderPage();
@@ -46,42 +34,36 @@ test('renders button labeled "I\'m here"', () => {
   expect(screen.getByTestId('checkin-button')).toHaveTextContent("I'm here");
 });
 
-test('checkin-button is disabled while mutation is pending', () => {
-  mockUseMutation.mockReturnValue({ mutate: vi.fn(), isPending: true });
+test('shows checkin-success message after successful check-in', async () => {
+  server.use(
+    http.post('/api/checkin/:eventId', () => HttpResponse.json({}, { status: 200 })),
+  );
   renderPage();
-  expect(screen.getByTestId('checkin-button')).toBeDisabled();
-});
-
-test('shows checkin-success message after successful mutation', () => {
-  let capturedOnSuccess: (() => void) | undefined;
-  mockUseMutation.mockImplementation(({ onSuccess }: { onSuccess?: () => void }) => {
-    capturedOnSuccess = onSuccess;
-    return { mutate: vi.fn(), isPending: false };
+  fireEvent.click(screen.getByTestId('checkin-button'));
+  await waitFor(() => {
+    expect(screen.getByTestId('checkin-success')).toBeInTheDocument();
   });
-  renderPage();
-  act(() => { capturedOnSuccess?.(); });
-  expect(screen.getByTestId('checkin-success')).toBeInTheDocument();
   expect(screen.getByTestId('checkin-success')).toHaveTextContent("You're checked in!");
 });
 
-test('hides checkin-button after successful check-in', () => {
-  let capturedOnSuccess: (() => void) | undefined;
-  mockUseMutation.mockImplementation(({ onSuccess }: { onSuccess?: () => void }) => {
-    capturedOnSuccess = onSuccess;
-    return { mutate: vi.fn(), isPending: false };
-  });
+test('hides checkin-button after successful check-in', async () => {
+  server.use(
+    http.post('/api/checkin/:eventId', () => HttpResponse.json({}, { status: 200 })),
+  );
   renderPage();
-  act(() => { capturedOnSuccess?.(); });
-  expect(screen.queryByTestId('checkin-button')).not.toBeInTheDocument();
+  fireEvent.click(screen.getByTestId('checkin-button'));
+  await waitFor(() => {
+    expect(screen.queryByTestId('checkin-button')).not.toBeInTheDocument();
+  });
 });
 
-test('shows error message after failed mutation', () => {
-  let capturedOnError: (() => void) | undefined;
-  mockUseMutation.mockImplementation(({ onError }: { onError?: () => void }) => {
-    capturedOnError = onError;
-    return { mutate: vi.fn(), isPending: false };
-  });
+test('shows error message after failed check-in', async () => {
+  server.use(
+    http.post('/api/checkin/:eventId', () => HttpResponse.error()),
+  );
   renderPage();
-  act(() => { capturedOnError?.(); });
-  expect(screen.getByText(/Check-in failed/i)).toBeInTheDocument();
+  fireEvent.click(screen.getByTestId('checkin-button'));
+  await waitFor(() => {
+    expect(screen.getByText(/Check-in failed/i)).toBeInTheDocument();
+  });
 });

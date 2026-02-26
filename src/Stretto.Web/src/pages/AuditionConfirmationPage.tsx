@@ -1,17 +1,11 @@
 import { useLocation } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
+import { formatTime } from '../lib/timeUtils';
 
 type ConfirmationState = {
   slotTime?: string;
   date?: string;
 };
-
-function formatTime(timeStr: string) {
-  const [h, m] = timeStr.split(':');
-  const d = new Date();
-  d.setHours(Number(h), Number(m), 0);
-  return format(d, 'h:mm a');
-}
 
 export default function AuditionConfirmationPage() {
   const location = useLocation();

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format, parseISO } from 'date-fns';
+import { formatTime } from '../lib/timeUtils';
 
 type PublicAuditionSlotDto = {
   id: string;
@@ -45,13 +46,6 @@ async function submitSignUp(slotId: string, body: SignUpFormValues): Promise<voi
     const data = await res.json().catch(() => ({}));
     throw new Error(data.message ?? 'Sign-up failed');
   }
-}
-
-function formatTime(timeStr: string) {
-  const [h, m] = timeStr.split(':');
-  const d = new Date();
-  d.setHours(Number(h), Number(m), 0);
-  return format(d, 'h:mm a');
 }
 
 function SlotList({

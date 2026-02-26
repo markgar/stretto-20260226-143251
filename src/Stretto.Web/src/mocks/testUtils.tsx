@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import type { ReactElement } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import type { AuthUser } from '../stores/authStore';
 
@@ -6,7 +7,7 @@ export function createQueryClient(): QueryClient {
   return new QueryClient({ defaultOptions: { queries: { retry: false } } });
 }
 
-export function wrapWithProviders(ui: React.ReactElement, queryClient: QueryClient): React.ReactElement {
+export function wrapWithProviders(ui: ReactElement, queryClient: QueryClient): ReactElement {
   return <QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>;
 }
 
