@@ -39,8 +39,11 @@ public class AuditionDatesController : ProtectedControllerBase
     public async Task<IActionResult> Create([FromBody] CreateAuditionDateRequest req)
     {
         var (orgId, role, _) = await GetSessionAsync();
+<<<<<<< HEAD
         if (role != "Admin")
             throw new ForbiddenException("Only admins can create audition dates");
+=======
+>>>>>>> 66fb56e ([validator] Fix build errors and add Playwright tests for milestone 10a: Attendance Backend)
         var dto = await _auditionService.CreateAsync(orgId, req);
         return Created($"/api/audition-dates/{dto.Id}", dto);
     }

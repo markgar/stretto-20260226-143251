@@ -168,6 +168,7 @@ Validated in milestone `milestone-06b-venues-admin-pages`:
 - **Frontend npm install delay**: The frontend container runs `npm install` on first start — expect ~15-30 seconds before the Vite dev server is ready at http://localhost:7778/.
 - **Secure cookie prevents page reload auth restore**: The `stretto_session` cookie is set with `Secure` flag. In the Docker HTTP setup, the browser does NOT send this cookie on page reload (only over HTTPS). Zustand state is lost on full page reload (`page.goto()`). In Playwright tests, use React Router client-side navigation (click nav links) instead of `page.goto()` for pages that require auth.
 
+<<<<<<< HEAD
 ## Milestone 11b: Auditions — API Controllers
 
 Validated in milestone `milestone-11b-auditions-api-controllers`:
@@ -180,6 +181,19 @@ Validated in milestone `milestone-11b-auditions-api-controllers`:
 - **Slot shape**: Each slot has `id`, `auditionDateId`, `slotTime`, `memberId`, `status`, `notes`.
 - **All 10 Playwright tests pass** in `e2e/auditions-validation.spec.ts`.
 - **All 11 API tests pass** via Python urllib tests.
+=======
+## Milestone 10a: Attendance — Backend
+
+Validated in milestone `milestone-10a-attendance-backend`:
+
+- **AttendanceController**: Registered with routes `GET /api/events/{eventId}/attendance` (admin only), `PUT /api/events/{eventId}/attendance/{memberId}` (admin only), `POST /api/checkin/{eventId}` (any member), `PUT /api/events/{eventId}/attendance/me/excused` (any member).
+- **ProtectedControllerBase 3-tuple**: `GetSessionAsync()` now returns `(orgId, role, memberId)`. Any controller that deconstructs with 2 variables will fail to compile with CS8132. `AuditionDatesController` and `AuditionSlotsController` were broken — fixed by changing `var (orgId, _)` to `var (orgId, _, _)` and `var (orgId, role)` to `var (orgId, role, _)`.
+- **AttendanceService.GetForEventAsync**: Returns members assigned to the project via ProjectAssignments. Without project assignments, returns an empty array `[]` (valid per spec — endpoint returns 200 + JSON array).
+- **AttendanceService.SetStatusAsync**: Creates or updates an AttendanceRecord regardless of project assignment. PUT endpoint works even without explicit member-project assignment.
+- **ToggleExcused logic**: First call (no record) → Excused. Second call (Excused) → Absent. Third call (Absent) → Excused. Correct behavior verified.
+- **No AssignmentsController**: Milestone 08a assignment endpoints (`POST /api/projects/{id}/assignments/{memberId}`) are not in this codebase. Attendance tests work without them as SetStatusAsync doesn't require project membership.
+- **All 9 Playwright tests pass** in `e2e/attendance-validation.spec.ts`.
+>>>>>>> 66fb56e ([validator] Fix build errors and add Playwright tests for milestone 10a: Attendance Backend)
 
 ## Building and Testing Locally (without Docker)
 
