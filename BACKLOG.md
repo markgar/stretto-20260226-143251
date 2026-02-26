@@ -24,7 +24,7 @@
 
 12. [x] Audition Sign-Up — Member-facing public audition listing page (no auth required to browse); sign-up API (claim slot, create member account if email is new, reject already-taken slots); sign-up form with email field; confirmation page; re-generate TypeScript API client <!-- depends: 11 -->
 
-13. [ ] Project Materials — Links and documents API: add link (title + URL), delete link; upload document (file), list documents, download document, delete document; local filesystem storage behind IStorageProvider abstraction; admin Materials tab UI in project detail (add link form, upload button, list with delete actions); member read-only materials view showing links and download buttons; re-generate TypeScript API client <!-- depends: 7 -->
+13. [2] Project Materials — Links and documents API: add link (title + URL), delete link; upload document (file), list documents, download document, delete document; local filesystem storage behind IStorageProvider abstraction; admin Materials tab UI in project detail (add link form, upload button, list with delete actions); member read-only materials view showing links and download buttons; re-generate TypeScript API client <!-- depends: 7 -->
 
 14. [1] Member Features — My Projects, My Calendar, Profile — Member My Projects page (list of assigned projects with drill-in to events and materials); member event detail with excused-absence toggle; member My Calendar page (date-grouped list of upcoming events across all projects) with iCal export (GET /members/me/calendar.ics returning iCal feed of member's upcoming events, export/subscribe link on the calendar page); member Profile page (edit name/email, toggle notification opt-out); re-generate TypeScript API client <!-- depends: 8, 10 -->
 
