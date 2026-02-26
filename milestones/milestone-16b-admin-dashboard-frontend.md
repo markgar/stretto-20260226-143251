@@ -21,7 +21,7 @@
 
 - [x] Replace `src/Stretto.Web/src/pages/DashboardPage.tsx` with the full admin dashboard page; import `useDashboard`, `useProgramYearsList` hooks, `format` and `parseISO` from `date-fns`; render `AppShell` wrapping a `div.p-6.space-y-6`; include heading `data-testid="dashboard-heading"` with text "Dashboard"; render a `<select data-testid="program-year-select">` populated from `useProgramYearsList()` with a leading option "Current Year" (value `""`) followed by each program year by name and id; store selected year id in local `useState<string>('')`
 
-- [ ] Add skeleton loader to `DashboardPage.tsx`: when `isLoading` is true, render `<div data-testid="dashboard-skeleton" className="space-y-4">` containing three `<div className="h-12 rounded-md bg-muted animate-pulse" />` placeholder blocks instead of the data sections
+- [x] Add skeleton loader to `DashboardPage.tsx`: when `isLoading` is true, render `<div data-testid="dashboard-skeleton" className="space-y-4">` containing three `<div className="h-12 rounded-md bg-muted animate-pulse" />` placeholder blocks instead of the data sections
 
 - [ ] Add the upcoming events section to `DashboardPage.tsx`: when not loading, render a `<section>` with heading "Upcoming Events (Next 30 Days)"; when `summary?.upcomingEvents` is empty or undefined, render `<p data-testid="no-upcoming-events" className="text-muted-foreground text-sm">No events scheduled in the next 30 days.</p>`; otherwise render a `<ul>` where each event is an `<li data-testid="upcoming-event-row" key={event.id}>` showing `format(parseISO(event.date), 'MMM d, yyyy')`, `event.projectName`, `event.venueName ?? 'No venue'`, and `event.eventType` as a small badge with `data-testid="event-type-badge"`
 
