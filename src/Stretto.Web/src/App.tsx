@@ -18,6 +18,7 @@ import EventFormPage from './pages/EventFormPage';
 import EventDetailPage from './pages/EventDetailPage';
 import CheckInPage from './pages/CheckInPage';
 import UtilizationGridPage from './pages/UtilizationGridPage';
+import NotificationsPage from './pages/NotificationsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 import { AuthInitializer } from './components/AuthInitializer';
@@ -60,7 +61,7 @@ function App() {
           <Route path="/venues" element={<VenuesListPage />} />
           <Route path="/venues/new" element={<VenueFormPage />} />
           <Route path="/venues/:id/edit" element={<VenueFormPage />} />
-          <Route path="/notifications" element={<ComingSoon />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/my-projects" element={<ComingSoon />} />
           <Route path="/my-calendar" element={<ComingSoon />} />
           <Route path="/profile" element={<ComingSoon />} />

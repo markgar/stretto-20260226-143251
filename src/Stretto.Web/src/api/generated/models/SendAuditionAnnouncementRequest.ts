@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type RecentActivityItem = {
-  activityType: string;
-  description: string;
-  occurredAt: string;
+export type SendAuditionAnnouncementRequest = {
+    auditionDateId?: string;
+    subject?: string | null;
+    body?: string | null;
 };
+
