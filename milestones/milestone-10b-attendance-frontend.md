@@ -13,7 +13,7 @@
 
 - [x] Run `npm run generate` in `src/Stretto.Web/` to regenerate the TypeScript API client from the updated OpenAPI spec; verify `src/Stretto.Web/src/api/generated/` contains updated `AttendanceService` or equivalent client methods
 
-- [ ] Add `/checkin/:eventId` route to `src/Stretto.Web/src/App.tsx` inside the `<Route element={<ProtectedRoute />}>` block, pointing to a new `CheckInPage` component imported from `./pages/CheckInPage`
+- [x] Add `/checkin/:eventId` route to `src/Stretto.Web/src/App.tsx` inside the `<Route element={<ProtectedRoute />}>` block, pointing to a new `CheckInPage` component imported from `./pages/CheckInPage`
 
 - [ ] Create `src/Stretto.Web/src/pages/CheckInPage.tsx` — no `AppShell`; full-height centered layout (`min-h-screen flex flex-col items-center justify-center p-6`); shows "Check In" as a heading; uses `useParams` to get `eventId`; renders a full-width green button (`data-testid="checkin-button"`, `className="w-full bg-green-600 hover:bg-green-700 text-white text-xl font-semibold py-6 rounded-xl"`) labeled "I'm here"; uses `useMutation` to call `POST /api/checkin/{eventId}`; on success, replaces button with a `<p data-testid="checkin-success">You're checked in!</p>` message; shows error text on failure
 

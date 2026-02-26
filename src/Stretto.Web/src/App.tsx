@@ -14,6 +14,7 @@ import ProjectFormPage from './pages/ProjectFormPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import EventFormPage from './pages/EventFormPage';
 import EventDetailPage from './pages/EventDetailPage';
+import CheckInPage from './pages/CheckInPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 import { AuthInitializer } from './components/AuthInitializer';
@@ -44,6 +45,7 @@ function App() {
           <Route path="/events/new" element={<EventFormPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/events/:id/edit" element={<EventFormPage />} />
+          <Route path="/checkin/:eventId" element={<CheckInPage />} />
           <Route path="/utilization" element={<ComingSoon />} />
           <Route path="/members" element={<MembersListPage />} />
           <Route path="/members/new" element={<MemberFormPage />} />
