@@ -69,6 +69,17 @@ The `docker-compose.yml` defines:
 - Tests live in `e2e/ui-validation.spec.ts`
 - Run: `docker compose run --rm playwright sh -c 'cd /app/e2e && npm install && npx playwright test --reporter=list'`
 
+## Milestone 02b: Database + Infrastructure + API Wiring
+
+Validated in milestone `milestone-02b-database-and-wiring`:
+
+- **EF Core InMemory**: `AppDbContext` registered with `UseInMemoryDatabase("StrettoDB")` in `Program.cs`. No migrations needed.
+- **DataSeeder**: `DataSeeder.SeedAsync` called after `app.Build()` using a DI scope. Inserts 1 org + 2 members if no organizations exist. Confirmed via EF Core log: "Saved 3 entities to in-memory store."
+- **GlobalExceptionHandlerMiddleware**: Registered before route mappings in `Program.cs`. Maps `NotFoundException` → 404, `ValidationException` → 400, unhandled → 500. All with `application/json` Content-Type and `{"message":"..."}` body.
+- **BaseRepository<T>**: Generic repository scoping queries to `OrganizationId` via `EF.Property<Guid>(e, "OrganizationId")`.
+- **37 tests pass**: `dotnet test Stretto.sln` passes all 37 tests.
+- **Playwright**: All 4 UI tests pass against frontend at `http://frontend:5173`.
+
 ## Known Gotchas
 
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
