@@ -1,5 +1,7 @@
 import { Navigate, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
+import AuditionSignUpPage from './pages/AuditionSignUpPage';
+import AuditionConfirmationPage from './pages/AuditionConfirmationPage';
 import DashboardPage from './pages/DashboardPage';
 import VenuesListPage from './pages/VenuesListPage';
 import VenueFormPage from './pages/VenueFormPage';
@@ -33,6 +35,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/auditions/:auditionDateId" element={<AuditionSignUpPage />} />
+        <Route path="/auditions/confirmation" element={<AuditionConfirmationPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/program-years" element={<ProgramYearsListPage />} />

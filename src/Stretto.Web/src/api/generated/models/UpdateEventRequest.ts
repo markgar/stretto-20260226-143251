@@ -4,10 +4,10 @@
 /* eslint-disable */
 import type { EventType } from './EventType';
 export type UpdateEventRequest = {
-    type: EventType;
-    date: string;
-    startTime: string;
-    durationMinutes: number;
+    type?: EventType;
+    date?: string;
+    startTime?: string;
+    durationMinutes?: number;
     venueId?: string | null;
 };
 
