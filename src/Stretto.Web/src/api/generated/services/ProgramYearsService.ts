@@ -101,4 +101,20 @@ export class ProgramYearsService {
             },
         });
     }
+    /**
+     * @param id
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static getApiProgramYearsUtilization(
+        id: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/program-years/{id}/utilization',
+            path: {
+                'id': id,
+            },
+        });
+    }
 }

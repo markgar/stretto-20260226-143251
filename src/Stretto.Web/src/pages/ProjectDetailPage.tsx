@@ -3,6 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { format, parseISO } from 'date-fns';
 import AppShell from '../components/AppShell';
 import ProjectEventsTab from '../components/ProjectEventsTab';
+import ProjectMembersTab from '../components/ProjectMembersTab';
 import { ProjectsService } from '../api/generated/services/ProjectsService';
 import { useAuthStore } from '../stores/authStore';
 
@@ -122,9 +123,7 @@ export default function ProjectDetailPage() {
               </div>
             )}
             {activeTab === 'events' && <ProjectEventsTab projectId={id!} />}
-            {activeTab === 'members' && (
-              <p className="text-muted-foreground">Coming soon</p>
-            )}
+            {activeTab === 'members' && <ProjectMembersTab projectId={id!} />}
             {activeTab === 'materials' && (
               <p className="text-muted-foreground">Coming soon</p>
             )}

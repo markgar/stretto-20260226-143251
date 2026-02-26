@@ -17,6 +17,7 @@ import ProjectDetailPage from './pages/ProjectDetailPage';
 import EventFormPage from './pages/EventFormPage';
 import EventDetailPage from './pages/EventDetailPage';
 import CheckInPage from './pages/CheckInPage';
+import UtilizationGridPage from './pages/UtilizationGridPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 import { AuthInitializer } from './components/AuthInitializer';
@@ -50,7 +51,7 @@ function App() {
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/events/:id/edit" element={<EventFormPage />} />
           <Route path="/checkin/:eventId" element={<CheckInPage />} />
-          <Route path="/utilization" element={<ComingSoon />} />
+          <Route path="/utilization" element={<UtilizationGridPage />} />
           <Route path="/members" element={<MembersListPage />} />
           <Route path="/members/new" element={<MemberFormPage />} />
           <Route path="/members/:id/edit" element={<MemberFormPage />} />
