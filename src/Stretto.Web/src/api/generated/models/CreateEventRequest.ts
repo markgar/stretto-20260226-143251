@@ -4,11 +4,11 @@
 /* eslint-disable */
 import type { EventType } from './EventType';
 export type CreateEventRequest = {
-    projectId?: string;
-    type?: EventType;
-    date?: string;
-    startTime?: string;
-    durationMinutes?: number;
+    projectId: string;
+    type: EventType;
+    date: string;
+    startTime: string;
+    durationMinutes: number;
     venueId?: string | null;
 };
 

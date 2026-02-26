@@ -23,15 +23,19 @@ export default function MemberProfilePage() {
   const { data: member } = useQuery<Member>({
     queryKey: ['member', id],
     queryFn: () =>
-      fetch(`/api/members/${id}`, { credentials: 'include' }).then((r) => r.json()),
+      fetch(`/api/members/${id}`, { credentials: 'include' }).then((r) => {
+        if (!r.ok) throw new Error(`Request failed: ${r.status}`);
+        return r.json();
+      }),
   });
 
   const { data: assignments = [] } = useQuery<Assignment[]>({
     queryKey: ['member-assignments', id],
     queryFn: () =>
-      fetch(`/api/members/${id}/assignments`, { credentials: 'include' }).then((r) =>
-        r.json()
-      ),
+      fetch(`/api/members/${id}/assignments`, { credentials: 'include' }).then((r) => {
+        if (!r.ok) throw new Error(`Request failed: ${r.status}`);
+        return r.json();
+      }),
   });
 
   return (

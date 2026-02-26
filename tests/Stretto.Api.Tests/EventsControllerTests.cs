@@ -303,12 +303,44 @@ public class EventsControllerTests : IClassFixture<EventsTestFactory>
     }
 
     [Fact]
-    public async Task Get_unknown_id_returns_404()
+    public async Task Create_with_duration_zero_returns_400()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
         var token = await LoginAsync(client);
+        var projectId = await CreateProjectAsync(client, token);
 
-        var req = WithSession(HttpMethod.Get, $"/api/events/{Guid.NewGuid()}", token);
+        var req = WithSession(HttpMethod.Post, "/api/events", token);
+        req.Content = JsonContent.Create(new
+        {
+            projectId,
+            type = 0,
+            date = EventDateInRange,
+            startTime = "18:30:00",
+            durationMinutes = 0,
+            venueId = (string?)null
+        });
+        var response = await client.SendAsync(req);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task Create_with_unknown_venue_returns_404()
+    {
+        var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
+        var token = await LoginAsync(client);
+        var projectId = await CreateProjectAsync(client, token);
+
+        var req = WithSession(HttpMethod.Post, "/api/events", token);
+        req.Content = JsonContent.Create(new
+        {
+            projectId,
+            type = 0,
+            date = EventDateInRange,
+            startTime = "18:30:00",
+            durationMinutes = 120,
+            venueId = Guid.NewGuid().ToString()
+        });
         var response = await client.SendAsync(req);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);

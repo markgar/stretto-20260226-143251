@@ -188,6 +188,64 @@ public class EventServiceTests : IDisposable
         Assert.True(ex.Errors.ContainsKey("date"));
     }
 
+    [Fact]
+    public async Task CreateAsync_throws_ValidationException_when_duration_is_zero()
+    {
+        var project = await SeedProjectAsync();
+        var req = new CreateEventRequest(project.Id, EventType.Rehearsal,
+            new DateOnly(2025, 10, 15), new TimeOnly(18, 30), 0, null);
+
+        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+            _service.CreateAsync(OrgId, req));
+
+        Assert.True(ex.Errors.ContainsKey("durationMinutes"));
+    }
+
+    [Fact]
+    public async Task CreateAsync_throws_ValidationException_when_duration_is_negative()
+    {
+        var project = await SeedProjectAsync();
+        var req = new CreateEventRequest(project.Id, EventType.Rehearsal,
+            new DateOnly(2025, 10, 15), new TimeOnly(18, 30), -30, null);
+
+        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+            _service.CreateAsync(OrgId, req));
+
+        Assert.True(ex.Errors.ContainsKey("durationMinutes"));
+    }
+
+    [Fact]
+    public async Task CreateAsync_throws_NotFoundException_when_venue_not_found()
+    {
+        var project = await SeedProjectAsync();
+        var req = new CreateEventRequest(project.Id, EventType.Rehearsal,
+            new DateOnly(2025, 10, 15), new TimeOnly(18, 30), 120, Guid.NewGuid());
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            _service.CreateAsync(OrgId, req));
+    }
+
+    [Fact]
+    public async Task CreateAsync_throws_NotFoundException_when_venue_belongs_to_different_org()
+    {
+        var project = await SeedProjectAsync();
+        var otherOrgVenue = new Venue
+        {
+            Id = Guid.NewGuid(),
+            Name = "Other Org Venue",
+            Address = "999 Other St",
+            OrganizationId = Guid.NewGuid()
+        };
+        _db.Venues.Add(otherOrgVenue);
+        await _db.SaveChangesAsync();
+
+        var req = new CreateEventRequest(project.Id, EventType.Rehearsal,
+            new DateOnly(2025, 10, 15), new TimeOnly(18, 30), 120, otherOrgVenue.Id);
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            _service.CreateAsync(OrgId, req));
+    }
+
     // UpdateAsync
 
     [Fact]
@@ -230,6 +288,36 @@ public class EventServiceTests : IDisposable
                     new DateOnly(2026, 1, 1), new TimeOnly(18, 30), 120, null)));
 
         Assert.True(ex.Errors.ContainsKey("date"));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_throws_ValidationException_when_duration_is_zero()
+    {
+        var project = await SeedProjectAsync();
+        var created = await _service.CreateAsync(OrgId, new CreateEventRequest(
+            project.Id, EventType.Rehearsal,
+            new DateOnly(2025, 10, 15), new TimeOnly(18, 30), 120, null));
+
+        var ex = await Assert.ThrowsAsync<ValidationException>(() =>
+            _service.UpdateAsync(created.Id, OrgId,
+                new UpdateEventRequest(EventType.Rehearsal,
+                    new DateOnly(2025, 10, 15), new TimeOnly(18, 30), 0, null)));
+
+        Assert.True(ex.Errors.ContainsKey("durationMinutes"));
+    }
+
+    [Fact]
+    public async Task UpdateAsync_throws_NotFoundException_when_venue_not_found()
+    {
+        var project = await SeedProjectAsync();
+        var created = await _service.CreateAsync(OrgId, new CreateEventRequest(
+            project.Id, EventType.Rehearsal,
+            new DateOnly(2025, 10, 15), new TimeOnly(18, 30), 120, null));
+
+        await Assert.ThrowsAsync<NotFoundException>(() =>
+            _service.UpdateAsync(created.Id, OrgId,
+                new UpdateEventRequest(EventType.Rehearsal,
+                    new DateOnly(2025, 10, 15), new TimeOnly(18, 30), 120, Guid.NewGuid())));
     }
 
     // DeleteAsync

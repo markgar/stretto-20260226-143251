@@ -1,63 +1,14 @@
-import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { useParams } from 'react-router-dom';
 import AppShell from '../components/AppShell';
-import { ProgramYearsService } from '../api/generated/services/ProgramYearsService';
-
-const schema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
-});
-
-type FormValues = z.infer<typeof schema>;
-
-type ProgramYear = FormValues & {
-  id: string;
-  isCurrent: boolean;
-  isArchived: boolean;
-};
+import { useProgramYearDetail } from './useProgramYearDetail';
 
 const inputClass =
   'w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring';
 
 export default function ProgramYearDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  const { data } = useQuery<ProgramYear>({
-    queryKey: ['program-year', id],
-    queryFn: () => ProgramYearsService.getApiProgramYears1(id!),
-  });
-
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } =
-    useForm<FormValues>({ resolver: zodResolver(schema) });
-
-  useEffect(() => {
-    if (data) reset({ name: data.name, startDate: data.startDate, endDate: data.endDate });
-  }, [data, reset]);
-
-  const saveMutation = useMutation({
-    mutationFn: (values: FormValues) => ProgramYearsService.putApiProgramYears(id!, values),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['program-year', id] }),
-  });
-
-  const archiveMutation = useMutation({
-    mutationFn: () => ProgramYearsService.postApiProgramYearsArchive(id!),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['program-years'] });
-      navigate('/program-years');
-    },
-  });
-
-  const activateMutation = useMutation({
-    mutationFn: () => ProgramYearsService.postApiProgramYearsActivate(id!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['program-year', id] }),
-  });
+  const { data, form, saveMutation, archiveMutation, activateMutation } = useProgramYearDetail(id);
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = form;
 
   return (
     <AppShell>

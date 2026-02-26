@@ -48,6 +48,19 @@ public class EventService : IEventService
                 ["date"] = ["Event date must fall within the project date range"]
             });
 
+        if (req.DurationMinutes <= 0)
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["durationMinutes"] = ["Duration must be greater than zero"]
+            });
+
+        if (req.VenueId.HasValue)
+        {
+            var venue = await _venues.GetByIdAsync(req.VenueId.Value, orgId);
+            if (venue is null)
+                throw new NotFoundException("Venue not found");
+        }
+
         var ev = new Event
         {
             Id = Guid.NewGuid(),
@@ -81,6 +94,19 @@ public class EventService : IEventService
             {
                 ["date"] = ["Event date must fall within the project date range"]
             });
+
+        if (req.DurationMinutes <= 0)
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["durationMinutes"] = ["Duration must be greater than zero"]
+            });
+
+        if (req.VenueId.HasValue)
+        {
+            var venue = await _venues.GetByIdAsync(req.VenueId.Value, orgId);
+            if (venue is null)
+                throw new NotFoundException("Venue not found");
+        }
 
         ev.EventType = req.Type;
         ev.Date = req.Date;

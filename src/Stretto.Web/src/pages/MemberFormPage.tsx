@@ -39,7 +39,10 @@ export default function MemberFormPage() {
   const { data: member } = useQuery<MemberDto>({
     queryKey: ['member', id],
     queryFn: () =>
-      fetch(`/api/members/${id}`, { credentials: 'include' }).then((r) => r.json()),
+      fetch(`/api/members/${id}`, { credentials: 'include' }).then((r) => {
+        if (!r.ok) throw new Error(`Request failed: ${r.status}`);
+        return r.json();
+      }),
     enabled: isEdit,
   });
 

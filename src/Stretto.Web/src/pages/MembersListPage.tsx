@@ -21,7 +21,10 @@ export default function MembersListPage() {
       fetch(
         `/api/members${search ? `?search=${encodeURIComponent(search)}` : ''}`,
         { credentials: 'include' }
-      ).then((r) => r.json()),
+      ).then((r) => {
+        if (!r.ok) throw new Error(`Request failed: ${r.status}`);
+        return r.json();
+      }),
   });
 
   return (
