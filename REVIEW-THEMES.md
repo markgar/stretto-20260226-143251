@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Authentication — App Shell
+Last updated: Venues — CRUD API
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -19,3 +19,6 @@ Last updated: Authentication — App Shell
 15. **Frontend auth store needs session rehydration** — An in-memory auth store (e.g. Zustand) loses state on page refresh; always add an app-mount validate call (`GET /auth/validate`) that rehydrates the store from the session cookie before ProtectedRoute checks run, otherwise every refresh logs the user out.
 16. **Duplicate data-testid in responsive DOM** — When a component renders multiple visibility-toggled copies of the same element (e.g., desktop/tablet/mobile nav), all copies are present in the DOM simultaneously; add viewport suffixes to testids (`nav-desktop-*`, `nav-mobile-*`) or use a single canonical copy with `aria-hidden` on the rest, so test selectors stay unique.
 17. **Mutations must use useMutation** — All API write operations (login, create, update, delete) must use Tanstack Query's `useMutation`, not raw `fetch`/`useEffect`; the project convention is explicit on this and raw fetch bypasses the consistent error/loading state management that useMutation provides.
+18. **Seed data emails must stay in sync with test fixtures** — Any change to seed data email addresses must be applied simultaneously to every test file that sends those emails (unit tests, integration tests, e2e tests); stale email references in tests cause silent test-suite failures with no build error.
+19. **Tests must be placed in the correct layer test project** — Each test class must live in the project that mirrors its subject layer (`Stretto.Application.Tests` for services, `Stretto.Infrastructure.Tests` for repositories/stores, `Stretto.Domain.Tests` for entities); placing tests in the wrong project creates false cross-layer dependencies and masks the architectural layer of a failure.
+20. **Controllers must inject interfaces, not concrete services** — All Application-layer service dependencies in API controllers must be declared as interfaces and registered as `AddScoped<IFoo, FooService>()`; injecting concrete types prevents controller unit-testing and couples the API layer to implementation details.
