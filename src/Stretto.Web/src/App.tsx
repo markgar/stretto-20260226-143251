@@ -1,6 +1,8 @@
 import { Navigate, Routes, Route } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
+import VenuesListPage from './pages/VenuesListPage';
+import VenueFormPage from './pages/VenueFormPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 
@@ -24,7 +26,9 @@ function App() {
         <Route path="/utilization" element={<ComingSoon />} />
         <Route path="/members" element={<ComingSoon />} />
         <Route path="/auditions" element={<ComingSoon />} />
-        <Route path="/venues" element={<ComingSoon />} />
+        <Route path="/venues" element={<VenuesListPage />} />
+        <Route path="/venues/new" element={<VenueFormPage />} />
+        <Route path="/venues/:id/edit" element={<VenueFormPage />} />
         <Route path="/notifications" element={<ComingSoon />} />
         <Route path="/my-projects" element={<ComingSoon />} />
         <Route path="/my-calendar" element={<ComingSoon />} />
