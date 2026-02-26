@@ -16,7 +16,7 @@
 > - `src/Stretto.Web/src/pages/ProjectDetailPage.tsx` — where tab components are rendered (replace "Coming soon" placeholder)
 > - `src/Stretto.Web/src/api/generated/services/ProjectMaterialsService.ts` — generated API client methods to call
 
-- [ ] Create `src/Stretto.Web/src/components/ProjectMaterialsTab.tsx` that accepts `{ projectId: string }` prop; fetch links with `useQuery(['projectLinks', projectId], () => ProjectMaterialsService.getApiProjectsLinks(projectId))` and documents with `useQuery(['projectDocuments', projectId], () => ProjectMaterialsService.getApiProjectsDocuments(projectId))`; render two sections: "Links" and "Documents"; show loading skeleton (three `h-8 bg-muted rounded animate-pulse` divs) while loading; show "No links yet" / "No documents yet" when lists are empty
+- [x] Create `src/Stretto.Web/src/components/ProjectMaterialsTab.tsx` that accepts `{ projectId: string }` prop; fetch links with `useQuery(['projectLinks', projectId], () => ProjectMaterialsService.getApiProjectsLinks(projectId))` and documents with `useQuery(['projectDocuments', projectId], () => ProjectMaterialsService.getApiProjectsDocuments(projectId))`; render two sections: "Links" and "Documents"; show loading skeleton (three `h-8 bg-muted rounded animate-pulse` divs) while loading; show "No links yet" / "No documents yet" when lists are empty
 
 - [ ] Add the links list to `ProjectMaterialsTab`: render each link as a row with the title as an `<a href={link.url} target="_blank" rel="noreferrer" data-testid={`link-${link.id}`}>` and a delete button `data-testid={`delete-link-${link.id}`}` (admin only) that calls `ProjectMaterialsService.deleteApiProjectsLinks(projectId, link.id)` via `useMutation` and invalidates `['projectLinks', projectId]` on success
 
