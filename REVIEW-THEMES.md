@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Database + Infrastructure + API Wiring
+Last updated: Authentication — Backend
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -13,3 +13,6 @@ Last updated: Database + Infrastructure + API Wiring
 9. **Post-load tenant check instead of DB-level filter** — In repository `GetById` methods, always include the `OrganizationId` filter in the SQL query (via `EF.Property` or a typed predicate) rather than loading the entity first and checking in memory; a post-load check still materialises the wrong-tenant row into the EF change tracker.
 10. **Hardcoded personal or real email addresses in seed data** — Use `@example.com` addresses (an IANA-reserved domain that cannot receive email) for all development seed data; never commit real personal addresses — they become a permanent privacy exposure in git history.
 11. **Missing unique index on authentication key** — Whenever an entity uses an email address (or other unique token) as an authentication credential, declare a database-level unique index on that column; omitting it allows duplicate credentials and breaks lookup-by-identity logic silently.
+12. **Validate all session paths, not just login** — When login checks a condition (e.g., `IsActive`, role, expiry), the validate/refresh path must check the same condition; a guard applied only at login leaves live sessions unaffected by subsequent state changes.
+13. **In-memory session stores need TTL and eviction** — Any `ConcurrentDictionary`-backed session store must include an expiry timestamp and lazy eviction on lookup; without it, sessions are valid indefinitely and the collection grows without bound under repeated logins.
+14. **Test every new auth component** — When adding authentication endpoints and services, always include unit tests for the service layer (success + each failure path) and integration tests for the HTTP endpoints; auth logic is high-value and high-risk to leave uncovered.
