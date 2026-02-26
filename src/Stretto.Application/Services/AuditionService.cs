@@ -66,10 +66,7 @@ public class AuditionService : IAuditionService
 
         var totalMinutes = (int)(req.EndTime - req.StartTime).TotalMinutes;
         if (totalMinutes % req.BlockLengthMinutes != 0)
-            throw new ValidationException(new Dictionary<string, string[]>
-            {
-                ["blockLengthMinutes"] = ["Block length must evenly divide the total duration"]
-            });
+            throw new UnprocessableEntityException("Block length must evenly divide the total duration");
 
         var date = new AuditionDate
         {
