@@ -31,4 +31,4 @@
 
 - [x] Add utilization action to `src/Stretto.Api/Controllers/ProgramYearsController.cs`: `GET /api/program-years/{id}/utilization` calls `_assignmentService.GetUtilizationGridAsync(id, orgId)` and returns 200. Inject `IProjectAssignmentService` via constructor
 
-- [ ] Register `IProjectAssignmentService` → `ProjectAssignmentService` as scoped in `src/Stretto.Api/Program.cs`
+- [x] Register `IProjectAssignmentService` → `ProjectAssignmentService` as scoped in `src/Stretto.Api/Program.cs`
