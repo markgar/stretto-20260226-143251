@@ -4,7 +4,7 @@ namespace Stretto.Application.Interfaces;
 
 public interface IAuditionService
 {
-    Task<List<AuditionDateDto>> ListByProgramYearAsync(Guid programYearId, Guid orgId);
+    Task<IReadOnlyList<AuditionDateDto>> ListByProgramYearAsync(Guid programYearId, Guid orgId);
     Task<AuditionDateDto> GetAsync(Guid id, Guid orgId);
     Task<AuditionDateDto> CreateAsync(Guid orgId, CreateAuditionDateRequest req);
     Task DeleteAsync(Guid id, Guid orgId);

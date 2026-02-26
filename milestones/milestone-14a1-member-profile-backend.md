@@ -25,4 +25,4 @@
 
 - [x] Implement `GetMeAsync` and `UpdateMeAsync` in `MemberService`: `GetMeAsync` calls `GetByIdAsync` and throws `NotFoundException` if absent; `UpdateMeAsync` validates uniqueness of the new email (excluding the member's own current email), updates `FirstName`, `LastName`, `Email`, and `NotificationOptOut`, then calls `UpdateAsync`
 
-- [ ] Cleanup #198: Update `IAuditionService.ListByProgramYearAsync` in `src/Stretto.Application/Interfaces/IAuditionService.cs` to return `Task<IReadOnlyList<AuditionDateDto>>` instead of `Task<List<AuditionDateDto>>`; update the corresponding return type in `AuditionService.ListByProgramYearAsync` implementation in `src/Stretto.Application/Services/AuditionService.cs`
+- [x] Cleanup #198: Update `IAuditionService.ListByProgramYearAsync` in `src/Stretto.Application/Interfaces/IAuditionService.cs` to return `Task<IReadOnlyList<AuditionDateDto>>` instead of `Task<List<AuditionDateDto>>`; update the corresponding return type in `AuditionService.ListByProgramYearAsync` implementation in `src/Stretto.Application/Services/AuditionService.cs`

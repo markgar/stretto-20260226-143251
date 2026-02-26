@@ -19,7 +19,7 @@ public class AuditionService : IAuditionService
         _members = members;
     }
 
-    public async Task<List<AuditionDateDto>> ListByProgramYearAsync(Guid programYearId, Guid orgId)
+    public async Task<IReadOnlyList<AuditionDateDto>> ListByProgramYearAsync(Guid programYearId, Guid orgId)
     {
         var dates = await _dates.ListAsync(orgId, d => d.ProgramYearId == programYearId);
         var dateIds = dates.Select(d => d.Id).ToHashSet();
