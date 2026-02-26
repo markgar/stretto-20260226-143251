@@ -9,7 +9,7 @@
 > - `src/Stretto.Web/src/App.tsx` — root route file to update with login/dashboard routes
 > - `src/Stretto.Web/src/lib/utils.ts` — `cn` helper to use in new components
 
-- [ ] Install npm packages in `src/Stretto.Web`: `npm install zustand react-hook-form @hookform/resolvers zod`
+- [x] Install npm packages in `src/Stretto.Web`: `npm install zustand react-hook-form @hookform/resolvers zod`
 
 - [ ] Create `src/Stretto.Web/src/stores/authStore.ts`; define type `AuthUser { id: string; email: string; firstName: string; lastName: string; role: 'Admin' | 'Member'; orgId: string; orgName: string }`; create store with `create<{ user: AuthUser | null; setUser: (u: AuthUser) => void; clearUser: () => void }>(...)`; export as `useAuthStore`
 
