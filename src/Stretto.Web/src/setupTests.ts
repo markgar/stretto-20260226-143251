@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { server } from './mocks/server';
 
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
@@ -13,3 +14,8 @@ const localStorageMock = (() => {
 })();
 
 Object.defineProperty(window, 'localStorage', { value: localStorageMock, writable: true });
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'bypass' }));
+afterEach(() => server.resetHandlers());
+afterAll(() => server.close());
+
