@@ -20,7 +20,7 @@
 
 ## Tasks
 
-- [ ] Add `src/Stretto.Application/DTOs/AttendanceDtos.cs` with records: `AttendanceSummaryItemDto(Guid MemberId, string MemberName, string? Status)` (Status is null when no record exists), `SetAttendanceStatusRequest(string Status)` where Status is one of "Present", "Excused", "Absent", `AttendanceRecordDto(Guid Id, Guid EventId, Guid MemberId, string Status)`
+- [x] Add `src/Stretto.Application/DTOs/AttendanceDtos.cs` with records: `AttendanceSummaryItemDto(Guid MemberId, string MemberName, string? Status)` (Status is null when no record exists), `SetAttendanceStatusRequest(string Status)` where Status is one of "Present", "Excused", "Absent", `AttendanceRecordDto(Guid Id, Guid EventId, Guid MemberId, string Status)`
 
 - [ ] Add `src/Stretto.Application/Interfaces/IAttendanceService.cs` with methods: `Task<List<AttendanceSummaryItemDto>> GetForEventAsync(Guid eventId, Guid orgId)`, `Task<AttendanceRecordDto> SetStatusAsync(Guid eventId, Guid memberId, Guid orgId, AttendanceStatus status)`, `Task<AttendanceRecordDto> CheckInAsync(Guid eventId, Guid memberId, Guid orgId)`, `Task<AttendanceRecordDto> ToggleExcusedAsync(Guid eventId, Guid memberId, Guid orgId)`
 
