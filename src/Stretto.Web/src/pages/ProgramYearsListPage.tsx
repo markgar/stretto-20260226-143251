@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import AppShell from '../components/AppShell';
+import { ProgramYearsService } from '../api/generated/services/ProgramYearsService';
 
 type ProgramYear = {
   id: string;
@@ -17,25 +18,16 @@ export default function ProgramYearsListPage() {
 
   const { data: programYears = [] } = useQuery<ProgramYear[]>({
     queryKey: ['program-years'],
-    queryFn: () =>
-      fetch('/api/program-years', { credentials: 'include' }).then((r) => r.json()),
+    queryFn: () => ProgramYearsService.getApiProgramYears(),
   });
 
   const archiveMutation = useMutation({
-    mutationFn: (id: string) =>
-      fetch(`/api/program-years/${id}/archive`, {
-        method: 'POST',
-        credentials: 'include',
-      }),
+    mutationFn: (id: string) => ProgramYearsService.postApiProgramYearsArchive(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['program-years'] }),
   });
 
   const activateMutation = useMutation({
-    mutationFn: (id: string) =>
-      fetch(`/api/program-years/${id}/activate`, {
-        method: 'POST',
-        credentials: 'include',
-      }),
+    mutationFn: (id: string) => ProgramYearsService.postApiProgramYearsActivate(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['program-years'] }),
   });
 
@@ -67,43 +59,23 @@ export default function ProgramYearsListPage() {
               </div>
               <div className="flex items-center gap-2">
                 {py.isCurrent && (
-                  <span
-                    data-testid={`current-badge-${py.id}`}
-                    className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800"
-                  >
+                  <span data-testid={`current-badge-${py.id}`} className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
                     Current
                   </span>
                 )}
                 {py.isArchived && (
-                  <span
-                    data-testid={`archived-badge-${py.id}`}
-                    className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600"
-                  >
+                  <span data-testid={`archived-badge-${py.id}`} className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
                     Archived
                   </span>
                 )}
-                <Link
-                  to={`/program-years/${py.id}`}
-                  data-testid={`view-${py.id}`}
-                  className="text-sm text-primary hover:underline"
-                >
-                  View
-                </Link>
+                <Link to={`/program-years/${py.id}`} data-testid={`view-${py.id}`} className="text-sm text-primary hover:underline">View</Link>
                 {!py.isArchived && (
-                  <button
-                    data-testid={`archive-${py.id}`}
-                    onClick={() => archiveMutation.mutate(py.id)}
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
+                  <button data-testid={`archive-${py.id}`} onClick={() => archiveMutation.mutate(py.id)} className="text-sm text-muted-foreground hover:text-foreground">
                     Archive
                   </button>
                 )}
                 {!py.isCurrent && !py.isArchived && (
-                  <button
-                    data-testid={`activate-${py.id}`}
-                    onClick={() => activateMutation.mutate(py.id)}
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  >
+                  <button data-testid={`activate-${py.id}`} onClick={() => activateMutation.mutate(py.id)} className="text-sm text-muted-foreground hover:text-foreground">
                     Activate
                   </button>
                 )}

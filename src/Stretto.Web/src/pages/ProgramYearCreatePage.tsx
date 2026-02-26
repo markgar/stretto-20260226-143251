@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import AppShell from '../components/AppShell';
+import { ProgramYearsService } from '../api/generated/services/ProgramYearsService';
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -12,6 +13,9 @@ const schema = z.object({
 });
 
 type FormValues = z.infer<typeof schema>;
+
+const inputClass =
+  'w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring';
 
 export default function ProgramYearCreatePage() {
   const navigate = useNavigate();
@@ -23,72 +27,30 @@ export default function ProgramYearCreatePage() {
   } = useForm<FormValues>({ resolver: zodResolver(schema) });
 
   const createMutation = useMutation({
-    mutationFn: (values: FormValues) =>
-      fetch('/api/program-years', {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      }),
+    mutationFn: (values: FormValues) => ProgramYearsService.postApiProgramYears(values),
     onSuccess: () => navigate('/program-years'),
   });
-
-  function onSubmit(values: FormValues) {
-    createMutation.mutate(values);
-  }
 
   return (
     <AppShell>
       <div className="p-6 max-w-md space-y-6">
         <h1 className="text-2xl font-semibold">New Program Year</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <form onSubmit={handleSubmit((v) => createMutation.mutate(v))} className="space-y-4" noValidate>
           <div className="space-y-1">
-            <label htmlFor="name" className="text-sm font-medium">
-              Name
-            </label>
-            <input
-              id="name"
-              data-testid="name-input"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              {...register('name')}
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
-            )}
+            <label htmlFor="name" className="text-sm font-medium">Name</label>
+            <input id="name" data-testid="name-input" className={inputClass} {...register('name')} />
+            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
           </div>
-
           <div className="space-y-1">
-            <label htmlFor="startDate" className="text-sm font-medium">
-              Start Date
-            </label>
-            <input
-              id="startDate"
-              type="date"
-              data-testid="start-date-input"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              {...register('startDate')}
-            />
-            {errors.startDate && (
-              <p className="text-sm text-destructive">{errors.startDate.message}</p>
-            )}
+            <label htmlFor="startDate" className="text-sm font-medium">Start Date</label>
+            <input id="startDate" type="date" data-testid="start-date-input" className={inputClass} {...register('startDate')} />
+            {errors.startDate && <p className="text-sm text-destructive">{errors.startDate.message}</p>}
           </div>
-
           <div className="space-y-1">
-            <label htmlFor="endDate" className="text-sm font-medium">
-              End Date
-            </label>
-            <input
-              id="endDate"
-              type="date"
-              data-testid="end-date-input"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              {...register('endDate')}
-            />
-            {errors.endDate && (
-              <p className="text-sm text-destructive">{errors.endDate.message}</p>
-            )}
+            <label htmlFor="endDate" className="text-sm font-medium">End Date</label>
+            <input id="endDate" type="date" data-testid="end-date-input" className={inputClass} {...register('endDate')} />
+            {errors.endDate && <p className="text-sm text-destructive">{errors.endDate.message}</p>}
           </div>
-
           <button
             type="submit"
             data-testid="submit-button"

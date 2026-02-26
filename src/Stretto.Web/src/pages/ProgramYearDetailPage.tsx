@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import AppShell from '../components/AppShell';
+import { ProgramYearsService } from '../api/generated/services/ProgramYearsService';
 
 const schema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -20,6 +21,9 @@ type ProgramYear = FormValues & {
   isArchived: boolean;
 };
 
+const inputClass =
+  'w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring';
+
 export default function ProgramYearDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -27,44 +31,23 @@ export default function ProgramYearDetailPage() {
 
   const { data } = useQuery<ProgramYear>({
     queryKey: ['program-year', id],
-    queryFn: () =>
-      fetch(`/api/program-years/${id}`, { credentials: 'include' }).then((r) => r.json()),
+    queryFn: () => ProgramYearsService.getApiProgramYears1(id!),
   });
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } =
+    useForm<FormValues>({ resolver: zodResolver(schema) });
 
   useEffect(() => {
-    if (data) {
-      reset({
-        name: data.name,
-        startDate: data.startDate,
-        endDate: data.endDate,
-      });
-    }
+    if (data) reset({ name: data.name, startDate: data.startDate, endDate: data.endDate });
   }, [data, reset]);
 
   const saveMutation = useMutation({
-    mutationFn: (values: FormValues) =>
-      fetch(`/api/program-years/${id}`, {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
-      }),
+    mutationFn: (values: FormValues) => ProgramYearsService.putApiProgramYears(id!, values),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['program-year', id] }),
   });
 
   const archiveMutation = useMutation({
-    mutationFn: () =>
-      fetch(`/api/program-years/${id}/archive`, {
-        method: 'POST',
-        credentials: 'include',
-      }),
+    mutationFn: () => ProgramYearsService.postApiProgramYearsArchive(id!),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['program-years'] });
       navigate('/program-years');
@@ -72,71 +55,31 @@ export default function ProgramYearDetailPage() {
   });
 
   const activateMutation = useMutation({
-    mutationFn: () =>
-      fetch(`/api/program-years/${id}/activate`, {
-        method: 'POST',
-        credentials: 'include',
-      }),
+    mutationFn: () => ProgramYearsService.postApiProgramYearsActivate(id!),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['program-year', id] }),
   });
-
-  function onSubmit(values: FormValues) {
-    saveMutation.mutate(values);
-  }
 
   return (
     <AppShell>
       <div className="p-6 max-w-md space-y-6">
         <h1 className="text-2xl font-semibold">{data?.name ?? 'Program Year'}</h1>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
+        <form onSubmit={handleSubmit((v) => saveMutation.mutate(v))} className="space-y-4" noValidate>
           <div className="space-y-1">
-            <label htmlFor="name" className="text-sm font-medium">
-              Name
-            </label>
-            <input
-              id="name"
-              data-testid="name-input"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              {...register('name')}
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
-            )}
+            <label htmlFor="name" className="text-sm font-medium">Name</label>
+            <input id="name" data-testid="name-input" className={inputClass} {...register('name')} />
+            {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
           </div>
-
           <div className="space-y-1">
-            <label htmlFor="startDate" className="text-sm font-medium">
-              Start Date
-            </label>
-            <input
-              id="startDate"
-              type="date"
-              data-testid="start-date-input"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              {...register('startDate')}
-            />
-            {errors.startDate && (
-              <p className="text-sm text-destructive">{errors.startDate.message}</p>
-            )}
+            <label htmlFor="startDate" className="text-sm font-medium">Start Date</label>
+            <input id="startDate" type="date" data-testid="start-date-input" className={inputClass} {...register('startDate')} />
+            {errors.startDate && <p className="text-sm text-destructive">{errors.startDate.message}</p>}
           </div>
-
           <div className="space-y-1">
-            <label htmlFor="endDate" className="text-sm font-medium">
-              End Date
-            </label>
-            <input
-              id="endDate"
-              type="date"
-              data-testid="end-date-input"
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              {...register('endDate')}
-            />
-            {errors.endDate && (
-              <p className="text-sm text-destructive">{errors.endDate.message}</p>
-            )}
+            <label htmlFor="endDate" className="text-sm font-medium">End Date</label>
+            <input id="endDate" type="date" data-testid="end-date-input" className={inputClass} {...register('endDate')} />
+            {errors.endDate && <p className="text-sm text-destructive">{errors.endDate.message}</p>}
           </div>
-
           <button
             type="submit"
             data-testid="save-button"
@@ -149,22 +92,12 @@ export default function ProgramYearDetailPage() {
 
         <div className="flex gap-3">
           {data && !data.isArchived && (
-            <button
-              data-testid="archive-button"
-              onClick={() => archiveMutation.mutate()}
-              disabled={archiveMutation.isPending}
-              className="rounded-md border px-4 py-2 text-sm hover:bg-accent disabled:opacity-50"
-            >
+            <button data-testid="archive-button" onClick={() => archiveMutation.mutate()} disabled={archiveMutation.isPending} className="rounded-md border px-4 py-2 text-sm hover:bg-accent disabled:opacity-50">
               Archive
             </button>
           )}
           {data && !data.isCurrent && !data.isArchived && (
-            <button
-              data-testid="activate-button"
-              onClick={() => activateMutation.mutate()}
-              disabled={activateMutation.isPending}
-              className="rounded-md border px-4 py-2 text-sm hover:bg-accent disabled:opacity-50"
-            >
+            <button data-testid="activate-button" onClick={() => activateMutation.mutate()} disabled={activateMutation.isPending} className="rounded-md border px-4 py-2 text-sm hover:bg-accent disabled:opacity-50">
               Activate
             </button>
           )}
