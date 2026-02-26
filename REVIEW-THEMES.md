@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Project Materials — Backend (Links and Documents API)
+Last updated: Audition Sign-Up — Frontend Pages
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -50,3 +50,4 @@ Last updated: Project Materials — Backend (Links and Documents API)
 46. **Check-then-act on shared mutable resources needs concurrency protection** — Whenever a service reads an entity, checks a condition (e.g., `slot.MemberId == null`), then updates it, two concurrent requests can both pass the check and both commit; use EF Core optimistic concurrency (`RowVersion`/`Timestamp`) or a DB-level unique constraint on the resource to guarantee at-most-one success; the pattern recurs across booking, assignment, and sign-up operations.
 47. **Avoid redundant entity re-reads when delegating to a sub-method** — When a public service method validates an entity (e.g., `GetByIdAsync`) and then delegates to a private helper that repeats the same query, extract the load into a private method that accepts the already-loaded entity; loading the same row twice per request adds measurable latency and the double-read pattern silently multiplies as more callers are added.
 48. **Cover every new exception type in GlobalExceptionHandlerMiddlewareTests** — Each new exception class added to `GlobalExceptionHandlerMiddleware` must have a corresponding unit test asserting the correct HTTP status code and JSON body shape; the middleware is the single global error-handling surface and an untested branch can silently regress to a 500 on a path that should return a structured error response.
+49. **Extract shared utility functions instead of duplicating across page files** — When two or more page components in the same milestone need the same small helper (e.g., `formatTime`, `formatDate`), extract it to `src/Stretto.Web/src/lib/` immediately; copy-pasted helpers diverge silently across files and a future fix applied to one copy leaves the other broken.
