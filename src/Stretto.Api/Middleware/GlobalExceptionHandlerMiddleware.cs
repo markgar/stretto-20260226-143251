@@ -42,7 +42,6 @@ public class GlobalExceptionHandlerMiddleware
             var body = JsonSerializer.Serialize(new { message = ex.Message });
             await context.Response.WriteAsync(body);
         }
-<<<<<<< HEAD
         catch (ConflictException ex)
         {
             context.Response.StatusCode = 409;
@@ -50,19 +49,13 @@ public class GlobalExceptionHandlerMiddleware
             var body = JsonSerializer.Serialize(new { message = ex.Message });
             await context.Response.WriteAsync(body);
         }
-=======
->>>>>>> 635556b ([validator] Add audition controllers, UnprocessableEntityException (422), and milestone 11a validation)
         catch (UnprocessableEntityException ex)
         {
             context.Response.StatusCode = 422;
             context.Response.ContentType = "application/json";
-<<<<<<< HEAD
             var body = ex.Errors.Count > 0
                 ? JsonSerializer.Serialize(new { message = ex.Message, errors = ex.Errors })
                 : JsonSerializer.Serialize(new { message = ex.Message });
-=======
-            var body = JsonSerializer.Serialize(new { message = ex.Message });
->>>>>>> 635556b ([validator] Add audition controllers, UnprocessableEntityException (422), and milestone 11a validation)
             await context.Response.WriteAsync(body);
         }
         catch (ValidationException ex)
