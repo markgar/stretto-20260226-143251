@@ -1,0 +1,42 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.nupkg
+*.snupkg
+TestResults/
+
+# Node / Frontend
+node_modules/
+dist/
+.vite/
+.next/
+
+# Generated API client (regenerated from OpenAPI spec on build)
+# Checked in intentionally — see README
+# src/Stretto.Web/src/api-client/
+
+# Environment & secrets
+.env
+.env.local
+.env*.local
+appsettings.Development.json
+appsettings.*.local.json
+
+# File uploads (local storage)
+uploads/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# Coverage
+coverage/
+*.lcov
