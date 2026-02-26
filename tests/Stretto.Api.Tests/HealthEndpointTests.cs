@@ -1,18 +1,23 @@
+using Microsoft.AspNetCore.Mvc.Testing;
+
 namespace Stretto.Api.Tests;
 
-/// <summary>
-/// Integration tests for the /health endpoint.
-/// Full HTTP integration tests require Microsoft.AspNetCore.Mvc.Testing — see issue #4.
-/// </summary>
-public class HealthEndpointTests
+public class HealthEndpointTests : IClassFixture<WebApplicationFactory<Program>>
 {
-    [Fact]
-    public void Health_endpoint_is_registered_in_api_project()
+    private readonly WebApplicationFactory<Program> _factory;
+
+    public HealthEndpointTests(WebApplicationFactory<Program> factory)
     {
-        // The Program.cs in Stretto.Api registers GET /health.
-        // This test verifies that the API project assembly loads without error
-        // (a build-time proxy for endpoint registration until WebApplicationFactory is available).
-        var assembly = typeof(Program).Assembly;
-        Assert.Equal("Stretto.Api", assembly.GetName().Name);
+        _factory = factory;
+    }
+
+    [Fact]
+    public async Task Health_endpoint_returns_200_with_healthy_status()
+    {
+        var client = _factory.CreateClient();
+        var response = await client.GetAsync("/health");
+        response.EnsureSuccessStatusCode();
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("healthy", body);
     }
 }
