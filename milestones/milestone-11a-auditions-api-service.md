@@ -31,4 +31,4 @@
 
 - [x] Implement `UpdateSlotStatusAsync` in `AuditionService`: fetch the slot using `_slots.GetByIdAsync(slotId, orgId)` (throw `NotFoundException("Audition slot not found")` if null); parse the `status` string to `AuditionStatus` enum (throw `ValidationException` with `["status"] = ["Invalid status value"]` if parse fails); set `slot.Status`; call `_slots.UpdateAsync(slot)`; return `ToSlotDto(slot)`
 
-- [ ] Implement `UpdateSlotNotesAsync` in `AuditionService`: fetch the slot (throw `NotFoundException` if null); set `slot.Notes = notes`; call `_slots.UpdateAsync(slot)`; return `ToSlotDto(slot)`
+- [x] Implement `UpdateSlotNotesAsync` in `AuditionService`: fetch the slot (throw `NotFoundException` if null); set `slot.Notes = notes`; call `_slots.UpdateAsync(slot)`; return `ToSlotDto(slot)`
