@@ -1,0 +1,23 @@
+services:
+  app:
+    build: .
+    ports:
+      - "7777:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    networks:
+      - stretto-net
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.52.0-noble
+    volumes:
+      - .:/app
+    networks:
+      - stretto-net
+    profiles:
+      - testing
+
+networks:
+  stretto-net:
+    driver: bridge
