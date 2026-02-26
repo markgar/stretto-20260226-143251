@@ -26,6 +26,7 @@ builder.Services.AddScoped<IAuditionService, AuditionService>();
 builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<IStorageProvider, LocalFileStorageProvider>();
 builder.Services.AddScoped<IProjectMaterialsService, ProjectMaterialsService>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 var app = builder.Build();
 
