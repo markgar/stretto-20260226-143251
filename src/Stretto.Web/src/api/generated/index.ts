@@ -8,6 +8,7 @@ export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
 export type { CreateAuditionDateRequest } from './models/CreateAuditionDateRequest';
+export type { SetAttendanceStatusRequest } from './models/SetAttendanceStatusRequest';
 export type { CreateEventRequest } from './models/CreateEventRequest';
 export type { CreateMemberRequest } from './models/CreateMemberRequest';
 export type { CreateProgramYearRequest } from './models/CreateProgramYearRequest';
@@ -23,6 +24,7 @@ export type { UpdateSlotNotesRequest } from './models/UpdateSlotNotesRequest';
 export type { UpdateSlotStatusRequest } from './models/UpdateSlotStatusRequest';
 
 export { AuditionDatesService } from './services/AuditionDatesService';
+export { AttendanceService } from './services/AttendanceService';
 export { AuditionSlotsService } from './services/AuditionSlotsService';
 export { AuthService } from './services/AuthService';
 export { EventsService } from './services/EventsService';
