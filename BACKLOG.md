@@ -12,7 +12,7 @@
 
 6. [x] Venues — CRUD API endpoints (list, create, get, update, delete) scoped to organization; admin Venues pages: list, create form, edit form with all contact fields (name, address, contact name, email, phone); re-generate TypeScript API client <!-- depends: 3 -->
 
-7. [2] Projects — CRUD API endpoints (list by program year, create, get, update, delete) with start/end date validation; admin Projects pages: list within program year, create form, project detail page with tabs (Overview, Events, Materials, Members); re-generate TypeScript API client <!-- depends: 4 -->
+7. [x] Projects — CRUD API endpoints (list by program year, create, get, update, delete) with start/end date validation; admin Projects pages: list within program year, create form, project detail page with tabs (Overview, Events, Materials, Members); re-generate TypeScript API client <!-- depends: 4 -->
 
 8. [ ] Member Assignments + Utilization Grid — Assign/unassign member API endpoints; utilization grid API endpoint (server-side member × project matrix sorted by utilization count); assignment UI on project Members tab (browse/search member list, toggle assignment); admin Utilization Grid page (full matrix on desktop, list-by-member on mobile with utilization counts/percentages and accent-colored filled cells); re-generate TypeScript API client <!-- depends: 5, 7 -->
 
