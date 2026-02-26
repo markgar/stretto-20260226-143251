@@ -1,8 +1,9 @@
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import AppShell from '../components/AppShell';
 import { EventsService } from '../api/generated/services/EventsService';
+import { AttendanceService } from '../api/generated/services/AttendanceService';
 import { useAuthStore } from '../stores/authStore';
 
 type Event = {
@@ -13,6 +14,12 @@ type Event = {
   durationMinutes: number;
   venueName?: string;
   projectId: string;
+};
+
+type AttendanceSummaryItem = {
+  memberId: string;
+  memberName: string;
+  status: string | null;
 };
 
 function EventTypeBadge({ type }: { type: number }) {
@@ -27,6 +34,69 @@ function EventTypeBadge({ type }: { type: number }) {
     <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700">
       Performance
     </span>
+  );
+}
+
+function AttendanceStatusBadge({ status }: { status: string | null }) {
+  if (status === 'Present') return <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-700">Present</span>;
+  if (status === 'Excused') return <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-700">Excused</span>;
+  if (status === 'Absent') return <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-red-100 text-red-700">Absent</span>;
+  return <span className="text-sm text-muted-foreground">—</span>;
+}
+
+function AttendanceRow({ item, eventId }: { item: AttendanceSummaryItem; eventId: string }) {
+  const queryClient = useQueryClient();
+  const statusMutation = useMutation({
+    mutationFn: (status: string) =>
+      AttendanceService.putApiEventsAttendance(eventId, item.memberId, { status }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['attendance', eventId] }),
+  });
+
+  return (
+    <div className="flex items-center justify-between py-2 border-b last:border-0">
+      <div className="flex items-center gap-3">
+        <span className="text-sm font-medium">{item.memberName}</span>
+        <AttendanceStatusBadge status={item.status} />
+      </div>
+      <select
+        value={item.status ?? ''}
+        onChange={(e) => statusMutation.mutate(e.target.value)}
+        disabled={statusMutation.isPending}
+        className="text-sm border rounded px-2 py-1 disabled:opacity-50"
+        aria-label={`Set status for ${item.memberName}`}
+      >
+        <option value="">— Select —</option>
+        <option value="Present">Present</option>
+        <option value="Excused">Excused</option>
+        <option value="Absent">Absent</option>
+      </select>
+    </div>
+  );
+}
+
+function AttendancePanel({ eventId }: { eventId: string }) {
+  const { data: attendance, isLoading } = useQuery<AttendanceSummaryItem[]>({
+    queryKey: ['attendance', eventId],
+    queryFn: () => AttendanceService.getApiEventsAttendance(eventId),
+  });
+
+  return (
+    <section data-testid="attendance-panel" className="mt-8 rounded-lg border p-4 max-w-xl">
+      <h2 className="text-lg font-semibold mb-2">Attendance</h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        Check-in URL:{' '}
+        <span data-testid="checkin-url" className="font-mono text-foreground">
+          /checkin/{eventId}
+        </span>
+      </p>
+      {isLoading && <p className="text-sm text-muted-foreground">Loading attendance…</p>}
+      {attendance && attendance.length === 0 && (
+        <p className="text-sm text-muted-foreground">No members found.</p>
+      )}
+      {attendance && attendance.map((item) => (
+        <AttendanceRow key={item.memberId} item={item} eventId={eventId} />
+      ))}
+    </section>
   );
 }
 
@@ -113,6 +183,7 @@ export default function EventDetailPage() {
                 </Link>
               </div>
             </div>
+            {isAdmin && <AttendancePanel eventId={id!} />}
           </>
         )}
       </div>
