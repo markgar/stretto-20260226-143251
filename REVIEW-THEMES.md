@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Attendance — Frontend
+Last updated: Audition Sign-Up — Backend API
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -46,3 +46,5 @@ Last updated: Attendance — Frontend
 42. **Validate FK parent existence in child record upserts** — When creating a new child record that references a parent via FK (e.g., `AttendanceRecord.EventId`), always validate the parent entity exists and belongs to the same org before persisting; skipping this allows callers to create orphaned records referencing non-existent or wrong-org entities, corrupting read-side aggregations silently.
 43. **Match component auth guard to endpoint auth requirement** — When a component is conditionally rendered based on `user?.role`, every API endpoint it calls must permit that role; rendering `MemberAttendanceSection` only for Members while calling an Admin-only endpoint means the feature is silently broken for every user it targets; always verify each endpoint's auth requirement against the component's render condition before shipping.
 44. **Always handle useQuery isError alongside isLoading** — Every `useQuery` call that renders data must also destructure `isError` and render a user-visible error message; omitting it causes an empty/blank UI with no feedback when the request fails, which is indistinguishable from "no data" and leaves users unable to diagnose or retry.
+45. **Validate ALL required fields in public unauthenticated endpoints** — Public endpoints have no auth gate so all required fields must be validated explicitly before use; partial validation (e.g., checking `email` but not `firstName`/`lastName`) leaves server-side code exposed to null-dereference or garbage data from untrusted callers; validate every field that is required to produce a valid domain entity in the same validation pass.
+46. **Check-then-act on shared mutable resources needs concurrency protection** — Whenever a service reads an entity, checks a condition (e.g., `slot.MemberId == null`), then updates it, two concurrent requests can both pass the check and both commit; use EF Core optimistic concurrency (`RowVersion`/`Timestamp`) or a DB-level unique constraint on the resource to guarantee at-most-one success; the pattern recurs across booking, assignment, and sign-up operations.
