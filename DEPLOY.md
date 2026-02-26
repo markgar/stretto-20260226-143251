@@ -175,6 +175,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## Milestone 11b: Auditions — API Controllers
 
 Validated in milestone `milestone-11b-auditions-api-controllers`:
@@ -213,6 +214,19 @@ Validated in milestone `milestone-12a-audition-signup-backend`:
 - **Playwright APIRequestContext cookie workaround**: For `beforeAll` that needs admin auth, extract `stretto_session` from `Set-Cookie` response header and pass it manually in subsequent request `Cookie` header (Secure cookie isn't sent over HTTP automatically).
 - **AuditionSlotsController route**: Slot updates at `PUT /api/audition-slots/{id}/status` and `PUT /api/audition-slots/{id}/notes` (not `PUT /api/audition-slots/{id}`).
 >>>>>>> b7c4ab8 ([validator] Add milestone 12a audition signup backend validation tests and update DEPLOY.md)
+=======
+## Milestone 13a: Project Materials — Backend (Links and Documents API)
+
+Validated in milestone `milestone-13a-project-materials-backend`:
+
+- **ProjectMaterialsController**: Registered at `api/projects/{projectId:guid}`. Links at `/links` and documents at `/documents`.
+- **Links endpoints**: `POST /api/projects/{id}/links` → 201 (admin only), `GET /api/projects/{id}/links` → 200 (any auth), `DELETE /api/projects/{id}/links/{linkId}` → 204 (admin only, 403 for member).
+- **Documents endpoints**: `POST /api/projects/{id}/documents` → 201 (admin only, multipart/form-data with `file` and `title`), `GET /api/projects/{id}/documents` → 200 (any auth), `GET /api/projects/{id}/documents/{docId}/download` → 200 with `Content-Disposition: attachment` (any auth), `DELETE /api/projects/{id}/documents/{docId}` → 204 (admin only).
+- **LocalFileStorageProvider**: Stores uploads in `uploads/` directory inside the container. File saved as `{Guid}_{originalFileName}`.
+- **All unauthenticated requests return 401** before any business logic runs.
+- **All 11 Playwright tests pass** in `e2e/project-materials-validation.spec.ts`.
+- **Playwright test pattern**: Use `request` fixture (direct to `http://app:8080`) for API tests, NOT `page.evaluate` with `fetch` (which goes through Vite proxy that strips `/api` prefix).
+>>>>>>> ff22540 ([validator] Milestone 13a: Project Materials Backend validation — all tests pass)
 
 ## Building and Testing Locally (without Docker)
 
