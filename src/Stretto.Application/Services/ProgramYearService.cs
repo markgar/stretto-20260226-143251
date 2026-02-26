@@ -47,6 +47,23 @@ public class ProgramYearService
         return ToDto(year);
     }
 
+    public async Task<ProgramYearDto> UpdateAsync(Guid id, Guid orgId, UpdateProgramYearRequest req)
+    {
+        var year = await _programYears.GetByIdAsync(id, orgId);
+        if (year is null)
+            throw new NotFoundException("Program year not found");
+
+        if (req.StartDate >= req.EndDate)
+            throw new ValidationException(new Dictionary<string, string[]> { ["startDate"] = new[] { "Start date must be before end date" } });
+
+        year.Name = req.Name;
+        year.StartDate = req.StartDate;
+        year.EndDate = req.EndDate;
+
+        await _programYears.UpdateAsync(year);
+        return ToDto(year);
+    }
+
     private static ProgramYearDto ToDto(ProgramYear y) =>
         new(y.Id, y.Name, y.StartDate, y.EndDate, y.IsCurrent, y.IsArchived);
 }
