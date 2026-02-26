@@ -90,3 +90,24 @@ test('clicking Members tab no longer shows "Coming soon" placeholder', async () 
   await userEvent.click(screen.getByTestId('tab-members'));
   expect(screen.queryByText(/Coming soon/i)).not.toBeInTheDocument();
 });
+
+test('clicking Materials tab renders ProjectMaterialsTab, not "Coming soon"', async () => {
+  const qc = createQueryClient();
+  qc.setQueryData(['project', 'p1'], sampleProject);
+  qc.setQueryData(['projectLinks', 'p1'], []);
+  qc.setQueryData(['projectDocuments', 'p1'], []);
+  renderPage(qc);
+  await userEvent.click(screen.getByTestId('tab-materials'));
+  expect(screen.queryByText(/Coming soon/i)).not.toBeInTheDocument();
+});
+
+test('clicking Materials tab renders Links and Documents section headings', async () => {
+  const qc = createQueryClient();
+  qc.setQueryData(['project', 'p1'], sampleProject);
+  qc.setQueryData(['projectLinks', 'p1'], []);
+  qc.setQueryData(['projectDocuments', 'p1'], []);
+  renderPage(qc);
+  await userEvent.click(screen.getByTestId('tab-materials'));
+  expect(screen.getByText('Links')).toBeInTheDocument();
+  expect(screen.getByText('Documents')).toBeInTheDocument();
+});
