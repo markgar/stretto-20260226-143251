@@ -27,4 +27,4 @@
 
 - [x] Create `src/Stretto.Api/Controllers/EventsController.cs` with `[ApiController]`, `[Route("api/events")]`, inheriting `ProtectedControllerBase`; constructor-inject `IEventService` and `IAuthService`; implement: `GET /api/events?projectId={id}` (return 400 if `projectId` query param is missing, else call `ListByProjectAsync` and return `Ok(list)`); `GET /api/events/{id:guid}` (call `GetAsync`, return `Ok(dto)`); `POST /api/events` (require Admin role, call `CreateAsync`, return `Created($"/api/events/{dto.Id}", dto)`); `PUT /api/events/{id:guid}` (require Admin role, call `UpdateAsync`, return `Ok(dto)`); `DELETE /api/events/{id:guid}` (require Admin role, call `DeleteAsync`, return `NoContent()`)
 
-- [ ] Regenerate the TypeScript client: run `cd src/Stretto.Web && npm run generate` so `EventDto`, `CreateEventRequest`, `UpdateEventRequest`, and the `/api/events` endpoints appear in `src/Stretto.Web/src/api/generated/`
+- [x] Regenerate the TypeScript client: run `cd src/Stretto.Web && npm run generate` so `EventDto`, `CreateEventRequest`, `UpdateEventRequest`, and the `/api/events` endpoints appear in `src/Stretto.Web/src/api/generated/`

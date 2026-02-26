@@ -7,16 +7,20 @@ export { CancelablePromise, CancelError } from './core/CancelablePromise';
 export { OpenAPI } from './core/OpenAPI';
 export type { OpenAPIConfig } from './core/OpenAPI';
 
+export type { CreateEventRequest } from './models/CreateEventRequest';
 export type { CreateMemberRequest } from './models/CreateMemberRequest';
 export type { CreateProgramYearRequest } from './models/CreateProgramYearRequest';
 export type { CreateProjectRequest } from './models/CreateProjectRequest';
+export { EventType } from './models/EventType';
 export type { LoginRequest } from './models/LoginRequest';
 export type { SaveVenueRequest } from './models/SaveVenueRequest';
+export type { UpdateEventRequest } from './models/UpdateEventRequest';
 export type { UpdateMemberRequest } from './models/UpdateMemberRequest';
 export type { UpdateProgramYearRequest } from './models/UpdateProgramYearRequest';
 export type { UpdateProjectRequest } from './models/UpdateProjectRequest';
 
 export { AuthService } from './services/AuthService';
+export { EventsService } from './services/EventsService';
 export { HealthService } from './services/HealthService';
 export { MembersService } from './services/MembersService';
 export { ProgramYearsService } from './services/ProgramYearsService';
