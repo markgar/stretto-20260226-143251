@@ -151,6 +151,15 @@ Validated in milestone `milestone-06b-venues-admin-pages`:
 - **Secure cookie prevents page reload auth restore**: The `stretto_session` cookie is set with `Secure` flag. In the Docker HTTP setup, the browser does NOT send this cookie on page reload (only over HTTPS). Zustand state is lost on full page reload (`page.goto()`). In Playwright tests, use React Router client-side navigation (click nav links) instead of `page.goto()` for pages that require auth. The `loginAsAdmin` helper + nav link clicks work correctly.
 - **Auth restore on reload (App.tsx)**: `App.tsx` calls `GET /api/auth/validate` on mount to restore auth state from the session cookie. This works in HTTPS production but NOT in the HTTP Docker dev setup due to the Secure cookie issue above.
 - **Venues API route**: `GET /api/venues` (with `/api` prefix, proxied by Vite) returns `[]` for empty list, `401` without auth. Direct backend call: `GET http://localhost:7777/api/venues`.
+<<<<<<< HEAD
+=======
+>>>>>>> c00bb06 ([validator] Validate milestone-06b: Venues — Admin Pages)
+=======
+>>>>>>> 74a9ed4 ([validator] Validate milestone-04b: Program Years Admin Pages)
+- **Vite proxy for API calls (FIXED in milestone-09b)**: The frontend calls `/api/*` relative URLs. Two proxy rules are needed: `/api/auth` → rewrite to `/auth` (for AuthController at `[Route("auth")]`), and `/api` → no rewrite (for all other controllers at `[Route("api/...")]`). Using a single `/api` rule with rewrite breaks all data APIs. The fix is in `src/Stretto.Web/vite.config.ts`.
+- **AppShell nav testids (milestone 04b)**: Nav items now use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
+- **Seed data email**: `DataSeeder` seeds `mgarner22@gmail.com` (Admin) and `mgarner@outlook.com` (Member). Use `mgarner22@gmail.com` for all authentication tests. Note: `auth-validation.spec.ts` still uses old `admin@example.com` — those tests are broken (issue #83).
+>>>>>>> 6cdef31 ([validator] Validate milestone-09b: Events — Pages)
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **Dockerfile must copy ALL test project files**: Before `dotnet restore`, the Dockerfile must `COPY` all `.csproj` files referenced in `Stretto.sln`, including all test projects (`Stretto.Api.Tests`, `Stretto.Domain.Tests`, `Stretto.Application.Tests`, `Stretto.Infrastructure.Tests`). Missing any causes `dotnet restore` to fail with MSB3202.
@@ -169,6 +178,22 @@ cd src/Stretto.Web && npm run build             # should exit 0
 ```
 
 Requires .NET 10 SDK and Node.js 22+ installed.
+
+## Milestone 09b: Events — Pages
+
+Validated in milestone `milestone-09b-events-pages`:
+
+- **Vite proxy fix (critical)**: `vite.config.ts` had a single `/api` proxy rule with `rewrite: (path) => path.replace(/^\/api/, '')`. This stripped `/api` from ALL paths. Auth worked (AuthController is at `[Route("auth")]` — no `/api` prefix), but ALL data APIs failed (404) because ProjectsController, EventsController etc. are at `[Route("api/...")]`. Fixed by using two proxy entries: `/api/auth` (rewrite to `/auth`) + `/api` (no rewrite). This fix is required for ANY Playwright test that checks data loaded via the frontend.
+- **EventsController**: Full CRUD at `/api/events`. GET list by `projectId` query param, POST create, GET by id, PUT update, DELETE. All return 401 without auth.
+- **ProjectDetailPage tabs**: NOT using shadcn `<Tabs>` with `role="tab"`. Uses plain `<button>` elements with `data-testid="tab-{overview|events|members|materials}"`. Use `page.getByTestId('tab-events')` (not `page.getByRole('tab', ...)`).
+- **EventDetailPage project link**: Link text is "View project" (not project name). Use `page.getByRole('link', { name: 'View project' })`.
+- **Event type badge**: Rehearsal (type=0) shows indigo badge; Performance (type=1) shows purple badge.
+- **Date format in EventDetailPage**: `format(date, 'EEEE, MMMM d, yyyy')` e.g. "Wednesday, October 15, 2025".
+- **Date format in ProjectEventsTab**: `format(date, 'MMM d, yyyy')` e.g. "Oct 15, 2025". Each date is a `<Link>` to `/events/{id}`.
+- **Add event button**: `data-testid="add-event-button"` in `ProjectEventsTab`.
+- **All 11 Playwright tests pass** in `e2e/events-pages-validation.spec.ts`.
+- **Auth tokens still work for frontend login**: Vite proxy `/api/auth` → `/auth` mapping maintained. `POST http://frontend:5173/api/auth/login` → `http://app:8080/auth/login` ✓.
+- **Cookie pattern in Playwright tests**: Use `page.context().addCookies([{name: 'stretto_session', value: token, domain: 'frontend', path: '/', secure: false}])` + `localStorage.setItem('stretto_user', JSON.stringify(user))` pattern (from `loginViaApi` in venues-validation.spec.ts).
 
 ## Milestone 07a: Projects — CRUD API
 

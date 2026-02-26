@@ -13,9 +13,15 @@ export default defineConfig({
   server: {
     allowedHosts: true,
     proxy: {
-      '/api': {
+      // Auth endpoints live at /auth on the backend (no /api prefix)
+      '/api/auth': {
         target: process.env.VITE_API_URL || 'http://localhost:8080',
         rewrite: (path) => path.replace(/^\/api/, ''),
+        changeOrigin: true,
+      },
+      // All other API endpoints keep their /api prefix
+      '/api': {
+        target: process.env.VITE_API_URL || 'http://localhost:8080',
         changeOrigin: true,
       },
     },
