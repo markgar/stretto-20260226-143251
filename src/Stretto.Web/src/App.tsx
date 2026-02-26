@@ -6,6 +6,9 @@ import VenueFormPage from './pages/VenueFormPage';
 import ProgramYearsListPage from './pages/ProgramYearsListPage';
 import ProgramYearCreatePage from './pages/ProgramYearCreatePage';
 import ProgramYearDetailPage from './pages/ProgramYearDetailPage';
+import MembersListPage from './pages/MembersListPage';
+import MemberFormPage from './pages/MemberFormPage';
+import MemberProfilePage from './pages/MemberProfilePage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 import { AuthInitializer } from './components/AuthInitializer';
@@ -31,7 +34,10 @@ function App() {
           <Route path="/program-years/:id" element={<ProgramYearDetailPage />} />
           <Route path="/projects" element={<ComingSoon />} />
           <Route path="/utilization" element={<ComingSoon />} />
-          <Route path="/members" element={<ComingSoon />} />
+          <Route path="/members" element={<MembersListPage />} />
+          <Route path="/members/new" element={<MemberFormPage />} />
+          <Route path="/members/:id/edit" element={<MemberFormPage />} />
+          <Route path="/members/:id" element={<MemberProfilePage />} />
           <Route path="/auditions" element={<ComingSoon />} />
           <Route path="/venues" element={<VenuesListPage />} />
           <Route path="/venues/new" element={<VenueFormPage />} />
