@@ -10,7 +10,7 @@
 
 5. [1] Members — Admin — Members CRUD API (list with search, get, create, update, deactivate); admin Members pages: searchable list with status badges, add member form, edit member page, member profile with assignment summary; re-generate TypeScript API client <!-- depends: 3 -->
 
-6. [3] Venues — CRUD API endpoints (list, create, get, update, delete) scoped to organization; admin Venues pages: list, create form, edit form with all contact fields (name, address, contact name, email, phone); re-generate TypeScript API client <!-- depends: 3 -->
+6. [x] Venues — CRUD API endpoints (list, create, get, update, delete) scoped to organization; admin Venues pages: list, create form, edit form with all contact fields (name, address, contact name, email, phone); re-generate TypeScript API client <!-- depends: 3 -->
 
 7. [ ] Projects — CRUD API endpoints (list by program year, create, get, update, delete) with start/end date validation; admin Projects pages: list within program year, create form, project detail page with tabs (Overview, Events, Materials, Members); re-generate TypeScript API client <!-- depends: 4 -->
 
