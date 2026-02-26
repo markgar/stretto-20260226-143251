@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Program Years — Admin Pages
+Last updated: Projects — CRUD API
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -28,3 +28,6 @@ Last updated: Program Years — Admin Pages
 24. **Test every new service and controller, not just auth** — Every new Application-layer service and API controller must ship with unit tests (service layer) and integration tests (controller HTTP contract) in the same commit; missing tests on the primary milestone deliverable is a blocker, not a follow-up.
 25. **Service tests must use real repos, not hand-rolled fakes** — Use EF Core InMemory database with real `BaseRepository<T>` for service tests; hand-rolled fake repositories silently pass update assertions because their `UpdateAsync` is a no-op, making the tests unreliable; the project convention is explicit: no mocking unless unavoidable.
 26. **Multi-step writes need safe ordering** — When a business operation activates one record and deactivates others (e.g. `MarkCurrentAsync`), always deactivate others first then activate the target; activating first creates a window where two records are simultaneously active, and any subsequent failure leaves the database in a corrupt state.
+27. **Validation error keys must identify the actual failing field** — When a single validation check covers multiple fields (e.g. `startDate < lower || endDate > upper`), split it into per-field branches and use the key of the field that is actually invalid; collapsing all branches under one key (e.g. `"startDate"`) causes the client to highlight the wrong form field.
+28. **Delete operations must clean up dependent entities** — When deleting an aggregate root (e.g. `Project`), always delete or cascade-delete all child/dependent records (`ProjectAssignment`, `Event`); without navigation properties, EF Core does not infer FK relationships and no cascade is set up, leaving orphaned rows in production databases.
+29. **Shared controller helpers must be extracted to a base class** — When identical private methods (e.g. `GetSessionAsync`) are copied verbatim into three or more controllers, extract the method into a `ControllerBase`-derived base class or middleware; copy-paste helpers drift independently and create multiple places to fix a single authentication bug.
