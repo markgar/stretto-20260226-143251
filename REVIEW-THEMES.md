@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Projects — CRUD API
+Last updated: Members — API
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -31,3 +31,5 @@ Last updated: Projects — CRUD API
 27. **Validation error keys must identify the actual failing field** — When a single validation check covers multiple fields (e.g. `startDate < lower || endDate > upper`), split it into per-field branches and use the key of the field that is actually invalid; collapsing all branches under one key (e.g. `"startDate"`) causes the client to highlight the wrong form field.
 28. **Delete operations must clean up dependent entities** — When deleting an aggregate root (e.g. `Project`), always delete or cascade-delete all child/dependent records (`ProjectAssignment`, `Event`); without navigation properties, EF Core does not infer FK relationships and no cascade is set up, leaving orphaned rows in production databases.
 29. **Shared controller helpers must be extracted to a base class** — When identical private methods (e.g. `GetSessionAsync`) are copied verbatim into three or more controllers, extract the method into a `ControllerBase`-derived base class or middleware; copy-paste helpers drift independently and create multiple places to fix a single authentication bug.
+30. **Always pass ignoreCase:true to Enum.TryParse** — `Enum.TryParse<T>` is case-sensitive by default; a user submitting `"admin"` or `"ADMIN"` gets a 400 validation error even though it is a valid value; always call `Enum.TryParse<T>(value, ignoreCase: true, out var result)` when parsing user-supplied strings to enums.
+31. **Validate target existence before any side effects in multi-step writes** — When a write operation may affect other records (e.g. clearing IsCurrent on sibling rows), always load and validate the target entity first; executing side effects before the existence check means a NotFoundException unwinds the application exception stack but leaves the already-persisted side effects in the database, corrupting state.
