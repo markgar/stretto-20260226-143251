@@ -11,7 +11,7 @@
 
 - [x] Install npm packages in `src/Stretto.Web`: `npm install zustand react-hook-form @hookform/resolvers zod`
 
-- [ ] Create `src/Stretto.Web/src/stores/authStore.ts`; define type `AuthUser { id: string; email: string; firstName: string; lastName: string; role: 'Admin' | 'Member'; orgId: string; orgName: string }`; create store with `create<{ user: AuthUser | null; setUser: (u: AuthUser) => void; clearUser: () => void }>(...)`; export as `useAuthStore`
+- [x] Create `src/Stretto.Web/src/stores/authStore.ts`; define type `AuthUser { id: string; email: string; firstName: string; lastName: string; role: 'Admin' | 'Member'; orgId: string; orgName: string }`; create store with `create<{ user: AuthUser | null; setUser: (u: AuthUser) => void; clearUser: () => void }>(...)`; export as `useAuthStore`
 
 - [ ] Create `src/Stretto.Web/src/nav.ts`; import Lucide icons `LayoutDashboard, CalendarDays, FolderOpen, Grid3x3, Users, Mic2, MapPin, Bell, Calendar, User`; export `adminNavItems` array with eight entries (Dashboard `/dashboard`, Program Years `/program-years`, Projects `/projects`, Utilization Grid `/utilization`, Members `/members`, Auditions `/auditions`, Venues `/venues`, Notifications `/notifications`) each with `{ label, to, icon }` shape; export `memberNavItems` array with four entries (My Projects `/my-projects`, My Calendar `/my-calendar`, Auditions `/auditions`, Profile `/profile`)
 
