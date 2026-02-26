@@ -21,7 +21,7 @@ public class BaseRepository<T> : IRepository<T> where T : class
             return null;
 
         var orgIdProp = typeof(T).GetProperty("OrganizationId");
-        if (orgIdProp is null || (Guid)orgIdProp.GetValue(entity)! != orgId)
+        if (orgIdProp is not null && (Guid)orgIdProp.GetValue(entity)! != orgId)
             return null;
 
         return entity;

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Stretto.Domain.Entities;
 using Stretto.Domain.Enums;
 
@@ -7,7 +8,7 @@ public static class DataSeeder
 {
     public static async Task SeedAsync(AppDbContext db)
     {
-        if (db.Organizations.Any())
+        if (await db.Organizations.AnyAsync())
             return;
 
         var org = new Organization
