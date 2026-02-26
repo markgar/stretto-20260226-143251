@@ -27,6 +27,11 @@ public class BaseRepository<T> : IRepository<T> where T : class
         return entity;
     }
 
+    public async Task<T?> FindOneAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await _context.Set<T>().Where(predicate).FirstOrDefaultAsync();
+    }
+
     public async Task<List<T>> ListAsync(Guid orgId, Expression<Func<T, bool>>? predicate = null)
     {
         IQueryable<T> query = _context.Set<T>()
