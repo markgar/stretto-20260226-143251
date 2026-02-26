@@ -14,7 +14,7 @@
 
 > **Prerequisite:** milestone-15a-notifications-backend must be complete before starting this milestone.
 
-- [ ] Create `NotificationsController` in `src/Stretto.Api/Controllers/NotificationsController.cs` extending `ProtectedControllerBase`; route prefix `api/notifications`; all four endpoints require Admin role (throw `ForbiddenException` otherwise): `GET /api/notifications/assignment-recipients?programYearId={id}` → `Ok(await _notifications.GetAssignmentRecipientsAsync(programYearId, orgId))`; `POST /api/notifications/assignment-announcement` body `SendAssignmentAnnouncementRequest` → `NoContent()`; `GET /api/notifications/audition-recipients?auditionDateId={id}` → `Ok(await _notifications.GetAuditionRecipientsAsync(auditionDateId, orgId))`; `POST /api/notifications/audition-announcement` body `SendAuditionAnnouncementRequest` → `NoContent()`
+- [x] Create `NotificationsController` in `src/Stretto.Api/Controllers/NotificationsController.cs` extending `ProtectedControllerBase`; route prefix `api/notifications`; all four endpoints require Admin role (throw `ForbiddenException` otherwise): `GET /api/notifications/assignment-recipients?programYearId={id}` → `Ok(await _notifications.GetAssignmentRecipientsAsync(programYearId, orgId))`; `POST /api/notifications/assignment-announcement` body `SendAssignmentAnnouncementRequest` → `NoContent()`; `GET /api/notifications/audition-recipients?auditionDateId={id}` → `Ok(await _notifications.GetAuditionRecipientsAsync(auditionDateId, orgId))`; `POST /api/notifications/audition-announcement` body `SendAuditionAnnouncementRequest` → `NoContent()`
 
 - [ ] Run `npm run generate` in `src/Stretto.Web` to regenerate the TypeScript API client from the updated OpenAPI spec
 
