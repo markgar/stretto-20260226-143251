@@ -42,15 +42,20 @@ export default function VenueFormPage() {
   }, [venue, reset]);
 
   const saveMutation = useMutation({
-    mutationFn: (values: FormValues) => {
+    mutationFn: async (values: FormValues) => {
       const url = isEdit ? `/api/venues/${id}` : '/api/venues';
       const method = isEdit ? 'PUT' : 'POST';
-      return fetch(url, {
+      const response = await fetch(url, {
         method,
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
       });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({ message: 'Request failed' }));
+        throw new Error(err.message ?? 'Request failed');
+      }
+      return response;
     },
     onSuccess: () => navigate('/venues'),
   });
@@ -142,6 +147,11 @@ export default function VenueFormPage() {
           >
             Save Venue
           </button>
+          {saveMutation.isError && (
+            <p data-testid="form-error" className="text-destructive text-sm">
+              {(saveMutation.error as Error).message}
+            </p>
+          )}
         </form>
       </div>
     </AppShell>

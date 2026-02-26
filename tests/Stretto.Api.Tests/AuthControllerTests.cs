@@ -95,7 +95,7 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
     }
 
     [Fact]
-    public async Task Login_sets_persistent_cookie_with_max_age()
+    public async Task Login_sets_session_cookie_with_expires_not_max_age()
     {
         var client = _factory.CreateClient(new WebApplicationFactoryClientOptions { HandleCookies = false });
 
@@ -105,6 +105,8 @@ public class AuthControllerTests : IClassFixture<AuthTestFactory>
         var setCookieValues = response.Headers.GetValues("Set-Cookie");
         Assert.Contains(setCookieValues, h =>
             h.Contains("stretto_session") &&
+            h.Contains("expires=", StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(setCookieValues, h =>
             h.Contains("max-age=", StringComparison.OrdinalIgnoreCase));
     }
 
