@@ -43,7 +43,7 @@ public class GlobalExceptionHandlerMiddlewareTests
     }
 
     [Fact]
-    public async Task ValidationException_returns_400_with_validation_failed_and_errors()
+    public async Task ValidationException_returns_422_with_validation_failed_and_errors()
     {
         var (context, body) = CreateHttpContext();
         var errors = new Dictionary<string, string[]>
@@ -56,7 +56,7 @@ public class GlobalExceptionHandlerMiddlewareTests
 
         await middleware.InvokeAsync(context);
 
-        Assert.Equal(400, context.Response.StatusCode);
+        Assert.Equal(422, context.Response.StatusCode);
         Assert.Equal("application/json", context.Response.ContentType);
         var json = await ReadBodyAsync(body);
         using var doc = JsonDocument.Parse(json);
