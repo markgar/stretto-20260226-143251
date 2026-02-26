@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Domain", "src\Stret
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Application", "src\Stretto.Application\Stretto.Application.csproj", "{50AFB817-90D2-4D48-AFF7-16EF00E93A1A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stretto.Infrastructure", "src\Stretto.Infrastructure\Stretto.Infrastructure.csproj", "{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,18 @@ Global
 		{50AFB817-90D2-4D48-AFF7-16EF00E93A1A}.Release|x64.Build.0 = Release|Any CPU
 		{50AFB817-90D2-4D48-AFF7-16EF00E93A1A}.Release|x86.ActiveCfg = Release|Any CPU
 		{50AFB817-90D2-4D48-AFF7-16EF00E93A1A}.Release|x86.Build.0 = Release|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Debug|x64.Build.0 = Debug|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Debug|x86.Build.0 = Debug|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Release|x64.ActiveCfg = Release|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Release|x64.Build.0 = Release|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Release|x86.ActiveCfg = Release|Any CPU
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,5 +64,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{A95C0631-77FE-4000-8B29-54C5B688E038} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{50AFB817-90D2-4D48-AFF7-16EF00E93A1A} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{6304CF70-1B83-4FB7-ACDA-41307A9BE3BE} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal
