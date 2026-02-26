@@ -23,5 +23,4 @@ npx playwright test
 - Backend: .NET 10, clean architecture (`Stretto.Domain`, `Stretto.Application`, `Stretto.Infrastructure`, `Stretto.Api`)
 - Frontend: React + TypeScript + Vite in `src/Stretto.Web`
 - API contract: OpenAPI spec served at `/swagger`; TypeScript client auto-generated via `npm run generate-api`
-- Seed data is loaded automatically on startup (see `src/Stretto.Infrastructure/Persistence/SeedData.cs`)
 - See REQUIREMENTS.md for full feature details and SPEC.md for technical decisions.
