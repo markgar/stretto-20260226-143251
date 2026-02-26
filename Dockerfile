@@ -7,6 +7,9 @@ COPY src/Stretto.Application/Stretto.Application.csproj src/Stretto.Application/
 COPY src/Stretto.Infrastructure/Stretto.Infrastructure.csproj src/Stretto.Infrastructure/
 COPY src/Stretto.Api/Stretto.Api.csproj src/Stretto.Api/
 COPY tests/Stretto.Api.Tests/Stretto.Api.Tests.csproj tests/Stretto.Api.Tests/
+COPY tests/Stretto.Domain.Tests/Stretto.Domain.Tests.csproj tests/Stretto.Domain.Tests/
+COPY tests/Stretto.Application.Tests/Stretto.Application.Tests.csproj tests/Stretto.Application.Tests/
+COPY tests/Stretto.Infrastructure.Tests/Stretto.Infrastructure.Tests.csproj tests/Stretto.Infrastructure.Tests/
 
 RUN dotnet restore
 

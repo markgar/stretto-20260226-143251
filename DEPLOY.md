@@ -193,3 +193,15 @@ cd src/Stretto.Web && npm run build             # should exit 0
 
 Requires .NET 10 SDK and Node.js 22+ installed.
 
+## Milestone 07a: Projects — CRUD API
+
+Validated in milestone `milestone-07a-projects-api`:
+
+- **Dockerfile fix**: The solution now references 4 test projects (`Stretto.Api.Tests`, `Stretto.Domain.Tests`, `Stretto.Application.Tests`, `Stretto.Infrastructure.Tests`). The Dockerfile must COPY all 4 `.csproj` files before `dotnet restore` or the restore step fails with "project file not found". Updated Dockerfile to copy all test projects.
+- **ProjectsController**: Registered at `api/projects`. All 5 endpoints work: GET list by programYearId, POST create, GET by id, PUT update, DELETE.
+- **Authentication guard**: All endpoints return HTTP 401 without a valid `stretto_session` cookie.
+- **Authorization**: `POST`, `PUT`, `DELETE` require Admin role. Member role returns HTTP 403.
+- **Date validation**: `POST /api/projects` with `startDate >= endDate` returns HTTP 422 with `{"message":"Validation failed","errors":{"startDate":["Start date must be before end date"]}}`.
+- **App shell nav**: Projects nav item uses testid `nav-desktop-projects` (not `nav-projects`) due to multi-breakpoint nav pattern in AppShell.tsx.
+- **All 14 Playwright tests pass** in `e2e/projects-validation.spec.ts`.
+
