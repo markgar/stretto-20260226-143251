@@ -4,6 +4,7 @@ services:
     ports:
       - "7777:8080"
     environment:
+      # WARNING: Set to Development for local dev only — never use Development in production (exposes Swagger UI).
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
     networks:
