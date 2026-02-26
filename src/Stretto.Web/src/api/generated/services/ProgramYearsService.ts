@@ -2,19 +2,20 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { SaveVenueRequest } from '../models/SaveVenueRequest';
+import type { CreateProgramYearRequest } from '../models/CreateProgramYearRequest';
+import type { UpdateProgramYearRequest } from '../models/UpdateProgramYearRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class VenuesService {
+export class ProgramYearsService {
     /**
      * @returns any OK
      * @throws ApiError
      */
-    public static getApiVenues(): CancelablePromise<any> {
+    public static getApiProgramYears(): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/venues',
+            url: '/api/program-years',
         });
     }
     /**
@@ -22,12 +23,12 @@ export class VenuesService {
      * @returns any OK
      * @throws ApiError
      */
-    public static postApiVenues(
-        requestBody?: SaveVenueRequest,
+    public static postApiProgramYears(
+        requestBody?: CreateProgramYearRequest,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/venues',
+            url: '/api/program-years',
             body: requestBody,
             mediaType: 'application/json',
         });
@@ -37,12 +38,12 @@ export class VenuesService {
      * @returns any OK
      * @throws ApiError
      */
-    public static getApiVenues1(
+    public static getApiProgramYears1(
         id: string,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/venues/{id}',
+            url: '/api/program-years/{id}',
             path: {
                 'id': id,
             },
@@ -54,13 +55,13 @@ export class VenuesService {
      * @returns any OK
      * @throws ApiError
      */
-    public static putApiVenues(
+    public static putApiProgramYears(
         id: string,
-        requestBody?: SaveVenueRequest,
+        requestBody?: UpdateProgramYearRequest,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/api/venues/{id}',
+            url: '/api/program-years/{id}',
             path: {
                 'id': id,
             },
@@ -73,12 +74,28 @@ export class VenuesService {
      * @returns any OK
      * @throws ApiError
      */
-    public static deleteApiVenues(
+    public static postApiProgramYearsArchive(
         id: string,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/api/venues/{id}',
+            method: 'POST',
+            url: '/api/program-years/{id}/archive',
+            path: {
+                'id': id,
+            },
+        });
+    }
+    /**
+     * @param id
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static postApiProgramYearsActivate(
+        id: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/program-years/{id}/activate',
             path: {
                 'id': id,
             },

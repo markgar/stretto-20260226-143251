@@ -17,7 +17,20 @@ type AuthStore = {
 };
 
 export const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  setUser: (u) => set({ user: u }),
-  clearUser: () => set({ user: null }),
+  user: (() => {
+    try {
+      const raw = localStorage.getItem('stretto_user');
+      return raw ? JSON.parse(raw) as AuthUser : null;
+    } catch {
+      return null;
+    }
+  })(),
+  setUser: (u) => {
+    localStorage.setItem('stretto_user', JSON.stringify(u));
+    set({ user: u });
+  },
+  clearUser: () => {
+    localStorage.removeItem('stretto_user');
+    set({ user: null });
+  },
 }));

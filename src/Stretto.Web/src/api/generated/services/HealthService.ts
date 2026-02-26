@@ -3,18 +3,15 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { CancelablePromise } from '../core/CancelablePromise';
-import type { BaseHttpRequest } from '../core/BaseHttpRequest';
+import { OpenAPI } from '../core/OpenAPI';
+import { request as __request } from '../core/request';
 export class HealthService {
-    public readonly httpRequest: BaseHttpRequest;
-    constructor(httpRequest: BaseHttpRequest) {
-        this.httpRequest = httpRequest;
-    }
     /**
      * @returns any OK
      * @throws ApiError
      */
-    public getHealth(): CancelablePromise<any> {
-        return this.httpRequest.request({
+    public static getHealth(): CancelablePromise<any> {
+        return __request(OpenAPI, {
             method: 'GET',
             url: '/health',
         });
