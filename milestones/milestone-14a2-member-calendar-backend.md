@@ -16,7 +16,7 @@
 
 ## Tasks
 
-- [ ] Add `CalendarEventDto` record to a new file `src/Stretto.Application/DTOs/MemberCalendarDtos.cs` with parameters `Guid EventId`, `Guid ProjectId`, `string ProjectName`, `string EventType`, `DateOnly Date`, `TimeOnly StartTime`, `int DurationMinutes`, `string? VenueName`; add `MemberProjectSummaryDto` record with `Guid ProjectId`, `string ProjectName`, `DateOnly StartDate`, `DateOnly EndDate`, `int UpcomingEventCount`
+- [x] Add `CalendarEventDto` record to a new file `src/Stretto.Application/DTOs/MemberCalendarDtos.cs` with parameters `Guid EventId`, `Guid ProjectId`, `string ProjectName`, `string EventType`, `DateOnly Date`, `TimeOnly StartTime`, `int DurationMinutes`, `string? VenueName`; add `MemberProjectSummaryDto` record with `Guid ProjectId`, `string ProjectName`, `DateOnly StartDate`, `DateOnly EndDate`, `int UpcomingEventCount`
 
 - [ ] Create `IMemberCalendarService` interface in `src/Stretto.Application/Interfaces/IMemberCalendarService.cs` with two methods: `Task<List<MemberProjectSummaryDto>> GetProjectsAsync(Guid memberId, Guid orgId)` and `Task<List<CalendarEventDto>> GetUpcomingEventsAsync(Guid memberId, Guid orgId)`
 
