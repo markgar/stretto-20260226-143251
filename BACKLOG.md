@@ -18,7 +18,7 @@
 
 9. [x] Events — Create/update/delete events API with project date-range validation (type, date, start time, duration, venue); event list in project Events tab with type badges; event detail page; admin can edit/delete events; re-generate TypeScript API client <!-- depends: 6, 7 -->
 
-10. [2] Attendance — Attendance record API (set status: Present/Excused/Absent); unique check-in URL per event (/checkin/{eventId}); mobile-optimized check-in page (full-width green "I'm here" button, no nav chrome); member excused-absence toggle from their event view; admin attendance view on event detail (all assigned members with status badges); re-generate TypeScript API client <!-- depends: 9 -->
+10. [x] Attendance — Attendance record API (set status: Present/Excused/Absent); unique check-in URL per event (/checkin/{eventId}); mobile-optimized check-in page (full-width green "I'm here" button, no nav chrome); member excused-absence toggle from their event view; admin attendance view on event detail (all assigned members with status badges); re-generate TypeScript API client <!-- depends: 9 -->
 
 11. [x] Auditions — Admin Setup — Audition dates CRUD API (create with start time, end time, block length; validate block divides evenly; auto-generate time slots); admin Auditions pages: list audition dates by program year, create audition date form, slot grid view (status color-coding: Pending=amber, Accepted=green, Rejected=red, Waitlisted=blue), inline notes editor per slot, status update per slot; re-generate TypeScript API client <!-- depends: 4 -->
 
