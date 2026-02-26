@@ -50,6 +50,12 @@ public class AuditionService : IAuditionService
                 ["startTime"] = ["Start time must be before end time"]
             });
 
+        if (req.BlockLengthMinutes <= 0)
+            throw new ValidationException(new Dictionary<string, string[]>
+            {
+                ["blockLengthMinutes"] = ["Block length must be a positive number"]
+            });
+
         var totalMinutes = (int)(req.EndTime - req.StartTime).TotalMinutes;
         if (totalMinutes % req.BlockLengthMinutes != 0)
             throw new ValidationException(new Dictionary<string, string[]>
