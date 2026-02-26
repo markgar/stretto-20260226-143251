@@ -30,7 +30,7 @@ export default function AppShell({ children }: AppShellProps) {
               <NavLink
                 key={item.to}
                 to={item.to}
-                data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                data-testid={`nav-desktop-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
                 className={({ isActive }) =>
                   cn(
                     'flex items-center gap-3 px-4 py-2 text-sm transition-colors',
@@ -80,7 +80,7 @@ export default function AppShell({ children }: AppShellProps) {
               <NavLink
                 key={item.to}
                 to={item.to}
-                data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+                data-testid={`nav-tablet-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
                 className={({ isActive }) =>
                   cn(
                     'flex items-center gap-3 px-4 py-2 text-sm transition-colors',
@@ -123,7 +123,7 @@ export default function AppShell({ children }: AppShellProps) {
             <NavLink
               key={item.to}
               to={item.to}
-              data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
+              data-testid={`nav-mobile-${item.label.toLowerCase().replace(/\s+/g, '-')}`}
               className={({ isActive }) =>
                 cn(
                   'flex flex-1 flex-col items-center justify-center py-2 text-xs gap-1',
