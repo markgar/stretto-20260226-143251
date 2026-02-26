@@ -1,0 +1,33 @@
+# Stretto — Backlog
+
+1. [ ] Scaffolding — .NET 10 solution with Stretto.Domain/Application/Infrastructure/Api projects; Vite + React + TypeScript (strict) frontend in Stretto.Web; shadcn/ui + Tailwind CSS init; ESLint + Prettier config; dotnet format config; xUnit test project wired to `dotnet test`; Vitest + React Testing Library installed with `npm test`; health endpoint GET /health; openapi-typescript-codegen tooling installed and a generate script that outputs a typed client into `src/api/generated/`; placeholder passing tests in both backend and frontend <!-- depends: none -->
+
+2. [ ] Domain Entities + Database — Define all domain entities in Stretto.Domain (Organization, Member, ProgramYear, Project, ProjectAssignment, Venue, Event, AttendanceRecord, AuditionDate, AuditionSlot, ProjectLink, ProjectDocument); EF Core DbContext in Stretto.Infrastructure with Fluent API mappings for every entity; OrganizationId-scoped base repository; global exception handler middleware mapping typed exceptions (NotFoundException, ValidationException) to HTTP status codes; seed data (org "My Choir", admin mgarner22@gmail.com, member mgarner@outlook.com) <!-- depends: 1 -->
+
+3. [ ] Authentication + App Shell — /auth/login, /auth/validate, /auth/logout API endpoints; HttpOnly/Secure/SameSite=Strict cookie referencing server-side session token; Admin and Member roles; React login page (email-only Phase 1 flow); Zustand auth store (current user, org, role); protected route wrapper; responsive app shell layout — fixed left sidebar on desktop (org name, nav links, user/role), collapsible icon sidebar on tablet, bottom tab bar on mobile; admin nav skeleton (Dashboard, Program Years, Projects, Utilization Grid, Members, Auditions, Venues, Notifications); member nav skeleton (My Projects, My Calendar, Auditions, Profile); placeholder dashboard page <!-- depends: 2 -->
+
+4. [ ] Program Years — CRUD API endpoints (list, create, get, update, archive, mark-current) scoped to organization; admin Program Years pages: list with current/archived indicators and archive/activate actions, create form, program year detail; re-generate TypeScript API client <!-- depends: 3 -->
+
+5. [ ] Members — Admin — Members CRUD API (list with search, get, create, update, deactivate); admin Members pages: searchable list with status badges, add member form, edit member page, member profile with assignment summary; re-generate TypeScript API client <!-- depends: 3 -->
+
+6. [ ] Venues — CRUD API endpoints (list, create, get, update, delete) scoped to organization; admin Venues pages: list, create form, edit form with all contact fields (name, address, contact name, email, phone); re-generate TypeScript API client <!-- depends: 3 -->
+
+7. [ ] Projects — CRUD API endpoints (list by program year, create, get, update, delete) with start/end date validation; admin Projects pages: list within program year, create form, project detail page with tabs (Overview, Events, Materials, Members); re-generate TypeScript API client <!-- depends: 4 -->
+
+8. [ ] Member Assignments + Utilization Grid — Assign/unassign member API endpoints; utilization grid API endpoint (server-side member × project matrix sorted by utilization count); assignment UI on project Members tab (browse/search member list, toggle assignment); admin Utilization Grid page (full matrix on desktop, list-by-member on mobile with utilization counts/percentages and accent-colored filled cells); re-generate TypeScript API client <!-- depends: 5, 7 -->
+
+9. [ ] Events — Create/update/delete events API with project date-range validation (type, date, start time, duration, venue); event list in project Events tab with type badges; event detail page; admin can edit/delete events; re-generate TypeScript API client <!-- depends: 6, 7 -->
+
+10. [ ] Attendance — Attendance record API (set status: Present/Excused/Absent); unique check-in URL per event (/checkin/{eventId}); mobile-optimized check-in page (full-width green "I'm here" button, no nav chrome); member excused-absence toggle from their event view; admin attendance view on event detail (all assigned members with status badges); re-generate TypeScript API client <!-- depends: 9 -->
+
+11. [ ] Auditions — Admin Setup — Audition dates CRUD API (create with start time, end time, block length; validate block divides evenly; auto-generate time slots); admin Auditions pages: list audition dates by program year, create audition date form, slot grid view (status color-coding: Pending=amber, Accepted=green, Rejected=red, Waitlisted=blue), inline notes editor per slot, status update per slot; re-generate TypeScript API client <!-- depends: 4 -->
+
+12. [ ] Audition Sign-Up — Member-facing public audition listing page (no auth required to browse); sign-up API (claim slot, create member account if email is new, reject already-taken slots); sign-up form with email field; confirmation page; re-generate TypeScript API client <!-- depends: 11 -->
+
+13. [ ] Project Materials — Links and documents API: add link (title + URL), delete link; upload document (file), list documents, download document, delete document; local filesystem storage behind IStorageProvider abstraction; admin Materials tab UI in project detail (add link form, upload button, list with delete actions); member read-only materials view showing links and download buttons; re-generate TypeScript API client <!-- depends: 7 -->
+
+14. [ ] Member Features — My Projects, My Calendar, Profile — Member My Projects page (list of assigned projects with drill-in to events and materials); member event detail with excused-absence toggle; member My Calendar page (date-grouped list of upcoming events across all projects); member Profile page (edit name/email, toggle notification opt-out); re-generate TypeScript API client <!-- depends: 8, 10 -->
+
+15. [ ] iCal Export — GET /members/me/calendar.ics endpoint returning iCal feed of member's upcoming events; export/subscribe link on My Calendar page; re-generate TypeScript API client <!-- depends: 14 -->
+
+16. [ ] Notifications — INotificationProvider abstraction with stubbed implementation (no emails sent); assignment announcement endpoint (send to all members assigned in a program year); audition-open announcement endpoint; admin Notifications page (compose and send assignment or audition announcement, select program year/audition date, preview recipient list); member unsubscribe respected in stub; re-generate TypeScript API client <!-- depends: 8, 11 -->
