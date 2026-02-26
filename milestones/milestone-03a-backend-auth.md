@@ -15,7 +15,7 @@
 > - `src/Stretto.Infrastructure/Repositories/BaseRepository.cs` — implementation pattern to follow for `InMemoryAuthSessionStore`
 > - `src/Stretto.Infrastructure/Data/DataSeeder.cs` — shows seeded org and member data the auth service queries
 
-- [ ] Add `UnauthorizedException` in `Stretto.Application/Exceptions/UnauthorizedException.cs` with constructor `UnauthorizedException(string message = "Unauthorized")` extending `Exception`; update `GlobalExceptionHandlerMiddleware` to catch `UnauthorizedException` before the generic `Exception` catch and write a 401 JSON response `{"message":"..."}` with `Content-Type: application/json`
+- [x] Add `UnauthorizedException` in `Stretto.Application/Exceptions/UnauthorizedException.cs` with constructor `UnauthorizedException(string message = "Unauthorized")` extending `Exception`; update `GlobalExceptionHandlerMiddleware` to catch `UnauthorizedException` before the generic `Exception` catch and write a 401 JSON response `{"message":"..."}` with `Content-Type: application/json`
 
 - [ ] Add `FindOneAsync(Expression<Func<T, bool>> predicate)` to `IRepository<T>` in `Stretto.Application/Interfaces/IRepository.cs`; implement it in `BaseRepository<T>` in `Stretto.Infrastructure/Repositories/BaseRepository.cs` returning `await _context.Set<T>().Where(predicate).FirstOrDefaultAsync()`; this method does NOT apply org-scoping (used for email lookups during auth)
 
