@@ -174,6 +174,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 - **Secure cookie prevents page reload auth restore**: The `stretto_session` cookie is set with `Secure` flag. In the Docker HTTP setup, the browser does NOT send this cookie on page reload (only over HTTPS). Zustand state is lost on full page reload (`page.goto()`). In Playwright tests, use React Router client-side navigation (click nav links) instead of `page.goto()` for pages that require auth.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## Milestone 11b: Auditions — API Controllers
 
 Validated in milestone `milestone-11b-auditions-api-controllers`:
@@ -199,6 +200,19 @@ Validated in milestone `milestone-10a-attendance-backend`:
 - **No AssignmentsController**: Milestone 08a assignment endpoints (`POST /api/projects/{id}/assignments/{memberId}`) are not in this codebase. Attendance tests work without them as SetStatusAsync doesn't require project membership.
 - **All 9 Playwright tests pass** in `e2e/attendance-validation.spec.ts`.
 >>>>>>> 66fb56e ([validator] Fix build errors and add Playwright tests for milestone 10a: Attendance Backend)
+=======
+## Milestone 12a: Audition Sign-Up — Backend API
+
+Validated in milestone `milestone-12a-audition-signup-backend`:
+
+- **PublicAuditionsController**: New controller at `api/public/auditions` — inherits `ControllerBase` (NOT `ProtectedControllerBase`), so no auth cookie required.
+- **GET /api/public/auditions/{auditionDateId}**: Returns `PublicAuditionDateDto` with `id`, `date`, `startTime`, `endTime`, `blockLengthMinutes`, and `slots[]` each with `id`, `slotTime`, `isAvailable`. Works unauthenticated.
+- **POST /api/public/auditions/{slotId}/signup**: Accepts `{"firstName","lastName","email"}`. Returns 200 `AuditionSlotDto` with `status: "Pending"` and non-null `memberId`. Creates new member if email not found in org.
+- **Duplicate signup**: Returns HTTP 422 (mapped from `ValidationException`) with `{"message":"This slot has already been claimed"}`.
+- **isAvailable logic**: `slot.MemberId == null && slot.Status == AuditionStatus.Pending` — after signup, claimed slot shows `isAvailable: false`.
+- **Playwright APIRequestContext cookie workaround**: For `beforeAll` that needs admin auth, extract `stretto_session` from `Set-Cookie` response header and pass it manually in subsequent request `Cookie` header (Secure cookie isn't sent over HTTP automatically).
+- **AuditionSlotsController route**: Slot updates at `PUT /api/audition-slots/{id}/status` and `PUT /api/audition-slots/{id}/notes` (not `PUT /api/audition-slots/{id}`).
+>>>>>>> b7c4ab8 ([validator] Add milestone 12a audition signup backend validation tests and update DEPLOY.md)
 
 ## Building and Testing Locally (without Docker)
 
