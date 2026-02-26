@@ -17,6 +17,7 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
 builder.Services.AddSingleton<IAuthSessionStore, InMemoryAuthSessionStore>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<VenueService>();
+builder.Services.AddScoped<ProgramYearService>();
 
 var app = builder.Build();
 
