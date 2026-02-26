@@ -8,7 +8,7 @@
 > - `src/Stretto.Infrastructure/Stretto.Infrastructure.csproj` — project reference and NuGet package pattern for adding EF Core packages
 
 - [x] Create `NotFoundException` (constructor: `string message`) and `ValidationException` (constructor: `IDictionary<string, string[]> errors`) in `Stretto.Application/Exceptions/`; both inherit from `Exception`
-- [ ] Create `Organization` entity (Id Guid, Name string, CreatedAt DateTime) in `Stretto.Domain/Entities/Organization.cs`
+- [x] Create `Organization` entity (Id Guid, Name string, CreatedAt DateTime) in `Stretto.Domain/Entities/Organization.cs`
 - [ ] Create `Role` enum `{Admin = 0, Member = 1}` in `Stretto.Domain/Enums/Role.cs`; create `Member` entity (Id Guid, FirstName string, LastName string, Email string, Role Role, IsActive bool, OrganizationId Guid) in `Stretto.Domain/Entities/Member.cs`
 - [ ] Create `ProgramYear` entity (Id Guid, Name string, StartDate DateOnly, EndDate DateOnly, IsCurrent bool, IsArchived bool, OrganizationId Guid) in `Stretto.Domain/Entities/ProgramYear.cs`
 - [ ] Create `Venue` entity (Id Guid, Name string, Address string, ContactName string?, ContactEmail string?, ContactPhone string?, OrganizationId Guid) in `Stretto.Domain/Entities/Venue.cs`
