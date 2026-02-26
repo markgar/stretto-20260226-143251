@@ -13,6 +13,7 @@
 
 ---
 
+- [ ] Regenerate TypeScript API client by running `npm run generate` in `src/Stretto.Web` so `AuditionDatesService` and related types appear in `src/Stretto.Web/src/api/generated/`
 - [ ] Create `AuditionsListPage` in `src/Stretto.Web/src/pages/AuditionsListPage.tsx`; fetch program years via generated client to populate a `<select data-testid="program-year-select">` selector; on selection fetch audition dates via `GET /api/audition-dates?programYearId=`; render a table with columns Date, Start, End, Block (minutes), Actions (View, Delete); heading `data-testid="auditions-heading"`; link to `/auditions/new` with `data-testid="add-audition-date-button"` kept to ≤40 lines per function
 - [ ] Create `AuditionDateCreatePage` in `src/Stretto.Web/src/pages/AuditionDateCreatePage.tsx`; use React Hook Form + Zod schema with fields: `programYearId` (required Guid), `date` (required string in YYYY-MM-DD), `startTime` (required HH:mm), `endTime` (required HH:mm), `blockLengthMinutes` (required int min 5); on submit POST to `/api/audition-dates`, on success navigate to `/auditions/{newId}`; keep functions ≤40 lines
 - [ ] Create `AuditionSlotGridPage` in `src/Stretto.Web/src/pages/AuditionSlotGridPage.tsx`; fetch `GET /api/audition-dates/{id}` on mount; render a grid of slot cards showing `SlotTime`, status badge with color-coding (Pending=amber bg, Accepted=green bg, Rejected=red bg, Waitlisted=blue bg) via Tailwind classes; each card carries `data-testid={`slot-${slot.id}`}`; keep functions ≤40 lines
