@@ -17,7 +17,7 @@
 > - `src/Stretto.Api/Controllers/ProjectsController.cs` — thin controller inheriting `ProtectedControllerBase`; role check pattern for Admin-only actions
 > - `src/Stretto.Api/Program.cs` — DI registration; add `IEventService` here
 
-- [ ] Create `src/Stretto.Application/DTOs/EventDtos.cs` with three records: `EventDto(Guid Id, Guid ProjectId, EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId, string? VenueName)`; `CreateEventRequest(Guid ProjectId, EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId)`; `UpdateEventRequest(EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId)`
+- [x] Create `src/Stretto.Application/DTOs/EventDtos.cs` with three records: `EventDto(Guid Id, Guid ProjectId, EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId, string? VenueName)`; `CreateEventRequest(Guid ProjectId, EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId)`; `UpdateEventRequest(EventType Type, DateOnly Date, TimeOnly StartTime, int DurationMinutes, Guid? VenueId)`
 
 - [ ] Create `src/Stretto.Application/Interfaces/IEventService.cs` with five method signatures: `Task<List<EventDto>> ListByProjectAsync(Guid projectId, Guid orgId)`; `Task<EventDto> GetAsync(Guid id, Guid orgId)`; `Task<EventDto> CreateAsync(Guid orgId, CreateEventRequest req)`; `Task<EventDto> UpdateAsync(Guid id, Guid orgId, UpdateEventRequest req)`; `Task DeleteAsync(Guid id, Guid orgId)`
 
