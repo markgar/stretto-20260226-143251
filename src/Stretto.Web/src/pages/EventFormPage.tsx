@@ -9,10 +9,10 @@ import { EventsService } from '../api/generated/services/EventsService';
 import { VenuesService } from '../api/generated/services/VenuesService';
 
 const schema = z.object({
-  type: z.enum(['0', '1'], { required_error: 'Type is required' }),
+  type: z.enum(['0', '1']),
   date: z.string().min(1, 'Date is required'),
   startTime: z.string().min(1, 'Start time is required').regex(/^\d{2}:\d{2}$/, 'Use HH:mm format'),
-  durationMinutes: z.coerce.number().int().positive('Duration must be a positive number'),
+  durationMinutes: z.number().int().positive('Duration must be a positive number'),
   venueId: z.string().optional(),
 });
 
@@ -107,7 +107,7 @@ export default function EventFormPage() {
           </div>
           <div className="space-y-1">
             <label htmlFor="durationMinutes" className="text-sm font-medium">Duration (minutes)</label>
-            <input id="durationMinutes" type="number" data-testid="duration-input" className={inputClass} {...register('durationMinutes')} />
+            <input id="durationMinutes" type="number" data-testid="duration-input" className={inputClass} {...register('durationMinutes', { valueAsNumber: true })} />
             {errors.durationMinutes && <p className="text-sm text-destructive">{errors.durationMinutes.message}</p>}
           </div>
           <div className="space-y-1">
