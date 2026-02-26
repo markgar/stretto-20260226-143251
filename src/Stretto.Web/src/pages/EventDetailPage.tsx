@@ -135,7 +135,7 @@ function MemberAttendanceSection({ eventId, memberId }: { eventId: string; membe
   );
 }
 
-
+export default function EventDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
