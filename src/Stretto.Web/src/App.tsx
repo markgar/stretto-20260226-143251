@@ -9,6 +9,11 @@ import ProgramYearDetailPage from './pages/ProgramYearDetailPage';
 import MembersListPage from './pages/MembersListPage';
 import MemberFormPage from './pages/MemberFormPage';
 import MemberProfilePage from './pages/MemberProfilePage';
+import ProjectsListPage from './pages/ProjectsListPage';
+import ProjectFormPage from './pages/ProjectFormPage';
+import ProjectDetailPage from './pages/ProjectDetailPage';
+import EventFormPage from './pages/EventFormPage';
+import EventDetailPage from './pages/EventDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 import { AuthInitializer } from './components/AuthInitializer';
@@ -32,7 +37,13 @@ function App() {
           <Route path="/program-years" element={<ProgramYearsListPage />} />
           <Route path="/program-years/new" element={<ProgramYearCreatePage />} />
           <Route path="/program-years/:id" element={<ProgramYearDetailPage />} />
-          <Route path="/projects" element={<ComingSoon />} />
+          <Route path="/projects" element={<ProjectsListPage />} />
+          <Route path="/projects/new" element={<ProjectFormPage />} />
+          <Route path="/projects/:id" element={<ProjectDetailPage />} />
+          <Route path="/projects/:id/edit" element={<ProjectFormPage />} />
+          <Route path="/events/new" element={<EventFormPage />} />
+          <Route path="/events/:id" element={<EventDetailPage />} />
+          <Route path="/events/:id/edit" element={<EventFormPage />} />
           <Route path="/utilization" element={<ComingSoon />} />
           <Route path="/members" element={<MembersListPage />} />
           <Route path="/members/new" element={<MemberFormPage />} />
