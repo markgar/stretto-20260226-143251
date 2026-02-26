@@ -11,7 +11,7 @@
 
 ## Tasks
 
-- [ ] Run `npm run generate` in `src/Stretto.Web/` to regenerate the TypeScript API client from the updated OpenAPI spec; verify `src/Stretto.Web/src/api/generated/` contains updated `AttendanceService` or equivalent client methods
+- [x] Run `npm run generate` in `src/Stretto.Web/` to regenerate the TypeScript API client from the updated OpenAPI spec; verify `src/Stretto.Web/src/api/generated/` contains updated `AttendanceService` or equivalent client methods
 
 - [ ] Add `/checkin/:eventId` route to `src/Stretto.Web/src/App.tsx` inside the `<Route element={<ProtectedRoute />}>` block, pointing to a new `CheckInPage` component imported from `./pages/CheckInPage`
 
