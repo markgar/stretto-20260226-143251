@@ -80,6 +80,17 @@ Validated in milestone `milestone-02b-database-and-wiring`:
 - **37 tests pass**: `dotnet test Stretto.sln` passes all 37 tests.
 - **Playwright**: All 4 UI tests pass against frontend at `http://frontend:5173`.
 
+## Milestone 03a: Authentication — Backend
+
+Validated in milestone `milestone-03a-backend-auth`:
+
+- **Auth endpoints**: `POST /auth/login`, `GET /auth/validate`, `POST /auth/logout` all work correctly.
+- **Cookie**: `stretto_session` is set with `HttpOnly`, `Secure`, `SameSite=Strict`, `Path=/`. Contains a random 32-char hex token (not user data).
+- **Session store**: `InMemoryAuthSessionStore` (singleton) backed by `ConcurrentDictionary<string, Guid>`. Session is invalidated on logout.
+- **UnauthorizedException**: Mapped to HTTP 401 `{"message":"..."}` by `GlobalExceptionHandlerMiddleware`.
+- **Seed data bug**: `DataSeeder` uses `admin@example.com` and `member@example.com` but REQUIREMENTS.md specifies `mgarner22@gmail.com` and `mgarner@outlook.com`. Bug filed as issue #54. **Use `admin@example.com` for auth testing until this is fixed.**
+- **All 8 auth Playwright tests pass** using the `admin@example.com` seeded email.
+
 ## Known Gotchas
 
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
