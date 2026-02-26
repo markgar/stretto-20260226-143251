@@ -64,6 +64,40 @@ public class ProgramYearService
         return ToDto(year);
     }
 
+    public async Task<ProgramYearDto> ArchiveAsync(Guid id, Guid orgId)
+    {
+        var year = await _programYears.GetByIdAsync(id, orgId);
+        if (year is null)
+            throw new NotFoundException("Program year not found");
+
+        year.IsArchived = true;
+        year.IsCurrent = false;
+        await _programYears.UpdateAsync(year);
+        return ToDto(year);
+    }
+
+    public async Task<ProgramYearDto> MarkCurrentAsync(Guid id, Guid orgId)
+    {
+        var year = await _programYears.GetByIdAsync(id, orgId);
+        if (year is null)
+            throw new NotFoundException("Program year not found");
+
+        if (year.IsArchived)
+            throw new ValidationException(new Dictionary<string, string[]> { [""] = new[] { "Cannot activate an archived program year" } });
+
+        year.IsCurrent = true;
+        await _programYears.UpdateAsync(year);
+
+        var all = await _programYears.ListAsync(orgId);
+        foreach (var py in all.Where(py => py.Id != id && py.IsCurrent))
+        {
+            py.IsCurrent = false;
+            await _programYears.UpdateAsync(py);
+        }
+
+        return ToDto(year);
+    }
+
     private static ProgramYearDto ToDto(ProgramYear y) =>
         new(y.Id, y.Name, y.StartDate, y.EndDate, y.IsCurrent, y.IsArchived);
 }
