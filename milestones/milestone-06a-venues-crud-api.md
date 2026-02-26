@@ -19,7 +19,7 @@
 
 - [x] Fix `AuthService.ValidateAsync` in `src/Stretto.Application/Services/AuthService.cs`: after fetching the member by id, add `if (member is null || !member.IsActive) throw new UnauthorizedException();` — replacing the existing null-only check — so deactivated members cannot use existing session tokens (addresses findings #57 and #59)
 
-- [ ] Add session expiry to `InMemoryAuthSessionStore` in `src/Stretto.Infrastructure/Auth/InMemoryAuthSessionStore.cs`: store a `ConcurrentDictionary<string, (Guid memberId, DateTime expiresAt)>` instead of `ConcurrentDictionary<string, Guid>`; set expiry to `DateTime.UtcNow.AddHours(8)` in `CreateSession`; in `GetMemberId` return null if `DateTime.UtcNow > expiresAt` (addresses finding #60)
+- [x] Add session expiry to `InMemoryAuthSessionStore` in `src/Stretto.Infrastructure/Auth/InMemoryAuthSessionStore.cs`: store a `ConcurrentDictionary<string, (Guid memberId, DateTime expiresAt)>` instead of `ConcurrentDictionary<string, Guid>`; set expiry to `DateTime.UtcNow.AddHours(8)` in `CreateSession`; in `GetMemberId` return null if `DateTime.UtcNow > expiresAt` (addresses finding #60)
 
 - [ ] Create `src/Stretto.Application/DTOs/VenueDtos.cs` with two records: `VenueDto(Guid Id, string Name, string Address, string? ContactName, string? ContactEmail, string? ContactPhone)` and `SaveVenueRequest(string Name, string Address, string? ContactName, string? ContactEmail, string? ContactPhone)`
 
