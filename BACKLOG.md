@@ -16,7 +16,7 @@
 
 8. [1] Member Assignments + Utilization Grid — Assign/unassign member API endpoints; utilization grid API endpoint (server-side member × project matrix sorted by utilization count); assignment UI on project Members tab (browse/search member list, toggle assignment); admin Utilization Grid page (full matrix on desktop, list-by-member on mobile with utilization counts/percentages and accent-colored filled cells); re-generate TypeScript API client <!-- depends: 5, 7 -->
 
-9. [2] Events — Create/update/delete events API with project date-range validation (type, date, start time, duration, venue); event list in project Events tab with type badges; event detail page; admin can edit/delete events; re-generate TypeScript API client <!-- depends: 6, 7 -->
+9. [ ] Events — Create/update/delete events API with project date-range validation (type, date, start time, duration, venue); event list in project Events tab with type badges; event detail page; admin can edit/delete events; re-generate TypeScript API client <!-- depends: 6, 7 -->
 
 10. [ ] Attendance — Attendance record API (set status: Present/Excused/Absent); unique check-in URL per event (/checkin/{eventId}); mobile-optimized check-in page (full-width green "I'm here" button, no nav chrome); member excused-absence toggle from their event view; admin attendance view on event detail (all assigned members with status badges); re-generate TypeScript API client <!-- depends: 9 -->
 
