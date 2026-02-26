@@ -11,7 +11,7 @@
 - [x] Create `Organization` entity (Id Guid, Name string, CreatedAt DateTime) in `Stretto.Domain/Entities/Organization.cs`
 - [x] Create `Role` enum `{Admin = 0, Member = 1}` in `Stretto.Domain/Enums/Role.cs`; create `Member` entity (Id Guid, FirstName string, LastName string, Email string, Role Role, IsActive bool, OrganizationId Guid) in `Stretto.Domain/Entities/Member.cs`
 - [x] Create `ProgramYear` entity (Id Guid, Name string, StartDate DateOnly, EndDate DateOnly, IsCurrent bool, IsArchived bool, OrganizationId Guid) in `Stretto.Domain/Entities/ProgramYear.cs`
-- [ ] Create `Venue` entity (Id Guid, Name string, Address string, ContactName string?, ContactEmail string?, ContactPhone string?, OrganizationId Guid) in `Stretto.Domain/Entities/Venue.cs`
+- [x] Create `Venue` entity (Id Guid, Name string, Address string, ContactName string?, ContactEmail string?, ContactPhone string?, OrganizationId Guid) in `Stretto.Domain/Entities/Venue.cs`
 - [ ] Create `Project` entity (Id Guid, Name string, ProgramYearId Guid, StartDate DateOnly, EndDate DateOnly, OrganizationId Guid) in `Stretto.Domain/Entities/Project.cs`
 - [ ] Create `EventType` enum `{Rehearsal = 0, Performance = 1}` in `Stretto.Domain/Enums/EventType.cs`; create `Event` entity (Id Guid, ProjectId Guid, EventType EventType, Date DateOnly, StartTime TimeOnly, DurationMinutes int, VenueId Guid?, OrganizationId Guid) in `Stretto.Domain/Entities/Event.cs`
 - [ ] Create `ProjectAssignment` entity (Id Guid, ProjectId Guid, MemberId Guid, OrganizationId Guid) in `Stretto.Domain/Entities/ProjectAssignment.cs`
