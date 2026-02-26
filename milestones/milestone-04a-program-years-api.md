@@ -16,7 +16,7 @@
 > - `src/Stretto.Api/Controllers/AuthController.cs` — thin controller pattern; cookie reading; `GetOrgIdAsync()` helper pattern used in VenuesController
 > - `src/Stretto.Api/Program.cs` — add `AddScoped<ProgramYearService>()` here
 
-- [ ] Fix `AuthController.Login` in `src/Stretto.Api/Controllers/AuthController.cs`: add `Expires = DateTimeOffset.UtcNow.AddHours(8)` to the `CookieOptions` passed to `Response.Cookies.Append` so the session cookie persists across browser restarts (fixes finding #61)
+- [x] Fix `AuthController.Login` in `src/Stretto.Api/Controllers/AuthController.cs`: add `Expires = DateTimeOffset.UtcNow.AddHours(8)` to the `CookieOptions` passed to `Response.Cookies.Append` so the session cookie persists across browser restarts (fixes finding #61)
 
 - [ ] Create `src/Stretto.Application/DTOs/ProgramYearDtos.cs` with records: `ProgramYearDto(Guid Id, string Name, DateOnly StartDate, DateOnly EndDate, bool IsCurrent, bool IsArchived)`, `CreateProgramYearRequest(string Name, DateOnly StartDate, DateOnly EndDate)`, `UpdateProgramYearRequest(string Name, DateOnly StartDate, DateOnly EndDate)`
 
