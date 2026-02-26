@@ -15,7 +15,7 @@
 > - `src/Stretto.Api/Controllers/AuthController.cs` — pattern for thin controller: inject service, read session cookie, delegate to service, return HTTP result
 > - `src/Stretto.Api/Program.cs` — add `AddScoped<VenueService>()` here
 
-- [ ] Fix `GlobalExceptionHandlerMiddleware` catch-all in `src/Stretto.Api/Middleware/GlobalExceptionHandlerMiddleware.cs`: inject `ILogger<GlobalExceptionHandlerMiddleware>` via constructor; in the `catch (Exception ex)` block call `_logger.LogError(ex, "Unhandled exception")` before writing the 500 response (addresses finding #46)
+- [x] Fix `GlobalExceptionHandlerMiddleware` catch-all in `src/Stretto.Api/Middleware/GlobalExceptionHandlerMiddleware.cs`: inject `ILogger<GlobalExceptionHandlerMiddleware>` via constructor; in the `catch (Exception ex)` block call `_logger.LogError(ex, "Unhandled exception")` before writing the 500 response (addresses finding #46)
 
 - [ ] Fix `AuthService.ValidateAsync` in `src/Stretto.Application/Services/AuthService.cs`: after fetching the member by id, add `if (member is null || !member.IsActive) throw new UnauthorizedException();` — replacing the existing null-only check — so deactivated members cannot use existing session tokens (addresses findings #57 and #59)
 
