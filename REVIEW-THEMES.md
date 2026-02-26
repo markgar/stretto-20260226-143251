@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Authentication — Backend
+Last updated: Authentication — App Shell
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -16,3 +16,6 @@ Last updated: Authentication — Backend
 12. **Validate all session paths, not just login** — When login checks a condition (e.g., `IsActive`, role, expiry), the validate/refresh path must check the same condition; a guard applied only at login leaves live sessions unaffected by subsequent state changes.
 13. **In-memory session stores need TTL and eviction** — Any `ConcurrentDictionary`-backed session store must include an expiry timestamp and lazy eviction on lookup; without it, sessions are valid indefinitely and the collection grows without bound under repeated logins.
 14. **Test every new auth component** — When adding authentication endpoints and services, always include unit tests for the service layer (success + each failure path) and integration tests for the HTTP endpoints; auth logic is high-value and high-risk to leave uncovered.
+15. **Frontend auth store needs session rehydration** — An in-memory auth store (e.g. Zustand) loses state on page refresh; always add an app-mount validate call (`GET /auth/validate`) that rehydrates the store from the session cookie before ProtectedRoute checks run, otherwise every refresh logs the user out.
+16. **Duplicate data-testid in responsive DOM** — When a component renders multiple visibility-toggled copies of the same element (e.g., desktop/tablet/mobile nav), all copies are present in the DOM simultaneously; add viewport suffixes to testids (`nav-desktop-*`, `nav-mobile-*`) or use a single canonical copy with `aria-hidden` on the rest, so test selectors stay unique.
+17. **Mutations must use useMutation** — All API write operations (login, create, update, delete) must use Tanstack Query's `useMutation`, not raw `fetch`/`useEffect`; the project convention is explicit on this and raw fetch bypasses the consistent error/loading state management that useMutation provides.
