@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Auditions — API Controllers
+Last updated: Attendance — Backend
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -43,3 +43,4 @@ Last updated: Auditions — API Controllers
 39. **Keep milestone specs in sync with SPEC.md** — When an implementation changes to align with SPEC.md (e.g., status code 422→400), update the corresponding milestone spec validation criteria in the same commit; stale milestone specs become the authoritative reference for future builders and testers who write tests against them, causing hard-to-diagnose failures.
 40. **Never mock @tanstack/react-query, Zustand, or react-hook-form in component tests** — Wrap test components in a real `QueryClientProvider` (new `QueryClient` per test) and stub only at the HTTP level (e.g., `msw`); mocking these libraries bypasses real validation, caching, and query-key behaviour, making tests pass for wrong implementations. The zustand mock is particularly dangerous because `let state = fn(...)` is closed over and not reset between tests, causing silent state pollution across test cases.
 41. **Use enum types (not string) for domain-status fields** — Whenever an entity or DTO has a fixed set of valid status values (e.g., slot status: Pending/Accepted/Declined, attendance status: Present/Absent/Excused), model the field as a C# enum; using `string` with no validation allows any value to be persisted silently, and ASP.NET Core model binding will automatically reject unknown enum values with a 400 without any controller code.
+42. **Validate FK parent existence in child record upserts** — When creating a new child record that references a parent via FK (e.g., `AttendanceRecord.EventId`), always validate the parent entity exists and belongs to the same org before persisting; skipping this allows callers to create orphaned records referencing non-existent or wrong-org entities, corrupting read-side aggregations silently.
