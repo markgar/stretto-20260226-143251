@@ -3,6 +3,9 @@ import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import VenuesListPage from './pages/VenuesListPage';
 import VenueFormPage from './pages/VenueFormPage';
+import ProgramYearsListPage from './pages/ProgramYearsListPage';
+import ProgramYearCreatePage from './pages/ProgramYearCreatePage';
+import ProgramYearDetailPage from './pages/ProgramYearDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppShell from './components/AppShell';
 
@@ -21,7 +24,9 @@ function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/program-years" element={<ComingSoon />} />
+        <Route path="/program-years" element={<ProgramYearsListPage />} />
+        <Route path="/program-years/new" element={<ProgramYearCreatePage />} />
+        <Route path="/program-years/:id" element={<ProgramYearDetailPage />} />
         <Route path="/projects" element={<ComingSoon />} />
         <Route path="/utilization" element={<ComingSoon />} />
         <Route path="/members" element={<ComingSoon />} />
