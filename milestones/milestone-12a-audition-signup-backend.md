@@ -17,7 +17,7 @@
 
 - [x] Add three new DTO records to `src/Stretto.Application/DTOs/AuditionDtos.cs`: `AuditionSignUpRequest(string FirstName, string LastName, string Email)`; `PublicAuditionSlotDto(Guid Id, TimeOnly SlotTime, bool IsAvailable)`; `PublicAuditionDateDto(Guid Id, DateOnly Date, TimeOnly StartTime, TimeOnly EndTime, int BlockLengthMinutes, List<PublicAuditionSlotDto> Slots)`
 
-- [ ] Add two method signatures to `src/Stretto.Application/Interfaces/IAuditionService.cs`: `Task<PublicAuditionDateDto> GetPublicAuditionDateAsync(Guid auditionDateId)` and `Task<AuditionSlotDto> SignUpForSlotAsync(Guid slotId, AuditionSignUpRequest req)`
+- [x] Add two method signatures to `src/Stretto.Application/Interfaces/IAuditionService.cs`: `Task<PublicAuditionDateDto> GetPublicAuditionDateAsync(Guid auditionDateId)` and `Task<AuditionSlotDto> SignUpForSlotAsync(Guid slotId, AuditionSignUpRequest req)`
 
 - [ ] Add `IRepository<Member> _members` to `AuditionService` constructor: update constructor signature in `src/Stretto.Application/Services/AuditionService.cs` to also accept `IRepository<Member> members`; assign to `private readonly IRepository<Member> _members`; add `using Stretto.Domain.Entities;` if not already present
 
