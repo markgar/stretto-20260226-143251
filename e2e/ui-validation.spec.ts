@@ -155,6 +155,6 @@ test('app shell navigation is visible after login', async ({ page }) => {
   await page.waitForURL(/\/dashboard/, { timeout: 10000 });
 
   // At least one nav link should be visible (Dashboard nav item)
-  const dashboardNav = page.getByTestId('nav-dashboard').first();
+  const dashboardNav = page.getByTestId('nav-desktop-dashboard');
   await expect(dashboardNav).toBeVisible();
 });
