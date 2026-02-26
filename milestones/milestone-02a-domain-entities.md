@@ -22,4 +22,4 @@
 - [x] Create `ProjectDocument` entity (Id Guid, ProjectId Guid, Title string, FileName string, StoragePath string, OrganizationId Guid) in `Stretto.Domain/Entities/ProjectDocument.cs`
 - [x] Create `IRepository<T>` interface in `Stretto.Application/Interfaces/IRepository.cs` with methods: `Task<T?> GetByIdAsync(Guid id, Guid orgId)`, `Task<List<T>> ListAsync(Guid orgId, Expression<Func<T, bool>>? predicate = null)`, `Task AddAsync(T entity)`, `Task UpdateAsync(T entity)`, `Task DeleteAsync(T entity)`
 - [x] Create `IStorageProvider` interface in `Stretto.Application/Interfaces/IStorageProvider.cs` with methods: `Task<string> SaveAsync(string fileName, Stream content)`, `Task<Stream> GetAsync(string storagePath)`, `Task DeleteAsync(string storagePath)`
-- [ ] Create `INotificationProvider` interface in `Stretto.Application/Interfaces/INotificationProvider.cs` with method: `Task SendAsync(string to, string subject, string body)`
+- [x] Create `INotificationProvider` interface in `Stretto.Application/Interfaces/INotificationProvider.cs` with method: `Task SendAsync(string to, string subject, string body)`
