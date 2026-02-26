@@ -6,7 +6,10 @@ import type { LoginRequest } from '../models/LoginRequest';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import type { BaseHttpRequest } from '../core/BaseHttpRequest';
 export class AuthService {
-    constructor(public readonly httpRequest: BaseHttpRequest) {}
+    public readonly httpRequest: BaseHttpRequest;
+    constructor(httpRequest: BaseHttpRequest) {
+        this.httpRequest = httpRequest;
+    }
     /**
      * @param requestBody
      * @returns any OK
