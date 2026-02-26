@@ -16,7 +16,7 @@
 > - `src/Stretto.Api/Controllers/EventsController.cs` — controller pattern (ProtectedControllerBase, GetSessionAsync, role check, HTTP verbs)
 > - `src/Stretto.Api/Program.cs` — DI registration location
 
-- [ ] Create `src/Stretto.Application/DTOs/ProjectMaterialsDtos.cs` with records: `ProjectLinkDto(Guid Id, Guid ProjectId, string Title, string Url)`, `AddLinkRequest([Required] string Title, [Required] string Url)`, `ProjectDocumentDto(Guid Id, Guid ProjectId, string Title, string FileName)`
+- [x] Create `src/Stretto.Application/DTOs/ProjectMaterialsDtos.cs` with records: `ProjectLinkDto(Guid Id, Guid ProjectId, string Title, string Url)`, `AddLinkRequest([Required] string Title, [Required] string Url)`, `ProjectDocumentDto(Guid Id, Guid ProjectId, string Title, string FileName)`
 
 - [ ] Create `src/Stretto.Application/Interfaces/IProjectMaterialsService.cs` with method signatures: `Task<List<ProjectLinkDto>> ListLinksAsync(Guid projectId, Guid orgId)`, `Task<ProjectLinkDto> AddLinkAsync(Guid projectId, Guid orgId, AddLinkRequest req)`, `Task DeleteLinkAsync(Guid linkId, Guid orgId)`, `Task<List<ProjectDocumentDto>> ListDocumentsAsync(Guid projectId, Guid orgId)`, `Task<ProjectDocumentDto> UploadDocumentAsync(Guid projectId, Guid orgId, string title, string fileName, Stream content)`, `Task<(Stream stream, string fileName)> GetDocumentStreamAsync(Guid documentId, Guid orgId)`, `Task DeleteDocumentAsync(Guid documentId, Guid orgId)`
 
