@@ -17,7 +17,7 @@
 
 - [x] Add `NotificationsEnabled bool` property (default `true`) to the `Member` entity in `src/Stretto.Domain/Entities/Member.cs`
 
-- [ ] Create notification DTOs in `src/Stretto.Application/DTOs/NotificationDtos.cs`: `record RecipientDto(Guid MemberId, string Name, string Email)`; `record SendAssignmentAnnouncementRequest([Required] Guid ProgramYearId, [Required] string Subject, [Required] string Body)`; `record SendAuditionAnnouncementRequest([Required] Guid AuditionDateId, [Required] string Subject, [Required] string Body)`
+- [x] Create notification DTOs in `src/Stretto.Application/DTOs/NotificationDtos.cs`: `record RecipientDto(Guid MemberId, string Name, string Email)`; `record SendAssignmentAnnouncementRequest([Required] Guid ProgramYearId, [Required] string Subject, [Required] string Body)`; `record SendAuditionAnnouncementRequest([Required] Guid AuditionDateId, [Required] string Subject, [Required] string Body)`
 
 - [ ] Create `INotificationService` interface in `src/Stretto.Application/Interfaces/INotificationService.cs` with methods: `Task<List<RecipientDto>> GetAssignmentRecipientsAsync(Guid programYearId, Guid orgId)`; `Task SendAssignmentAnnouncementAsync(Guid programYearId, string subject, string body, Guid orgId)`; `Task<List<RecipientDto>> GetAuditionRecipientsAsync(Guid auditionDateId, Guid orgId)`; `Task SendAuditionAnnouncementAsync(Guid auditionDateId, string subject, string body, Guid orgId)`
 
