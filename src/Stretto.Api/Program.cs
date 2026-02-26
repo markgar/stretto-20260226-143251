@@ -18,3 +18,5 @@ app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
    .WithTags("Health");
 
 app.Run();
+
+public partial class Program {}
