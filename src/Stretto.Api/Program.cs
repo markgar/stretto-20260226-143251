@@ -1,9 +1,24 @@
+using Microsoft.EntityFrameworkCore;
+using Stretto.Application.Interfaces;
+using Stretto.Infrastructure.Data;
+using Stretto.Infrastructure.Repositories;
+using Stretto.Api.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddDbContext<AppDbContext>(o => o.UseInMemoryDatabase("StrettoDB"));
+builder.Services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await DataSeeder.SeedAsync(db);
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -12,6 +27,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }))
    .WithName("GetHealth")
