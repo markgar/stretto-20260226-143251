@@ -151,6 +151,17 @@ Validated in milestone `milestone-06b-venues-admin-pages`:
 - **Vite allowedHosts**: Without `server.allowedHosts: true` in `vite.config.ts`, Playwright requests from within Docker will be blocked with "Blocked request. This host not allowed."
 - **Frontend npm install delay**: The frontend container runs `npm install` on first start — expect ~15-30 seconds before the Vite dev server is ready at http://localhost:7778/.
 
+## Milestone 04a: Program Years — API
+
+Validated in milestone `milestone-04a-program-years-api`:
+
+- **ProgramYearsController**: Registered at `api/program-years`. All 6 endpoints work: GET list, POST create, GET by id, PUT update, POST archive, POST activate.
+- **Authentication guard**: All endpoints return HTTP 401 `{"message":"Unauthorized"}` without a valid `stretto_session` cookie.
+- **Activate mutual exclusivity**: `POST /api/program-years/{id}/activate` sets `isCurrent=true` for the activated year and `isCurrent=false` for all other years in the org.
+- **Archive behavior**: `POST /api/program-years/{id}/archive` sets `isArchived=true` and `isCurrent=false`.
+- **All 8 Playwright J-1 smoke tests pass**: sidebar shows Program Years nav link, clicking it loads without JS errors.
+- **Cookie expiry fix**: `AuthController.Login` now sets `Expires = DateTimeOffset.UtcNow.AddHours(8)` on the session cookie (finding #61 fix).
+
 ## Building and Testing Locally (without Docker)
 
 ```bash
