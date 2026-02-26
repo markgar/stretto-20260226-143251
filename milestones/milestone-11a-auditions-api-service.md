@@ -29,6 +29,6 @@
 
 - [x] Implement `DeleteAsync` in `AuditionService`: fetch the date (throw `NotFoundException` if null); load its slots with `_slots.ListAsync(orgId, s => s.AuditionDateId == id)`; call `_slots.DeleteAsync` for each slot; then call `_dates.DeleteAsync(date)`
 
-- [ ] Implement `UpdateSlotStatusAsync` in `AuditionService`: fetch the slot using `_slots.GetByIdAsync(slotId, orgId)` (throw `NotFoundException("Audition slot not found")` if null); parse the `status` string to `AuditionStatus` enum (throw `ValidationException` with `["status"] = ["Invalid status value"]` if parse fails); set `slot.Status`; call `_slots.UpdateAsync(slot)`; return `ToSlotDto(slot)`
+- [x] Implement `UpdateSlotStatusAsync` in `AuditionService`: fetch the slot using `_slots.GetByIdAsync(slotId, orgId)` (throw `NotFoundException("Audition slot not found")` if null); parse the `status` string to `AuditionStatus` enum (throw `ValidationException` with `["status"] = ["Invalid status value"]` if parse fails); set `slot.Status`; call `_slots.UpdateAsync(slot)`; return `ToSlotDto(slot)`
 
 - [ ] Implement `UpdateSlotNotesAsync` in `AuditionService`: fetch the slot (throw `NotFoundException` if null); set `slot.Notes = notes`; call `_slots.UpdateAsync(slot)`; return `ToSlotDto(slot)`
