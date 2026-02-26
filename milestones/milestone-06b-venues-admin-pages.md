@@ -9,9 +9,9 @@
 > - `src/Stretto.Web/src/App.tsx` — replace `/venues` placeholder and add `/venues/new` and `/venues/:id/edit` routes here
 > - `src/Stretto.Web/src/api/generated/` — auto-generated TypeScript API client; regenerate after backend changes
 
-- [ ] Install `@tanstack/react-query` in `src/Stretto.Web`: run `npm install @tanstack/react-query` from the `src/Stretto.Web/` directory
+- [x] Install `@tanstack/react-query` in `src/Stretto.Web`: run `npm install @tanstack/react-query` from the `src/Stretto.Web/` directory
 
-- [ ] Update `src/Stretto.Web/src/main.tsx` to set up Tanstack Query: import `QueryClient` and `QueryClientProvider` from `@tanstack/react-query`; create `const queryClient = new QueryClient()` above the render call; wrap `<BrowserRouter><App /></BrowserRouter>` in `<QueryClientProvider client={queryClient}>...</QueryClientProvider>`
+- [x] Update `src/Stretto.Web/src/main.tsx` to set up Tanstack Query: import `QueryClient` and `QueryClientProvider` from `@tanstack/react-query`; create `const queryClient = new QueryClient()` above the render call; wrap `<BrowserRouter><App /></BrowserRouter>` in `<QueryClientProvider client={queryClient}>...</QueryClientProvider>`
 
 - [ ] Regenerate the TypeScript API client: start the backend with `dotnet run --project src/Stretto.Api/` so Swagger is available at `http://localhost:5000/swagger/v1/swagger.json`, then run `npm run generate` from `src/Stretto.Web/`; commit the generated files in `src/Stretto.Web/src/api/generated/`
 
