@@ -15,7 +15,7 @@
 > - Infrastructure stub pattern: `src/Stretto.Infrastructure/LocalFileStorageProvider.cs`
 > - DI wiring: `src/Stretto.Api/Program.cs`
 
-- [ ] Add `NotificationsEnabled bool` property (default `true`) to the `Member` entity in `src/Stretto.Domain/Entities/Member.cs`
+- [x] Add `NotificationsEnabled bool` property (default `true`) to the `Member` entity in `src/Stretto.Domain/Entities/Member.cs`
 
 - [ ] Create notification DTOs in `src/Stretto.Application/DTOs/NotificationDtos.cs`: `record RecipientDto(Guid MemberId, string Name, string Email)`; `record SendAssignmentAnnouncementRequest([Required] Guid ProgramYearId, [Required] string Subject, [Required] string Body)`; `record SendAuditionAnnouncementRequest([Required] Guid AuditionDateId, [Required] string Subject, [Required] string Body)`
 
