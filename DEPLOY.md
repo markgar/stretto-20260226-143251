@@ -347,4 +347,22 @@ Validated in milestone `milestone-08a-member-assignments-backend`:
 - **Utilization endpoint on ProgramYearsController**: `GET /api/program-years/{id}/utilization` → 200 with `{ projects: [...], members: [...] }` where each member has `memberId`, `fullName`, `assignedCount`, `totalProjects`, `assignedProjectIds`.
 - **404 behavior**: `GET /api/projects/{nonExistentId}/members` → 404 `{"message":"Project not found"}`. `GET /api/program-years/{nonExistentId}/utilization` → 404 `{"message":"Program year not found"}`.
 - **All 7 Playwright tests pass** in `e2e/member-assignments-validation.spec.ts`.
+<<<<<<< HEAD
 >>>>>>> 72ed2a5 ([validator] Validate milestone 08a: Member Assignments – Backend)
+=======
+
+## Milestone 16a: Admin Dashboard – Backend
+
+Validated in milestone `milestone-16a-admin-dashboard-backend`:
+
+- **DashboardController**: Registered at `api/dashboard`. Single endpoint: `GET /api/dashboard/summary`.
+- **Authentication guard**: `GET /api/dashboard/summary` returns HTTP 401 without a valid `stretto_session` cookie.
+- **Authorization**: Requires Admin role. Member role returns HTTP 403.
+- **Optional query param**: `GET /api/dashboard/summary?programYearId={id}` uses that program year; without it, uses the current program year.
+- **No current program year**: Returns HTTP 200 with `{"programYearId":null,"programYearName":null,"upcomingEvents":[],"recentActivity":[]}`.
+- **Unknown programYearId**: Returns HTTP 404 `{"message":"Program year not found"}`.
+- **Response shape**: `{ programYearId, programYearName, upcomingEvents: [...], recentActivity: [...] }`. Each `recentActivity` item has `activityType` ("NewMember"/"NewAssignment"), `description`, `occurredAt`.
+- **Seed data email**: DataSeeder uses `admin@example.com` (Admin) and `member@example.com` (Member). Note: milestone spec references `mgarner22@gmail.com` but the actual seeder uses `admin@example.com`.
+- **CreatedAt fields added**: `Member.CreatedAt` and `ProjectAssignment.CreatedAt` added to domain entities and EF Core configurations for `recentActivity` lookback (last 14 days).
+- **All 10 validation tests pass**.
+>>>>>>> 6fdbd47 ([validator] Validate milestone-16a: Admin Dashboard – Backend)
