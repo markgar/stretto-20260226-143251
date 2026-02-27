@@ -170,6 +170,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 - **Seed data email**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all authentication tests.
 =======
 - **AppShell nav testids (milestone 04b)**: Nav items now use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
+<<<<<<< HEAD
 - **Seed data email**: `DataSeeder` seeds `mgarner22@gmail.com` (Admin) and `mgarner@outlook.com` (Member). Use `mgarner22@gmail.com` for all authentication tests. Note: `auth-validation.spec.ts` still uses old `admin@example.com` — those tests are broken (issue #83).
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
 =======
@@ -177,6 +178,10 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 =======
 - **Seed data email (milestone-16b verified)**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all Playwright authentication tests. The `mgarner22@gmail.com` email from REQUIREMENTS.md does NOT work — the actual seeded email is `admin@example.com`.
 >>>>>>> 083b7a8 ([validator] Validate milestone-16b: Admin Dashboard — Frontend)
+=======
+- **Seed data email**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all authentication tests. The DEPLOY.md entries referencing `mgarner22@gmail.com` are incorrect — always use `admin@example.com`.
+>>>>>>> 6cdef31 ([validator] Validate milestone-09b: Events — Pages)
+>>>>>>> 080229b ([validator] Validate milestone-14a2: Member Calendar Backend — all 11 Playwright tests pass)
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **Dockerfile must copy ALL test project files**: Before `dotnet restore`, the Dockerfile must `COPY` all `.csproj` files referenced in `Stretto.sln`, including all test projects (`Stretto.Api.Tests`, `Stretto.Domain.Tests`, `Stretto.Application.Tests`, `Stretto.Infrastructure.Tests`). Missing any causes `dotnet restore` to fail with MSB3202.
@@ -459,6 +464,7 @@ Validated in milestone `milestone-16b-admin-dashboard-frontend`:
 =======
 >>>>>>> 635556b ([validator] Add audition controllers, UnprocessableEntityException (422), and milestone 11a validation)
 
+<<<<<<< HEAD
 ## Milestone 15a: Notifications – Backend (Domain, Application, and Infrastructure)
 
 Validated in milestone `milestone-15a-notifications-backend`:
@@ -472,3 +478,18 @@ Validated in milestone `milestone-15a-notifications-backend`:
 - **Seed data**: Login with `admin@example.com` (no password check). Member email: `member@example.com`.
 - **All 9 Playwright tests pass** in `e2e/notifications-backend-validation.spec.ts`.
 >>>>>>> 0865013 ([validator] Validate milestone-15a: Notifications Backend)
+=======
+## Milestone 14a2: Member Features — Backend (Part 2: Calendar & Controller)
+
+Validated in milestone `milestone-14a2-member-calendar-backend`:
+
+- **MemberMeController**: Registered at `api/members/me`. All 5 endpoints work: GET me, PUT me, GET projects, GET calendar, GET calendar.ics.
+- **GET /api/members/me/projects**: Returns `200` with a JSON array of `MemberProjectSummaryDto` objects (empty if no assignments).
+- **GET /api/members/me/calendar**: Returns `200` with a JSON array of `CalendarEventDto` objects (upcoming events across assigned projects).
+- **GET /api/members/me/calendar.ics**: Returns `200` with `Content-Type: text/calendar`, `Content-Disposition: attachment; filename="my-calendar.ics"`, body starting with `BEGIN:VCALENDAR\nVERSION:2.0\n...END:VCALENDAR`.
+- **Auth enforcement**: All three new endpoints return HTTP 401 without a valid `stretto_session` cookie.
+- **IMemberCalendarService registered**: `builder.Services.AddScoped<IMemberCalendarService, MemberCalendarService>()` confirmed in `Program.cs`.
+- **ICalFeedGenerator**: Static class with `Generate(events, calendarName)` producing RFC 5545 iCal with VEVENT per event.
+- **Seed data confirmation**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Both can authenticate and access `api/members/me/*` endpoints.
+- **All 11 Playwright tests pass** in `e2e/member-calendar-validation.spec.ts`.
+>>>>>>> 080229b ([validator] Validate milestone-14a2: Member Calendar Backend — all 11 Playwright tests pass)
