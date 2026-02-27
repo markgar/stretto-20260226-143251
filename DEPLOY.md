@@ -171,6 +171,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 =======
 - **AppShell nav testids (milestone 04b)**: Nav items now use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
 <<<<<<< HEAD
+<<<<<<< HEAD
 - **Seed data email**: `DataSeeder` seeds `mgarner22@gmail.com` (Admin) and `mgarner@outlook.com` (Member). Use `mgarner22@gmail.com` for all authentication tests. Note: `auth-validation.spec.ts` still uses old `admin@example.com` — those tests are broken (issue #83).
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
 =======
@@ -182,6 +183,8 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 - **Seed data email**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all authentication tests. The DEPLOY.md entries referencing `mgarner22@gmail.com` are incorrect — always use `admin@example.com`.
 >>>>>>> 6cdef31 ([validator] Validate milestone-09b: Events — Pages)
 >>>>>>> 080229b ([validator] Validate milestone-14a2: Member Calendar Backend — all 11 Playwright tests pass)
+=======
+>>>>>>> b9f6b2a ([validator] Validate milestone-15b: Notifications – API Controller and Frontend)
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **Dockerfile must copy ALL test project files**: Before `dotnet restore`, the Dockerfile must `COPY` all `.csproj` files referenced in `Stretto.sln`, including all test projects (`Stretto.Api.Tests`, `Stretto.Domain.Tests`, `Stretto.Application.Tests`, `Stretto.Infrastructure.Tests`). Missing any causes `dotnet restore` to fail with MSB3202.
@@ -189,6 +192,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 - **Vite allowedHosts**: Without `server.allowedHosts: true` in `vite.config.ts`, Playwright requests from within Docker will be blocked with "Blocked request. This host not allowed."
 - **Frontend npm install delay**: The frontend container runs `npm install` on first start — expect ~15-30 seconds before the Vite dev server is ready at http://localhost:7778/.
 - **Secure cookie prevents page reload auth restore**: The `stretto_session` cookie is set with `Secure` flag. In the Docker HTTP setup, the browser does NOT send this cookie on page reload (only over HTTPS). Zustand state is lost on full page reload (`page.goto()`). In Playwright tests, use React Router client-side navigation (click nav links) instead of `page.goto()` for pages that require auth.
+- **Playwright API data loading tests**: When a Playwright test needs API data to load (e.g., dropdown options populated via `useQuery`), the `loginAsAdmin` helper (form submit) is NOT sufficient — the Secure cookie won't be sent with API calls from the Vite proxy. Use the `loginViaApi` pattern instead: POST to `http://app:8080/auth/login`, extract token, call `page.context().addCookies([{secure: false}])`, inject localStorage `stretto_user`, then `page.goto()` to the target URL.
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -196,6 +200,9 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b9f6b2a ([validator] Validate milestone-15b: Notifications – API Controller and Frontend)
 ## Milestone 11b: Auditions — API Controllers
 
 Validated in milestone `milestone-11b-auditions-api-controllers`:
@@ -207,8 +214,7 @@ Validated in milestone `milestone-11b-auditions-api-controllers`:
 - **Slot generation**: Creating an audition date automatically generates slots based on startTime, endTime, blockLengthMinutes (e.g., 09:00-12:00 / 15min = 12 slots). All slots start with status='Pending' and notes=null.
 - **Slot shape**: Each slot has `id`, `auditionDateId`, `slotTime`, `memberId`, `status`, `notes`.
 - **All 10 Playwright tests pass** in `e2e/auditions-validation.spec.ts`.
-- **All 11 API tests pass** via Python urllib tests.
-=======
+
 ## Milestone 10a: Attendance — Backend
 
 Validated in milestone `milestone-10a-attendance-backend`:
@@ -220,6 +226,7 @@ Validated in milestone `milestone-10a-attendance-backend`:
 - **ToggleExcused logic**: First call (no record) → Excused. Second call (Excused) → Absent. Third call (Absent) → Excused. Correct behavior verified.
 - **No AssignmentsController**: Milestone 08a assignment endpoints (`POST /api/projects/{id}/assignments/{memberId}`) are not in this codebase. Attendance tests work without them as SetStatusAsync doesn't require project membership.
 - **All 9 Playwright tests pass** in `e2e/attendance-validation.spec.ts`.
+<<<<<<< HEAD
 >>>>>>> 66fb56e ([validator] Fix build errors and add Playwright tests for milestone 10a: Attendance Backend)
 =======
 ## Milestone 12a: Audition Sign-Up — Backend API
@@ -285,6 +292,8 @@ Validated in milestone `milestone-08b-member-assignments-utilization-frontend`:
 - **All 13 Playwright tests pass** in `e2e/member-assignments-validation.spec.ts`.
 - **Playwright pattern for navigation to project pages**: Use `page.goto(FRONTEND_BASE + '/projects/{id}')` directly after `loginViaApi()` — this works because `loginViaApi` sets localStorage `stretto_user` (Zustand persists across goto).
 >>>>>>> 955966d ([validator] Validate milestone-08b: Member Assignments + Utilization Grid Frontend)
+=======
+>>>>>>> b9f6b2a ([validator] Validate milestone-15b: Notifications – API Controller and Frontend)
 
 ## Building and Testing Locally (without Docker)
 
@@ -361,12 +370,15 @@ Validated in milestone `milestone-09a-events-api`:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
 =======
 >>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
 =======
 >>>>>>> 083b7a8 ([validator] Validate milestone-16b: Admin Dashboard — Frontend)
+=======
+>>>>>>> b9f6b2a ([validator] Validate milestone-15b: Notifications – API Controller and Frontend)
 ## Milestone 11a: Auditions — Application Service Layer
 
 Validated in milestone `milestone-11a-auditions-api-service`:
@@ -378,6 +390,7 @@ Validated in milestone `milestone-11a-auditions-api-service`:
 - **Audition date endpoints**: `POST /api/audition-dates` auto-generates time slots. For 9:00–12:00 with 30-min blocks: 6 slots at 09:00, 09:30, 10:00, 10:30, 11:00, 11:30.
 - **Slot status values**: `AuditionStatus` enum values: `Pending`, `Accepted`, `Rejected`, `NoShow`. Serialized as strings.
 - **Pre-existing failures (not this milestone)**: `program-years-validation.spec.ts` tests fail (frontend UI issue), `milestone-04a-validation.spec.ts` sidebar tests fail, and `projects-validation.spec.ts:116` expects 422 for date validation but `ValidationException` maps to 400.
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -493,3 +506,19 @@ Validated in milestone `milestone-14a2-member-calendar-backend`:
 - **Seed data confirmation**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Both can authenticate and access `api/members/me/*` endpoints.
 - **All 11 Playwright tests pass** in `e2e/member-calendar-validation.spec.ts`.
 >>>>>>> 080229b ([validator] Validate milestone-14a2: Member Calendar Backend — all 11 Playwright tests pass)
+=======
+
+## Milestone 15b: Notifications – API Controller and Frontend
+
+Validated in milestone `milestone-15b-notifications-frontend`:
+
+- **Build fix**: `AuditionDatesController.cs` had a merge conflict marker (CS8300) that prevented `dotnet publish`. Fixed by resolving to keep `if (role != "Admin") throw new ForbiddenException(...)` before `CreateAsync`.
+- **NotificationsController**: Registered at `api/notifications`. All 4 endpoints work: `GET /api/notifications/assignment-recipients?programYearId=<guid>` (admin only, 200 + array), `POST /api/notifications/assignment-announcement` (admin only, 204), `GET /api/notifications/audition-recipients?auditionDateId=<guid>` (admin only, 200 + array), `POST /api/notifications/audition-announcement` (admin only, 204).
+- **Auth enforcement**: All endpoints return HTTP 401 without auth cookie; non-Admin returns HTTP 403 with `{"message":"Only admins can view recipients"}` or similar.
+- **Recipient shape**: `GET .../assignment-recipients` returns `[{"memberId":"...","name":"...","email":"..."}]`. With no project assignments, returns `[]` (not 404).
+- **NotificationsPage**: Renders at `/notifications` with `data-testid="notifications-heading"`. Has `type-select` (assignment/audition), `target-select` (program year or audition date options), `subject-input`, `body-input`, `preview-recipients-button`, `send-button`. Shows `data-testid="send-success"` on successful send.
+- **Playwright loginViaApi pattern required for data-loading tests**: Tests that check API-populated dropdowns must use: POST to `http://app:8080/auth/login` → extract session token → `page.context().addCookies([{secure: false}])` → inject `localStorage.setItem('stretto_user', JSON.stringify(user))` → `page.goto()`. The simple `loginAsAdmin` form-submit pattern does not send the Secure cookie with Vite proxy requests.
+- **Seed data includes program year**: `DataSeeder` seeds program year "2025-2026" (ID `22222222-2222-2222-2222-222222222222`), so the `target-select` dropdown has one option when type=assignment.
+- **All 7 Playwright tests pass** in `e2e/notifications-validation.spec.ts`.
+- **All 7 API tests pass** via curl.
+>>>>>>> b9f6b2a ([validator] Validate milestone-15b: Notifications – API Controller and Frontend)
