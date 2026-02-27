@@ -178,6 +178,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## Milestone 11b: Auditions — API Controllers
 
 Validated in milestone `milestone-11b-auditions-api-controllers`:
@@ -253,6 +254,20 @@ Validated in milestone `milestone-16a-admin-dashboard-backend`:
 - **Seed data uses admin@example.com**: Despite DEPLOY.md notes from milestone 09b claiming `mgarner22@gmail.com`, the actual `DataSeeder.cs` seeds `admin@example.com` (Admin) and `member@example.com` (Member). The `mgarner22@gmail.com` email in REQUIREMENTS.md and milestone specs is NOT the seeded email.
 - **All 5 Playwright API tests pass** in `e2e/dashboard-backend-validation.spec.ts`.
 >>>>>>> 92ee22f ([validator] Validate milestone-16a: Admin Dashboard Backend)
+=======
+## Milestone 08b: Member Assignments + Utilization Grid – Frontend
+
+Validated in milestone `milestone-08b-member-assignments-utilization-frontend`:
+
+- **Seed data email (corrected)**: `DataSeeder` actually seeds `admin@example.com` (Admin) and `member@example.com` (Member). Earlier DEPLOY.md entries claiming `mgarner22@gmail.com` were incorrect. Use `admin@example.com` for all authentication tests.
+- **ProjectMembersTab**: Renders at `data-testid="member-search-input"` + member rows with `data-testid="assign-{memberId}"` / `data-testid="unassign-{memberId}"` buttons. Search filters by name or email.
+- **ProjectDetailPage members tab**: Replaced "Coming soon" placeholder with `<ProjectMembersTab projectId={id!} />`. `data-testid="tab-members"` click shows the assignment UI.
+- **UtilizationGridPage**: Renders at `/utilization` with `data-testid="program-year-select"`. Desktop shows full table (member name, utilization count, colored cells). Mobile shows grouped list.
+- **Project assignment endpoints**: `GET /api/projects/{id}/members` → 200 list; `POST /api/projects/{id}/members` → 201; `DELETE /api/projects/{id}/members/{memberId}` → 204. All require auth (401 without).
+- **Utilization endpoint**: `GET /api/program-years/{id}/utilization` → 200 `{projects:[...], members:[{memberId, fullName, assignedCount, totalProjects, assignedProjectIds}]}`.
+- **All 13 Playwright tests pass** in `e2e/member-assignments-validation.spec.ts`.
+- **Playwright pattern for navigation to project pages**: Use `page.goto(FRONTEND_BASE + '/projects/{id}')` directly after `loginViaApi()` — this works because `loginViaApi` sets localStorage `stretto_user` (Zustand persists across goto).
+>>>>>>> 955966d ([validator] Validate milestone-08b: Member Assignments + Utilization Grid Frontend)
 
 ## Building and Testing Locally (without Docker)
 
