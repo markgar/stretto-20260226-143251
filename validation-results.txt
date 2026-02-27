@@ -1,0 +1,16 @@
+PASS  docker compose build -> success
+PASS  container startup -> healthy after 1s
+PASS  [J-1] GET /health -> 200
+PASS  GET /api/dashboard/summary without auth -> 401 (unauthenticated)
+PASS  POST /auth/login as admin@example.com -> 200 with session cookie
+PASS  GET /api/dashboard/summary authenticated as admin -> 200 with programYearId, programYearName, upcomingEvents[], recentActivity[]
+PASS  GET /api/dashboard/summary?programYearId=22222222-2222-2222-2222-222222222222 -> 200 with matching programYearId
+PASS  GET /api/dashboard/summary?programYearId=99999999-9999-9999-9999-999999999999 -> 404 with message "Program year not found"
+PASS  GET /api/dashboard/summary when no current program year (after archive) -> 200 with programYearId: null, empty upcomingEvents[], empty recentActivity[]
+PASS  GET /api/dashboard/summary authenticated as member@example.com -> 403 (forbidden, Admin only)
+PASS  [UI] GET /api/dashboard/summary without auth returns 401
+PASS  [UI] GET /api/dashboard/summary with admin auth returns 200 with correct fields
+PASS  [UI] GET /api/dashboard/summary?programYearId=valid returns 200 with matching programYearId
+PASS  [UI] GET /api/dashboard/summary?programYearId=unknown returns 404
+PASS  [UI] GET /api/dashboard/summary with member role returns 403
+NOTE  Bug fixed: DashboardController used return Forbid() which caused 500 instead of 403. Fixed to throw new ForbiddenException("Only admins can view the dashboard") matching the pattern used by other controllers.

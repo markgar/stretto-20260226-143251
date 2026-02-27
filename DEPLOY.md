@@ -177,6 +177,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## Milestone 11b: Auditions — API Controllers
 
 Validated in milestone `milestone-11b-auditions-api-controllers`:
@@ -239,6 +240,19 @@ Validated in milestone `milestone-08a-member-assignments-backend`:
 - **Error cases**: non-existent projectId → 404; non-existent programYearId → 404; duplicate assignment → 409 with `{"message":"Member is already assigned to this project"}`.
 - **All 7 Playwright API tests pass** in `e2e/member-assignments-validation.spec.ts`.
 >>>>>>> fd524ef ([validator] Validate milestone-08a: Member Assignments Backend - all tests pass)
+=======
+## Milestone 16a: Admin Dashboard — Backend
+
+Validated in milestone `milestone-16a-admin-dashboard-backend`:
+
+- **DashboardController**: Registered at `api/dashboard`. `GET /api/dashboard/summary` requires Admin role; Members get 403.
+- **Bug fixed**: `DashboardController` used `return Forbid()` (ASP.NET Core built-in) which causes HTTP 500 because no authentication scheme is configured. Fixed to `throw new ForbiddenException("Only admins can view the dashboard")` — matching the pattern used by EventsController, ProjectsController, etc.
+- **Optional `programYearId` query param**: `GET /api/dashboard/summary?programYearId={guid}` → specific year; no param → current year. Unknown ID → 404.
+- **No current year**: Returns HTTP 200 with `{"programYearId":null,"programYearName":null,"upcomingEvents":[],"recentActivity":[]}`.
+- **recentActivity**: `ActivityType` values are `"NewMember"` and `"NewAssignment"`. Members seeded by `DataSeeder` appear in `recentActivity` immediately.
+- **Seed data uses admin@example.com**: Despite DEPLOY.md notes from milestone 09b claiming `mgarner22@gmail.com`, the actual `DataSeeder.cs` seeds `admin@example.com` (Admin) and `member@example.com` (Member). The `mgarner22@gmail.com` email in REQUIREMENTS.md and milestone specs is NOT the seeded email.
+- **All 5 Playwright API tests pass** in `e2e/dashboard-backend-validation.spec.ts`.
+>>>>>>> 92ee22f ([validator] Validate milestone-16a: Admin Dashboard Backend)
 
 ## Building and Testing Locally (without Docker)
 
