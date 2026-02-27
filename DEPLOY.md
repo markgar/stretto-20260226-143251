@@ -165,6 +165,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 - **Vite proxy for API calls (FIXED in milestone-09b)**: The frontend calls `/api/*` relative URLs. Two proxy rules are needed: `/api/auth` → rewrite to `/auth` (for AuthController at `[Route("auth")]`), and `/api` → no rewrite (for all other controllers at `[Route("api/...")]`). Using a single `/api` rule with rewrite breaks all data APIs. The fix is in `src/Stretto.Web/vite.config.ts`.
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 - **AppShell nav testids (milestone 04b)**: Nav items use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
 - **Seed data email**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all authentication tests.
 =======
@@ -173,6 +174,9 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
 =======
 >>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
+=======
+- **Seed data email (milestone-16b verified)**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all Playwright authentication tests. The `mgarner22@gmail.com` email from REQUIREMENTS.md does NOT work — the actual seeded email is `admin@example.com`.
+>>>>>>> 083b7a8 ([validator] Validate milestone-16b: Admin Dashboard — Frontend)
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **Dockerfile must copy ALL test project files**: Before `dotnet restore`, the Dockerfile must `COPY` all `.csproj` files referenced in `Stretto.sln`, including all test projects (`Stretto.Api.Tests`, `Stretto.Domain.Tests`, `Stretto.Application.Tests`, `Stretto.Infrastructure.Tests`). Missing any causes `dotnet restore` to fail with MSB3202.
@@ -351,10 +355,13 @@ Validated in milestone `milestone-09a-events-api`:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
 =======
 >>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
+=======
+>>>>>>> 083b7a8 ([validator] Validate milestone-16b: Admin Dashboard — Frontend)
 ## Milestone 11a: Auditions — Application Service Layer
 
 Validated in milestone `milestone-11a-auditions-api-service`:
@@ -366,6 +373,7 @@ Validated in milestone `milestone-11a-auditions-api-service`:
 - **Audition date endpoints**: `POST /api/audition-dates` auto-generates time slots. For 9:00–12:00 with 30-min blocks: 6 slots at 09:00, 09:30, 10:00, 10:30, 11:00, 11:30.
 - **Slot status values**: `AuditionStatus` enum values: `Pending`, `Accepted`, `Rejected`, `NoShow`. Serialized as strings.
 - **Pre-existing failures (not this milestone)**: `program-years-validation.spec.ts` tests fail (frontend UI issue), `milestone-04a-validation.spec.ts` sidebar tests fail, and `projects-validation.spec.ts:116` expects 422 for date validation but `ValidationException` maps to 400.
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -430,3 +438,20 @@ Validated in milestone `milestone-14a1-member-profile-backend`:
 - **Seed data (confirmed)**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use these emails for all tests. DEPLOY.md had conflicting info — `admin@example.com` / `member@example.com` is correct (verified from DataSeeder source).
 - **All 7 Playwright tests pass** in `e2e/member-profile-validation.spec.ts`.
 >>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
+=======
+
+## Milestone 16b: Admin Dashboard — Frontend
+
+Validated in milestone `milestone-16b-admin-dashboard-frontend`:
+
+- **DashboardController**: Registered at `api/dashboard`. GET `/api/dashboard/summary` returns `DashboardSummaryDto` with `programYearId`, `programYearName`, `upcomingEvents[]`, `recentActivity[]`. Returns 401 without auth, 403 for non-Admin.
+- **DashboardPage**: Located at `src/Stretto.Web/src/pages/DashboardPage.tsx`. Renders `data-testid="dashboard-heading"` (text: "Dashboard") and `data-testid="program-year-select"` (default option "Current Year"). Uses `useDashboard` and `useProgramYearsList` hooks.
+- **useDashboard hook**: `src/Stretto.Web/src/pages/useDashboard.ts`. Uses `useQuery` with `queryKey: ['dashboard', selectedYearId]` and calls `DashboardService.getApiDashboardSummary`.
+- **Skeleton loader**: `data-testid="dashboard-skeleton"` shown while `isLoading` is true.
+- **Upcoming events**: When empty, `data-testid="no-upcoming-events"` shown. When populated, `data-testid="upcoming-event-row"` items with `data-testid="event-type-badge"`.
+- **Recent activity**: When empty, `data-testid="no-recent-activity"` shown. When populated, `data-testid="activity-item"` items.
+- **Seed data**: `admin@example.com` (Admin) and `member@example.com` (Member). Both seeded as NewMember activity items.
+- **Playwright auth pattern for dashboard**: Use `secure: false` + `localStorage.setItem('stretto_user', JSON.stringify(user))` then `page.goto(UI_BASE + '/dashboard')`. Do NOT try to navigate via nav link clicks — set localStorage before navigating directly to `/dashboard`.
+- **All 11 Playwright tests pass** in `e2e/dashboard-validation.spec.ts`.
+- **Merge conflicts at build time**: This milestone had 4 conflicted files (UnprocessableEntityException.cs, GlobalExceptionHandlerMiddleware.cs, AuditionDatesController.cs, AuditionSlotsController.cs). Conflicts were between HEAD and a previous validator commit. Resolved by keeping HEAD versions.
+>>>>>>> 083b7a8 ([validator] Validate milestone-16b: Admin Dashboard — Frontend)
