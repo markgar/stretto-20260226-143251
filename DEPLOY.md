@@ -376,6 +376,7 @@ Validated in milestone `milestone-11a-auditions-api-service`:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 ## Milestone 08a: Member Assignments – Backend
 
@@ -455,3 +456,19 @@ Validated in milestone `milestone-16b-admin-dashboard-frontend`:
 - **All 11 Playwright tests pass** in `e2e/dashboard-validation.spec.ts`.
 - **Merge conflicts at build time**: This milestone had 4 conflicted files (UnprocessableEntityException.cs, GlobalExceptionHandlerMiddleware.cs, AuditionDatesController.cs, AuditionSlotsController.cs). Conflicts were between HEAD and a previous validator commit. Resolved by keeping HEAD versions.
 >>>>>>> 083b7a8 ([validator] Validate milestone-16b: Admin Dashboard — Frontend)
+=======
+>>>>>>> 635556b ([validator] Add audition controllers, UnprocessableEntityException (422), and milestone 11a validation)
+
+## Milestone 15a: Notifications – Backend (Domain, Application, and Infrastructure)
+
+Validated in milestone `milestone-15a-notifications-backend`:
+
+- **NotificationsController added by validator**: `NotificationsController` at `api/notifications` was added to expose the notification service (the milestone implemented the service but not the controller). Registered at `src/Stretto.Api/Controllers/NotificationsController.cs`.
+- **Endpoints**: `GET /api/notifications/assignment-recipients?programYearId=...` (200), `POST /api/notifications/assignment-announcement` (204), `GET /api/notifications/audition-recipients?auditionDateId=...` (200), `POST /api/notifications/audition-announcement` (204). All require Admin auth (401 without cookie, 403 for non-Admin).
+- **INotificationService registered**: `builder.Services.AddScoped<INotificationService, NotificationService>()` in `Program.cs` (confirmed).
+- **INotificationProvider registered**: `builder.Services.AddScoped<INotificationProvider, LogNotificationProvider>()` in `Program.cs` (confirmed).
+- **LogNotificationProvider**: Logs `[NOTIFICATION] To: {to} | Subject: {subject} | Body: {body}` as Information. No actual emails sent.
+- **NotificationsEnabled field**: `Member.NotificationsEnabled` defaults to `true`. `NotificationService` filters by `m.IsActive && m.NotificationsEnabled`. Note: The entity also has a pre-existing `NotificationOptOut` field (used by `MemberService`/`UpdateMemberProfileRequest`) — these are separate fields. No admin API endpoint sets `NotificationsEnabled` to `false` directly.
+- **Seed data**: Login with `admin@example.com` (no password check). Member email: `member@example.com`.
+- **All 9 Playwright tests pass** in `e2e/notifications-backend-validation.spec.ts`.
+>>>>>>> 0865013 ([validator] Validate milestone-15a: Notifications Backend)

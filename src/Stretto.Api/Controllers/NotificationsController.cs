@@ -32,7 +32,11 @@ public class NotificationsController : ProtectedControllerBase
     {
         var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
+<<<<<<< HEAD
             throw new ForbiddenException("Only admins can send announcements");
+=======
+            throw new ForbiddenException("Only admins can send notifications");
+>>>>>>> 0865013 ([validator] Validate milestone-15a: Notifications Backend)
         await _notifications.SendAssignmentAnnouncementAsync(req.ProgramYearId, req.Subject, req.Body, orgId);
         return NoContent();
     }
@@ -52,7 +56,11 @@ public class NotificationsController : ProtectedControllerBase
     {
         var (orgId, role, _) = await GetSessionAsync();
         if (role != "Admin")
+<<<<<<< HEAD
             throw new ForbiddenException("Only admins can send announcements");
+=======
+            throw new ForbiddenException("Only admins can send notifications");
+>>>>>>> 0865013 ([validator] Validate milestone-15a: Notifications Backend)
         await _notifications.SendAuditionAnnouncementAsync(req.AuditionDateId, req.Subject, req.Body, orgId);
         return NoContent();
     }
