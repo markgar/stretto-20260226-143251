@@ -2,6 +2,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   "status": "failed",
   "failedTests": [
 <<<<<<< HEAD
@@ -34,4 +35,8 @@
   "status": "passed",
   "failedTests": []
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
+=======
+  "status": "passed",
+  "failedTests": []
+>>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
 }

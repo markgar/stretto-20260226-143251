@@ -50,6 +50,7 @@ public class GlobalExceptionHandlerMiddleware
             await context.Response.WriteAsync(body);
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
         catch (ConcurrencyException ex)
         {
             context.Response.StatusCode = 422;
@@ -59,6 +60,8 @@ public class GlobalExceptionHandlerMiddleware
         }
 =======
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
+=======
+>>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
         catch (UnprocessableEntityException ex)
         {
             context.Response.StatusCode = 422;

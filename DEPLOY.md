@@ -164,12 +164,15 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 - **Venues API route**: `GET /api/venues` (with `/api` prefix, proxied by Vite) returns `[]` for empty list, `401` without auth. Direct backend call: `GET http://localhost:7777/api/venues`.
 - **Vite proxy for API calls (FIXED in milestone-09b)**: The frontend calls `/api/*` relative URLs. Two proxy rules are needed: `/api/auth` → rewrite to `/auth` (for AuthController at `[Route("auth")]`), and `/api` → no rewrite (for all other controllers at `[Route("api/...")]`). Using a single `/api` rule with rewrite breaks all data APIs. The fix is in `src/Stretto.Web/vite.config.ts`.
 <<<<<<< HEAD
+<<<<<<< HEAD
 - **AppShell nav testids (milestone 04b)**: Nav items use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
 - **Seed data email**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all authentication tests.
 =======
 - **AppShell nav testids (milestone 04b)**: Nav items now use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
 - **Seed data email**: `DataSeeder` seeds `mgarner22@gmail.com` (Admin) and `mgarner@outlook.com` (Member). Use `mgarner22@gmail.com` for all authentication tests. Note: `auth-validation.spec.ts` still uses old `admin@example.com` — those tests are broken (issue #83).
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
+=======
+>>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **Dockerfile must copy ALL test project files**: Before `dotnet restore`, the Dockerfile must `COPY` all `.csproj` files referenced in `Stretto.sln`, including all test projects (`Stretto.Api.Tests`, `Stretto.Domain.Tests`, `Stretto.Application.Tests`, `Stretto.Infrastructure.Tests`). Missing any causes `dotnet restore` to fail with MSB3202.
@@ -347,8 +350,11 @@ Validated in milestone `milestone-09a-events-api`:
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
+=======
+>>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
 ## Milestone 11a: Auditions — Application Service Layer
 
 Validated in milestone `milestone-11a-auditions-api-service`:
@@ -360,6 +366,7 @@ Validated in milestone `milestone-11a-auditions-api-service`:
 - **Audition date endpoints**: `POST /api/audition-dates` auto-generates time slots. For 9:00–12:00 with 30-min blocks: 6 slots at 09:00, 09:30, 10:00, 10:30, 11:00, 11:30.
 - **Slot status values**: `AuditionStatus` enum values: `Pending`, `Accepted`, `Rejected`, `NoShow`. Serialized as strings.
 - **Pre-existing failures (not this milestone)**: `program-years-validation.spec.ts` tests fail (frontend UI issue), `milestone-04a-validation.spec.ts` sidebar tests fail, and `projects-validation.spec.ts:116` expects 422 for date validation but `ValidationException` maps to 400.
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 ## Milestone 08a: Member Assignments – Backend
@@ -409,3 +416,17 @@ Validated in milestone `milestone-13b-project-materials-frontend`:
 - **getByText() strict mode**: Use `getByRole('heading', { name: 'Links' })` instead of `getByText('Links')` to avoid strict mode violations when "No links yet" text also contains "links".
 - **All 10 Playwright tests pass** in `e2e/materials-validation.spec.ts`.
 >>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
+=======
+
+## Milestone 14a1: Member Features — Backend (Part 1: Member Profile)
+
+Validated in milestone `milestone-14a1-member-profile-backend`:
+
+- **MemberMeController**: Registered at `api/members/me`. Both endpoints work: `GET /api/members/me` returns the authenticated member's profile; `PUT /api/members/me` updates firstName, lastName, email, notificationOptOut.
+- **NotificationOptOut field**: Added to `Member` entity, `MemberDto`, and `MemberService.ToDto`. Defaults to `false` on creation.
+- **GetMeAsync / UpdateMeAsync**: Both methods added to `IMemberService` and implemented in `MemberService`. `UpdateMeAsync` validates email uniqueness (excluding self).
+- **Authentication guard**: Both endpoints return HTTP 401 without a valid `stretto_session` cookie.
+- **Merge conflicts resolved**: Multiple .cs files had unresolved merge conflict markers (from earlier validator commits vs HEAD). Resolved keeping HEAD versions: `UnprocessableEntityException.cs`, `GlobalExceptionHandlerMiddleware.cs`, `AuditionDatesController.cs`, `AuditionSlotsController.cs`.
+- **Seed data (confirmed)**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use these emails for all tests. DEPLOY.md had conflicting info — `admin@example.com` / `member@example.com` is correct (verified from DataSeeder source).
+- **All 7 Playwright tests pass** in `e2e/member-profile-validation.spec.ts`.
+>>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
