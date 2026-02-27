@@ -1,6 +1,6 @@
 # Review Themes
 
-Last updated: Admin Dashboard – Frontend
+Last updated: Notifications – Backend (Domain, Application, and Infrastructure)
 
 1. **TreatWarningsAsErrors missing** — Always add `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` to every `<PropertyGroup>` in every .csproj file alongside `<Nullable>enable</Nullable>`; nullable warnings that don't fail the build silently accumulate into dead null-safety.
 2. **Backslash path separators in .sln and .csproj** — Use forward slashes in all solution and project reference paths; backslashes are a Windows convention that breaks non-normalising tooling on Linux CI agents.
@@ -57,3 +57,5 @@ Last updated: Admin Dashboard – Frontend
 53. **Use AlertDialog for destructive confirmations, not window.confirm** — Replace all `window.confirm()` delete guards with shadcn/ui `AlertDialog`; `window.confirm` is a browser-native blocking modal that is visually inconsistent with the rest of the UI, cannot be styled, and is blocked entirely in some environments (iframes, PWAs); `AlertDialog` integrates with the shadcn/ui component system and produces a consistent user experience.
 54. **Extract repeated e2e test setup into named helpers** — When two or more e2e tests in the same file require identical setup (e.g., login + token extraction, data seeding), extract it into a named helper function at the top of the file and call it uniformly; copy-pasted setup blocks multiply maintenance cost on any API change and cause silent divergence when one copy is updated and others are not.
 55. **Never use personal email addresses in spec, test, or seed files** — Always use `@example.com` addresses (IANA-reserved, cannot receive email) in milestone specs, validation criteria, seed data, and test fixtures; real personal addresses committed to git history are a permanent privacy exposure that requires history-rewriting to remove.
+56. **Do not introduce a new boolean field that duplicates an existing one with inverted semantics** — Before adding a new boolean property to an entity (e.g., `NotificationsEnabled`), check for an existing field that expresses the same concept from the opposite direction (e.g., `NotificationOptOut`); two fields that represent the same user preference are never written together and will silently diverge, causing features built on one field to ignore changes made through the other.
+57. **[Required] on non-nullable value-type properties is a no-op** — `[Required]` has no effect on `int`, `bool`, `Guid`, `DateTime`, or any other non-nullable struct; these types can never be null so the attribute never fires; remove it to avoid misleading readers and, if you need a non-empty GUID check, add an explicit validator (e.g. `if (id == Guid.Empty)`).
