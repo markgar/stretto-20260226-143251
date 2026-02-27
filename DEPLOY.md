@@ -311,6 +311,7 @@ Validated in milestone `milestone-09a-events-api`:
 - **All 10 Playwright tests pass** in `e2e/events-api-validation.spec.ts`.
 - **EventService pattern**: Uses `_events.ListAsync(orgId, e => e.ProjectId == projectId)` for filtering. `IRepository<Event>`, `IRepository<Project>`, `IRepository<Venue>` all constructor-injected.
 
+<<<<<<< HEAD
 ## Milestone 11a: Auditions — Application Service Layer
 
 Validated in milestone `milestone-11a-auditions-api-service`:
@@ -322,3 +323,14 @@ Validated in milestone `milestone-11a-auditions-api-service`:
 - **Audition date endpoints**: `POST /api/audition-dates` auto-generates time slots. For 9:00–12:00 with 30-min blocks: 6 slots at 09:00, 09:30, 10:00, 10:30, 11:00, 11:30.
 - **Slot status values**: `AuditionStatus` enum values: `Pending`, `Accepted`, `Rejected`, `NoShow`. Serialized as strings.
 - **Pre-existing failures (not this milestone)**: `program-years-validation.spec.ts` tests fail (frontend UI issue), `milestone-04a-validation.spec.ts` sidebar tests fail, and `projects-validation.spec.ts:116` expects 422 for date validation but `ValidationException` maps to 400.
+=======
+## Milestone 08a: Member Assignments – Backend
+
+Validated in milestone `milestone-08a-member-assignments-backend`:
+
+- **ProjectAssignmentService**: Registered as scoped in `Program.cs`. Implements `IProjectAssignmentService` with 4 methods.
+- **Assignment endpoints on ProjectsController**: `GET /api/projects/{id}/members` → 200 (array with memberId, fullName, email, isAssigned), `POST /api/projects/{id}/members` → 201 (assigns member), `DELETE /api/projects/{id}/members/{memberId}` → 204.
+- **Utilization endpoint on ProgramYearsController**: `GET /api/program-years/{id}/utilization` → 200 with `{ projects: [...], members: [...] }` where each member has `memberId`, `fullName`, `assignedCount`, `totalProjects`, `assignedProjectIds`.
+- **404 behavior**: `GET /api/projects/{nonExistentId}/members` → 404 `{"message":"Project not found"}`. `GET /api/program-years/{nonExistentId}/utilization` → 404 `{"message":"Program year not found"}`.
+- **All 7 Playwright tests pass** in `e2e/member-assignments-validation.spec.ts`.
+>>>>>>> 72ed2a5 ([validator] Validate milestone 08a: Member Assignments – Backend)
