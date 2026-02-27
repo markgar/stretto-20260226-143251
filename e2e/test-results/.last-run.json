@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   "status": "failed",
   "failedTests": [
 <<<<<<< HEAD
@@ -39,4 +40,8 @@
   "status": "passed",
   "failedTests": []
 >>>>>>> 5464f80 ([validator] Validate milestone-14a1: Member Profile Backend)
+=======
+  "status": "passed",
+  "failedTests": []
+>>>>>>> c468765 ([validator] Save uncommitted validation changes)
 }
