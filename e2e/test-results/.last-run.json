@@ -5,6 +5,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   "status": "failed",
   "failedTests": [
 <<<<<<< HEAD
@@ -49,4 +50,8 @@
   "status": "passed",
   "failedTests": []
 >>>>>>> 310593a ([validator] Save uncommitted validation changes)
+=======
+  "status": "passed",
+  "failedTests": []
+>>>>>>> c53e40b ([validator] Save uncommitted validation changes)
 }
