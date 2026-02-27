@@ -176,6 +176,7 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 ## Milestone 11b: Auditions — API Controllers
 
 Validated in milestone `milestone-11b-auditions-api-controllers`:
@@ -227,6 +228,17 @@ Validated in milestone `milestone-13a-project-materials-backend`:
 - **All 11 Playwright tests pass** in `e2e/project-materials-validation.spec.ts`.
 - **Playwright test pattern**: Use `request` fixture (direct to `http://app:8080`) for API tests, NOT `page.evaluate` with `fetch` (which goes through Vite proxy that strips `/api` prefix).
 >>>>>>> ff22540 ([validator] Milestone 13a: Project Materials Backend validation — all tests pass)
+=======
+## Milestone 08a: Member Assignments – Backend
+
+Validated in milestone `milestone-08a-member-assignments-backend`:
+
+- **ProjectAssignmentService**: `IProjectAssignmentService` registered as scoped. Implements `ListProjectMembersAsync`, `AssignAsync`, `UnassignAsync`, `GetUtilizationGridAsync`.
+- **ProjectsController sub-resources**: `GET /api/projects/{id}/members` → 200 JSON array with `memberId`, `fullName`, `email`, `isAssigned`; `POST /api/projects/{id}/members` → 201 (admin-only); `DELETE /api/projects/{id}/members/{memberId}` → 204 (admin-only).
+- **ProgramYearsController utilization**: `GET /api/program-years/{id}/utilization` → 200 `{ projects: [...], members: [...] }` where each member has `assignedCount`, `totalProjects`, `assignedProjectIds`.
+- **Error cases**: non-existent projectId → 404; non-existent programYearId → 404; duplicate assignment → 409 with `{"message":"Member is already assigned to this project"}`.
+- **All 7 Playwright API tests pass** in `e2e/member-assignments-validation.spec.ts`.
+>>>>>>> fd524ef ([validator] Validate milestone-08a: Member Assignments Backend - all tests pass)
 
 ## Building and Testing Locally (without Docker)
 
