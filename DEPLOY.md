@@ -239,6 +239,7 @@ cd src/Stretto.Web && npm run build             # should exit 0
 
 Requires .NET 10 SDK and Node.js 22+ installed.
 
+<<<<<<< HEAD
 ## Milestone 09b: Events — Pages
 
 Validated in milestone `milestone-09b-events-pages`:
@@ -256,6 +257,24 @@ Validated in milestone `milestone-09b-events-pages`:
 - **Cookie pattern in Playwright tests**: Use `page.context().addCookies([{name: 'stretto_session', value: token, domain: 'frontend', path: '/', secure: false}])` + `localStorage.setItem('stretto_user', JSON.stringify(user))` pattern (from `loginViaApi` in venues-validation.spec.ts).
 
 ## Milestone 07a: Projects — CRUD API
+=======
+## Milestone 12b: Audition Sign-Up — Frontend Pages
+
+Validated in milestone `milestone-12b-audition-signup-frontend`:
+
+- **Public routes in App.tsx**: `/auditions/:auditionDateId` → `AuditionSignUpPage` and `/auditions/confirmation` → `AuditionConfirmationPage` are defined outside `<ProtectedRoute>`. Both render without redirecting to login.
+- **AuditionSignUpPage**: Calls `GET /api/public/auditions/{auditionDateId}` via raw `fetch` (no credentials). Renders date header, slot grid with Available/Taken badges, and a sign-up form when a slot is selected. On successful sign-up, navigates to `/auditions/confirmation` with `{ state: { slotTime, date } }`.
+- **AuditionConfirmationPage**: Reads `location.state` for `slotTime` and `date`. Renders "You're signed up!" heading, formatted date/time, and "Please arrive a few minutes early" note.
+- **CRITICAL BUG FIXED (issue #391)**: The Vite proxy in `vite.config.ts` stripped the `/api` prefix from ALL API calls, but only `AuthController` uses `[Route("auth")]` (without `/api`). All other controllers use `[Route("api/...")]`. Fixed by splitting into two proxy rules:
+  ```js
+  '/api/auth': { target, rewrite: path => path.replace(/^\/api/, ''), changeOrigin: true },
+  '/api': { target, changeOrigin: true },  // no rewrite — preserves /api prefix
+  ```
+- **All 8 Playwright tests pass** in `e2e/audition-signup-validation.spec.ts`.
+- **Note**: Frontend container needs restart after `vite.config.ts` change (config is read at startup).
+
+
+>>>>>>> e47852d ([validator] Fix Vite proxy, add audition sign-up UI tests, update DEPLOY.md)
 
 Validated in milestone `milestone-07a-projects-api`:
 
