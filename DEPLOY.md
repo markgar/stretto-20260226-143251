@@ -163,8 +163,13 @@ Validated in milestone `milestone-10b-attendance-frontend`:
 - **Auth restore on reload (App.tsx)**: `App.tsx` calls `GET /api/auth/validate` on mount to restore auth state from the session cookie. This works in HTTPS production but NOT in the HTTP Docker dev setup due to the Secure cookie issue above.
 - **Venues API route**: `GET /api/venues` (with `/api` prefix, proxied by Vite) returns `[]` for empty list, `401` without auth. Direct backend call: `GET http://localhost:7777/api/venues`.
 - **Vite proxy for API calls (FIXED in milestone-09b)**: The frontend calls `/api/*` relative URLs. Two proxy rules are needed: `/api/auth` → rewrite to `/auth` (for AuthController at `[Route("auth")]`), and `/api` → no rewrite (for all other controllers at `[Route("api/...")]`). Using a single `/api` rule with rewrite breaks all data APIs. The fix is in `src/Stretto.Web/vite.config.ts`.
+<<<<<<< HEAD
 - **AppShell nav testids (milestone 04b)**: Nav items use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
 - **Seed data email**: `DataSeeder` seeds `admin@example.com` (Admin) and `member@example.com` (Member). Use `admin@example.com` for all authentication tests.
+=======
+- **AppShell nav testids (milestone 04b)**: Nav items now use suffixed testids: `nav-desktop-{label}`, `nav-tablet-{label}`, `nav-mobile-{label}`. Old tests using `nav-{label}` will fail.
+- **Seed data email**: `DataSeeder` seeds `mgarner22@gmail.com` (Admin) and `mgarner@outlook.com` (Member). Use `mgarner22@gmail.com` for all authentication tests. Note: `auth-validation.spec.ts` still uses old `admin@example.com` — those tests are broken (issue #83).
+>>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
 - **HTTPS redirect**: `app.UseHttpsRedirection()` is in Program.cs. In Docker with HTTP-only, this could cause redirect loops if the client follows redirects to HTTPS. Use `http://localhost:7777` directly — HTTP works fine.
 - **Development environment required for Swagger**: Set `ASPNETCORE_ENVIRONMENT=Development` or Swagger endpoints won't be registered.
 - **Dockerfile must copy ALL test project files**: Before `dotnet restore`, the Dockerfile must `COPY` all `.csproj` files referenced in `Stretto.sln`, including all test projects (`Stretto.Api.Tests`, `Stretto.Domain.Tests`, `Stretto.Application.Tests`, `Stretto.Infrastructure.Tests`). Missing any causes `dotnet restore` to fail with MSB3202.
@@ -341,6 +346,9 @@ Validated in milestone `milestone-09a-events-api`:
 - **EventService pattern**: Uses `_events.ListAsync(orgId, e => e.ProjectId == projectId)` for filtering. `IRepository<Event>`, `IRepository<Project>`, `IRepository<Venue>` all constructor-injected.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
 ## Milestone 11a: Auditions — Application Service Layer
 
 Validated in milestone `milestone-11a-auditions-api-service`:
@@ -352,6 +360,7 @@ Validated in milestone `milestone-11a-auditions-api-service`:
 - **Audition date endpoints**: `POST /api/audition-dates` auto-generates time slots. For 9:00–12:00 with 30-min blocks: 6 slots at 09:00, 09:30, 10:00, 10:30, 11:00, 11:30.
 - **Slot status values**: `AuditionStatus` enum values: `Pending`, `Accepted`, `Rejected`, `NoShow`. Serialized as strings.
 - **Pre-existing failures (not this milestone)**: `program-years-validation.spec.ts` tests fail (frontend UI issue), `milestone-04a-validation.spec.ts` sidebar tests fail, and `projects-validation.spec.ts:116` expects 422 for date validation but `ValidationException` maps to 400.
+<<<<<<< HEAD
 =======
 ## Milestone 08a: Member Assignments – Backend
 
@@ -381,3 +390,22 @@ Validated in milestone `milestone-16a-admin-dashboard-backend`:
 - **CreatedAt fields added**: `Member.CreatedAt` and `ProjectAssignment.CreatedAt` added to domain entities and EF Core configurations for `recentActivity` lookback (last 14 days).
 - **All 10 validation tests pass**.
 >>>>>>> 6fdbd47 ([validator] Validate milestone-16a: Admin Dashboard – Backend)
+=======
+
+## Milestone 13b: Project Materials — Frontend (Admin + Member UI)
+
+Validated in milestone `milestone-13b-project-materials-frontend`:
+
+- **Merge conflicts resolved**: `UnprocessableEntityException.cs`, `GlobalExceptionHandlerMiddleware.cs`, `AuditionDatesController.cs`, `AuditionSlotsController.cs` all had unresolved merge conflict markers from milestone 11a. Resolved by keeping HEAD versions (ProtectedControllerBase pattern with 3-tuple `(orgId, role, memberId)`).
+- **ProjectMaterialsTab implemented**: `src/Stretto.Web/src/components/ProjectMaterialsTab.tsx` — renders Links and Documents sections; admin gets add-link form and upload-document form; member gets read-only view.
+- **ProjectDetailPage updated**: Materials tab no longer shows "Coming soon" placeholder — renders `<ProjectMaterialsTab projectId={id!} />`.
+- **Materials API endpoints all work**: GET/POST/DELETE `/api/projects/{id}/links`, GET/POST/DELETE `/api/projects/{id}/documents`, GET `/api/projects/{id}/documents/{docId}/download`.
+- **Admin add-link form testids**: `data-testid="link-title-input"`, `data-testid="link-url-input"`, `data-testid="add-link-button"`.
+- **Link row testids**: `data-testid="link-{id}"` (anchor), `data-testid="delete-link-{id}"` (delete button, admin only).
+- **Admin upload form testids**: `data-testid="upload-document-title-input"`, `data-testid="upload-document-input"` (file input), `data-testid="upload-document-button"`.
+- **Document row testids**: `data-testid="download-document-{id}"` (anchor), `data-testid="delete-document-{id}"` (delete button, admin only).
+- **Seed emails confirmed**: `admin@example.com` / `password` (Admin), `member@example.com` / `password` (Member). DataSeeder uses these values — NOT `mgarner22@gmail.com`.
+- **Playwright document upload**: Use `page.request.post()` with `multipart:` option to upload documents in tests; `page.evaluate()` with `fetch()` does NOT work because the browser context cannot reach `app:8080` directly.
+- **getByText() strict mode**: Use `getByRole('heading', { name: 'Links' })` instead of `getByText('Links')` to avoid strict mode violations when "No links yet" text also contains "links".
+- **All 10 Playwright tests pass** in `e2e/materials-validation.spec.ts`.
+>>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)

@@ -49,6 +49,7 @@ public class GlobalExceptionHandlerMiddleware
             var body = JsonSerializer.Serialize(new { message = ex.Message });
             await context.Response.WriteAsync(body);
         }
+<<<<<<< HEAD
         catch (ConcurrencyException ex)
         {
             context.Response.StatusCode = 422;
@@ -56,6 +57,8 @@ public class GlobalExceptionHandlerMiddleware
             var body = JsonSerializer.Serialize(new { message = ex.Message });
             await context.Response.WriteAsync(body);
         }
+=======
+>>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
         catch (UnprocessableEntityException ex)
         {
             context.Response.StatusCode = 422;

@@ -1,6 +1,7 @@
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   "status": "failed",
   "failedTests": [
 <<<<<<< HEAD
@@ -29,4 +30,8 @@
   "status": "passed",
   "failedTests": []
 >>>>>>> 67e69bf ([validator] Save uncommitted validation changes)
+=======
+  "status": "passed",
+  "failedTests": []
+>>>>>>> 84a2957 ([validator] Validate milestone-13b: Project Materials Frontend — all 10 UI tests pass)
 }
