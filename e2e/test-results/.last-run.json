@@ -1,5 +1,6 @@
 {
 <<<<<<< HEAD
+<<<<<<< HEAD
   "status": "failed",
   "failedTests": [
 <<<<<<< HEAD
@@ -24,4 +25,8 @@
   "status": "passed",
   "failedTests": []
 >>>>>>> 92ee22f ([validator] Validate milestone-16a: Admin Dashboard Backend)
+=======
+  "status": "passed",
+  "failedTests": []
+>>>>>>> 67e69bf ([validator] Save uncommitted validation changes)
 }
